@@ -18,6 +18,7 @@
 
             var bot = new EvaluationBot(twitchUserName, twitchAccessToken);
             bot.Run();
+            Console.ReadLine();
         }
     }
 }

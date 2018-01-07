@@ -28,14 +28,21 @@
 
         public void Run()
         {
-            while (true)
-            {
-                this.Evaluate();
-                Thread.Sleep(10000);
-            }
+            this.twitchClient.OnConnected += (sender, arguments) => Console.WriteLine("Connected!");
+            this.twitchClient.OnJoinedChannel += (sender, arguments) => Console.WriteLine($"Joined to {arguments.Channel}!");
+            this.twitchClient.OnMessageReceived += (sender, arguments) =>
+                {
+                    if (arguments.ChatMessage.Message.Trim().StartsWith("!eval"))
+                    {
+                        var evaluation = this.Evaluate();
+                        Console.WriteLine($"!!!{arguments.ChatMessage.Message}");
+                        this.twitchClient.SendMessage(evaluation);
+                    }
+                };
+            this.twitchClient.Connect();
         }
 
-        private void Evaluate()
+        private string Evaluate()
         {
             var sw = Stopwatch.StartNew();
             var livePgnAsString = this.GetLivePgn().GetAwaiter().GetResult();
@@ -43,18 +50,13 @@
             if (fenPosition == null)
             {
                 Console.WriteLine("Invalid fen! See if file.pgn contains valid PGN.");
-                return;
+                return null;
             }
 
             Console.WriteLine(sw.Elapsed);
 
             var evaluationMessage = this.GetStockfishEvaluation(fenPosition);
-
-            this.twitchClient.OnConnected += (sender, arguments) => this.twitchClient.SendMessage(evaluationMessage);
-            this.twitchClient.OnJoinedChannel += (sender, arguments) => Console.WriteLine(arguments.Channel);
-            this.twitchClient.OnMessageReceived += (sender, arguments) => Console.WriteLine(arguments.ChatMessage.Message);
-            this.twitchClient.Connect();
-            Console.WriteLine(evaluationMessage);
+            return evaluationMessage;
         }
 
         private string GetStockfishEvaluation(string fenPosition)
@@ -82,7 +84,7 @@
                 Console.WriteLine(currentLine);
                 if (currentLine?.StartsWith("bestmove") == true)
                 {
-                    return line + Environment.NewLine + currentLine;
+                    return line + " -- " + currentLine;
                 }
 
                 line = currentLine;
