@@ -2,9 +2,9 @@
 {
     using System;
     using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.Net.Http;
-    using System.Threading;
     using System.Threading.Tasks;
 
     using TwitchLib;
@@ -18,6 +18,8 @@
 
         private readonly TwitchClient twitchClient;
 
+        private DateTime lastMessage = DateTime.Now.AddDays(-1);
+
         public EvaluationBot(string twitchUserName, string twitchAccessToken)
         {
             this.random = new Random();
@@ -28,15 +30,27 @@
 
         public void Run()
         {
-            this.twitchClient.OnConnected += (sender, arguments) => Console.WriteLine("Connected!");
-            this.twitchClient.OnJoinedChannel += (sender, arguments) => Console.WriteLine($"Joined to {arguments.Channel}!");
+            // Console.WriteLine(this.Evaluate());
+
+            this.twitchClient.OnConnected += (sender, arguments) => this.Log("Connected!");
+            this.twitchClient.OnJoinedChannel += (sender, arguments) => this.Log($"Joined to {arguments.Channel}!");
             this.twitchClient.OnMessageReceived += (sender, arguments) =>
                 {
                     if (arguments.ChatMessage.Message.Trim().StartsWith("!eval"))
                     {
-                        var evaluation = this.Evaluate();
-                        Console.WriteLine($"!!!{arguments.ChatMessage.Message}");
-                        this.twitchClient.SendMessage(evaluation);
+                        this.Log($"Received {arguments.ChatMessage.Message} from {arguments.ChatMessage.Username}");
+                        if ((DateTime.Now - this.lastMessage).TotalSeconds >= 30)
+                        {
+                            this.lastMessage = DateTime.Now;
+                            this.twitchClient.SendMessage($"[{DateTime.Now.ToUniversalTime().ToString(CultureInfo.InvariantCulture)}] Thinking 10 seconds, please wait.");
+                            var evaluation = this.Evaluate();
+                            this.twitchClient.SendMessage($"{evaluation} <Stockfish 040118 64 POPCNT>");
+                            this.Log($"Responded with {evaluation}");
+                        }
+                        else
+                        {
+                            this.Log($"Cooldown: {(this.lastMessage - DateTime.Now).TotalSeconds} seconds.");
+                        }
                     }
                 };
             this.twitchClient.Connect();
@@ -44,16 +58,13 @@
 
         private string Evaluate()
         {
-            var sw = Stopwatch.StartNew();
             var livePgnAsString = this.GetLivePgn().GetAwaiter().GetResult();
             var fenPosition = this.ConvertPgnToFen(livePgnAsString);
             if (fenPosition == null)
             {
-                Console.WriteLine("Invalid fen! See if file.pgn contains valid PGN.");
+                this.Log("Invalid fen! See if file.pgn contains valid PGN.");
                 return null;
             }
-
-            Console.WriteLine(sw.Elapsed);
 
             var evaluationMessage = this.GetStockfishEvaluation(fenPosition);
             return evaluationMessage;
@@ -75,16 +86,22 @@
             sfProcess.Start();
 
             sfProcess.StandardInput.WriteLine($"position fen \"{fenPosition}\"");
-            sfProcess.StandardInput.WriteLine($"go movetime 1000");
+            sfProcess.StandardInput.WriteLine($"go movetime 10000");
 
             string line = null;
             while (!sfProcess.StandardOutput.EndOfStream)
             {
                 var currentLine = sfProcess.StandardOutput.ReadLine();
-                Console.WriteLine(currentLine);
+                //// Console.WriteLine(currentLine);
                 if (currentLine?.StartsWith("bestmove") == true)
                 {
-                    return line + " -- " + currentLine;
+                    Console.WriteLine(line);
+                    var depth = line.Split(" depth ")[1].Split(" ")[0];
+                    var cp = line.Split(" cp ")[1].Split(" ")[0];
+                    var time = line.Split(" time ")[1].Split(" ")[0];
+                    var best = currentLine.Split("bestmove ")[1];
+                    //// var pv = line.Split(" pv ")[1].Split(" ");
+                    return $"cp {cp} depth {depth} time {time} best {best}";
                 }
 
                 line = currentLine;
@@ -132,10 +149,18 @@
             if (outputParts?.Length > 2)
             {
                 fenPosition = outputParts[1];
-                Console.WriteLine(fenPosition);
+                //// Console.WriteLine(fenPosition);
             }
 
             return fenPosition;
+        }
+
+        private void Log(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.Write($"[{DateTime.Now}]");
+            Console.ResetColor();
+            Console.WriteLine($" {message}");
         }
     }
 }
