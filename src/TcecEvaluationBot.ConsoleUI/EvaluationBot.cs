@@ -42,9 +42,9 @@
                         if ((DateTime.Now - this.lastMessage).TotalSeconds >= 30)
                         {
                             this.lastMessage = DateTime.Now;
-                            this.twitchClient.SendMessage($"[{DateTime.Now.ToUniversalTime().ToString(CultureInfo.InvariantCulture)}] Thinking 10 seconds, please wait.");
+                            this.twitchClient.SendMessage($"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] Thinking 10 seconds, please wait.");
                             var evaluation = this.Evaluate();
-                            this.twitchClient.SendMessage($"{evaluation} <Stockfish 040118 64 POPCNT>");
+                            this.twitchClient.SendMessage($"{evaluation} <SF040118>");
                             // TODO: Emojis for eval 0.00  athUG 0.25  athSM 0.50  athS 1.00  athO 2.00  athC
                             this.Log($"Responded with {evaluation}");
                         }
@@ -98,11 +98,12 @@
                 {
                     Console.WriteLine(line);
                     var depth = line.Split(" depth ")[1].Split(" ")[0];
-                    var cp = line.Split(" cp ")[1].Split(" ")[0];
-                    var time = line.Split(" time ")[1].Split(" ")[0];
-                    var best = currentLine.Split("bestmove ")[1];
+                    var cp = int.Parse(line.Split(" cp ")[1].Split(" ")[0]);
+
+                    var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
+                    var ponder = currentLine.Split("ponder ")[1];
                     //// var pv = line.Split(" pv ")[1].Split(" ");
-                    return $"cp {cp} depth {depth} time {time} best {best}";
+                    return $"{(cp / 100):0.00} d{depth} pv {best} {ponder}";
                 }
 
                 line = currentLine;
