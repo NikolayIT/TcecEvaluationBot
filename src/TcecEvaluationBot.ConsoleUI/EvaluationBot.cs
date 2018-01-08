@@ -47,7 +47,6 @@
                             this.twitchClient.SendMessage($"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] Thinking {this.options.MoveTime / 1000} seconds, please wait.");
                             var evaluation = this.Evaluate();
                             this.twitchClient.SendMessage(evaluation);
-                            //// TODO: Emojis for eval 0.00  athUG 0.25  athSM 0.50  athS 1.00  athO 2.00  athC
                             this.Log($"Responded with {evaluation}");
                         }
                         else
@@ -120,7 +119,6 @@
 
                         var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
                         var ponder = currentLine.Contains("ponder ") ? currentLine.Split("ponder ")[1] : string.Empty;
-                        //// var pv = line.Split(" pv ")[1].Split(" ");
                         return $"{cp / 100.0M:0.00} d{depth} (tb {tbhits}) pv {best} {ponder} ({currentPlayer})";
                     }
 
