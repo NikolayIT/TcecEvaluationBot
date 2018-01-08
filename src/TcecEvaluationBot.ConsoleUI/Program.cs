@@ -2,21 +2,19 @@
 {
     using System;
 
+    using CommandLine;
+
     public static class Program
     {
         public static void Main(string[] args)
         {
-            if (args.Length < 2)
-            {
-                Console.WriteLine($"Usage: {typeof(Program).Assembly.GetName().Name}.exe [twitchUserName] [twitchAccessToken]");
-                Console.WriteLine($"You can generate an access token from twitchtokengenerator.com");
-                return;
-            }
+            var parserResult = CommandLine.Parser.Default.ParseArguments<Options>(args);
+            parserResult.WithParsed(RunBot);
+        }
 
-            var twitchUserName = args[0];
-            var twitchAccessToken = args[1];
-
-            var bot = new EvaluationBot(twitchUserName, twitchAccessToken);
+        private static void RunBot(Options options)
+        {
+            var bot = new EvaluationBot(options.TwitchUserName, options.TwitchAccessToken);
             bot.Run();
             Console.ReadLine();
         }

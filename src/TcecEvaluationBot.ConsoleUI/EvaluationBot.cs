@@ -45,6 +45,7 @@
                             this.twitchClient.SendMessage($"[{DateTime.Now.ToUniversalTime().ToString(CultureInfo.InvariantCulture)}] Thinking 10 seconds, please wait.");
                             var evaluation = this.Evaluate();
                             this.twitchClient.SendMessage($"{evaluation} <Stockfish 040118 64 POPCNT>");
+                            // TODO: Emojis for eval 0.00  athUG 0.25  athSM 0.50  athS 1.00  athO 2.00  athC
                             this.Log($"Responded with {evaluation}");
                         }
                         else
