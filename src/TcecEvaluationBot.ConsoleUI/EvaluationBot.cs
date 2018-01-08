@@ -87,6 +87,7 @@
             sfProcess.Start();
 
             sfProcess.StandardInput.WriteLine($"position fen \"{fenPosition}\"");
+            sfProcess.StandardInput.WriteLine($"setoption name Threads value 4");
             sfProcess.StandardInput.WriteLine($"go movetime 10000");
 
             string line = null;
