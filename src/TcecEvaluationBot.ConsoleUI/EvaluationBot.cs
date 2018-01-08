@@ -50,15 +50,18 @@
                             this.lastMessage = DateTime.Now;
 
                             var moveTime = this.options.MoveTime;
-                            var commandParts = arguments.ChatMessage.Message.Split(
-                                new[] { " " },
-                                StringSplitOptions.RemoveEmptyEntries);
+                            var commandParts = arguments.ChatMessage.Message.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
                             if (commandParts.Length > 1 && int.TryParse(commandParts[1], out var moveTimeArgument) && moveTimeArgument >= 5 && moveTimeArgument <= 25)
                             {
                                 moveTime = moveTimeArgument * 1000;
                             }
 
-                            this.twitchClient.SendMessage($"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] Thinking {moveTime / 1000} seconds, please wait.");
+                            if (this.options.ThinkingMessage)
+                            {
+                                this.twitchClient.SendMessage(
+                                    $"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] Thinking {moveTime / 1000} sec., please wait.");
+                            }
+
                             var evaluation = this.Evaluate(moveTime);
                             this.twitchClient.SendMessage(evaluation);
                             this.Log($"Responded with \"{evaluation}\"");
