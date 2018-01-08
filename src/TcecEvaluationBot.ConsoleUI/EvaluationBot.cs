@@ -20,6 +20,8 @@
 
         private readonly TwitchClient twitchClient;
 
+        private readonly IPositionEvaluator positionEvaluator;
+
         private DateTime lastMessage = DateTime.Now.AddDays(-1);
 
         public EvaluationBot(Options options)
@@ -29,6 +31,7 @@
             this.httpClient = new HttpClient();
             var credentials = new ConnectionCredentials(options.TwitchUserName, options.TwitchAccessToken);
             this.twitchClient = new TwitchClient(credentials, options.TwitchChannelName);
+            this.positionEvaluator = new StockfishPositionEvaluator(options, "stockfish.exe");
         }
 
         public void Run()
@@ -79,75 +82,8 @@
                 return null;
             }
 
-            var evaluationMessage = this.GetStockfishEvaluation(fenPosition, (int)moveTime);
-            return $"{evaluationMessage} <SF040118>";
-        }
-
-        private string GetStockfishEvaluation(string fenPosition, int moveTime)
-        {
-            var sfProcess = new Process
-                                {
-                                    StartInfo = new ProcessStartInfo
-                                                    {
-                                                        FileName = "stockfish.exe",
-                                                        UseShellExecute = false,
-                                                        RedirectStandardOutput = true,
-                                                        RedirectStandardInput = true,
-                                                        CreateNoWindow = true
-                                                    }
-                                };
-            sfProcess.Start();
-
-            sfProcess.StandardInput.WriteLine($"position fen \"{fenPosition}\"");
-            sfProcess.StandardInput.WriteLine($"setoption name Threads value {this.options.Threads}");
-            sfProcess.StandardInput.WriteLine($"setoption name Hash value {this.options.HashSize}");
-            if (!string.IsNullOrWhiteSpace(this.options.SyzygyPath))
-            {
-                sfProcess.StandardInput.WriteLine($"setoption name SyzygyPath value {this.options.SyzygyPath}");
-            }
-
-            sfProcess.StandardInput.WriteLine($"go movetime {moveTime}");
-
-            try
-            {
-                string line = null;
-                while (!sfProcess.StandardOutput.EndOfStream)
-                {
-                    var currentLine = sfProcess.StandardOutput.ReadLine();
-                    //// Console.WriteLine(currentLine);
-                    if (currentLine?.StartsWith("bestmove") == true)
-                    {
-                        Console.WriteLine(line);
-                        var depth = line.Split(" depth ")[1].Split(" ")[0];
-                        var tbhits = line.Split(" tbhits ")[1].Split(" ")[0];
-                        var cp = int.Parse(line.Split(" cp ")[1].Split(" ")[0]);
-                        char currentPlayer = 'w';
-                        if (fenPosition.Contains(" b "))
-                        {
-                            cp = -cp;
-                            currentPlayer = 'b';
-                        }
-
-                        var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
-                        var ponder = currentLine.Contains("ponder ") ? currentLine.Split("ponder ")[1] : string.Empty;
-                        return $"{cp / 100.0M:0.00} d{depth} (tb {tbhits}) pv {best} {ponder} ({currentPlayer})";
-                    }
-
-                    line = currentLine;
-                }
-            }
-            catch (Exception e)
-            {
-                this.Log("Error: " + e);
-                return $"Error has occurred: {e.Message}";
-            }
-            finally
-            {
-                sfProcess.Dispose();
-            }
-
-            Thread.Sleep(2000);
-            return $"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] No active game? Please try again.";
+            var evaluationMessage = this.positionEvaluator.GetEvaluation(fenPosition, (int)moveTime);
+            return evaluationMessage;
         }
 
         private async Task<string> GetLivePgn()
