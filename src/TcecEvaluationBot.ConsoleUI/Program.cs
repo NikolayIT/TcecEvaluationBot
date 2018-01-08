@@ -14,7 +14,7 @@
 
         private static void RunBot(Options options)
         {
-            var bot = new EvaluationBot(options.TwitchUserName, options.TwitchAccessToken);
+            var bot = new EvaluationBot(options);
             bot.Run();
             Console.ReadLine();
         }

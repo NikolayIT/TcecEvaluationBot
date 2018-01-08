@@ -2,7 +2,6 @@
 {
     using System;
     using System.Diagnostics;
-    using System.Globalization;
     using System.IO;
     using System.Net.Http;
     using System.Threading.Tasks;
@@ -12,6 +11,8 @@
 
     public class EvaluationBot
     {
+        private readonly Options options;
+
         private readonly Random random;
 
         private readonly HttpClient httpClient;
@@ -20,11 +21,12 @@
 
         private DateTime lastMessage = DateTime.Now.AddDays(-1);
 
-        public EvaluationBot(string twitchUserName, string twitchAccessToken)
+        public EvaluationBot(Options options)
         {
+            this.options = options;
             this.random = new Random();
             this.httpClient = new HttpClient();
-            var credentials = new ConnectionCredentials(twitchUserName, twitchAccessToken);
+            var credentials = new ConnectionCredentials(options.TwitchUserName, options.TwitchAccessToken);
             this.twitchClient = new TwitchClient(credentials, "tcecpoc");
         }
 
@@ -87,9 +89,9 @@
             sfProcess.Start();
 
             sfProcess.StandardInput.WriteLine($"position fen \"{fenPosition}\"");
-            sfProcess.StandardInput.WriteLine($"setoption name Threads value 4");
-            sfProcess.StandardInput.WriteLine($"setoption name Hash value 512");
-            sfProcess.StandardInput.WriteLine($"go movetime 10000");
+            sfProcess.StandardInput.WriteLine($"setoption name Threads value {this.options.Threads}");
+            sfProcess.StandardInput.WriteLine($"setoption name Hash value {this.options.HashSize}");
+            sfProcess.StandardInput.WriteLine($"go movetime {this.options.MoveTime}");
 
             string line = null;
             while (!sfProcess.StandardOutput.EndOfStream)

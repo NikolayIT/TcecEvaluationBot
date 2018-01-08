@@ -2,7 +2,7 @@
 {
     using CommandLine;
 
-    internal class Options
+    public class Options
     {
         [Option('u', "twitchUserName", Required = true, HelpText = "Twitch username for the chat bot.")]
         public string TwitchUserName { get; set; }
@@ -12,5 +12,14 @@
 
         [Option('s', "syzygyPath", Required = false, HelpText = "The path for syzygy table base.")]
         public string SyzygyPath { get; set; }
+
+        [Option('m', "moveTime", Default = 10000, HelpText = "Time (in milliseconds) for the engine to think.")]
+        public int MoveTime { get; set; }
+
+        [Option('t', "threads", Default = 2, HelpText = "The number of threads for the engine to run on.")]
+        public int Threads { get; set; }
+
+        [Option('h', "hash", Default = 128, HelpText = "The size of the hash (in MB) to be used by the engine.")]
+        public int HashSize { get; set; }
     }
 }
