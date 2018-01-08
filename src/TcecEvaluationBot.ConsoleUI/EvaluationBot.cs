@@ -4,6 +4,7 @@
     using System.Diagnostics;
     using System.IO;
     using System.Net.Http;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using TwitchLib;
@@ -44,10 +45,20 @@
                         if ((DateTime.Now - this.lastMessage).TotalSeconds >= this.options.CooldownTime)
                         {
                             this.lastMessage = DateTime.Now;
-                            this.twitchClient.SendMessage($"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] Thinking {this.options.MoveTime / 1000} seconds, please wait.");
-                            var evaluation = this.Evaluate();
+
+                            var moveTime = this.options.MoveTime;
+                            var commandParts = arguments.ChatMessage.Message.Split(
+                                new[] { " " },
+                                StringSplitOptions.RemoveEmptyEntries);
+                            if (commandParts.Length > 1 && int.TryParse(commandParts[1], out var moveTimeArgument) && moveTimeArgument >= 5 && moveTimeArgument <= 25)
+                            {
+                                moveTime = moveTimeArgument * 1000;
+                            }
+
+                            this.twitchClient.SendMessage($"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] Thinking {moveTime / 1000} seconds, please wait.");
+                            var evaluation = this.Evaluate(moveTime);
                             this.twitchClient.SendMessage(evaluation);
-                            this.Log($"Responded with {evaluation}");
+                            this.Log($"Responded with \"{evaluation}\"");
                         }
                         else
                         {
@@ -58,7 +69,7 @@
             this.twitchClient.Connect();
         }
 
-        private string Evaluate()
+        private string Evaluate(int moveTime)
         {
             var livePgnAsString = this.GetLivePgn().GetAwaiter().GetResult();
             var fenPosition = this.ConvertPgnToFen(livePgnAsString);
@@ -68,11 +79,11 @@
                 return null;
             }
 
-            var evaluationMessage = this.GetStockfishEvaluation(fenPosition);
+            var evaluationMessage = this.GetStockfishEvaluation(fenPosition, (int)moveTime);
             return $"{evaluationMessage} <SF040118>";
         }
 
-        private string GetStockfishEvaluation(string fenPosition)
+        private string GetStockfishEvaluation(string fenPosition, int moveTime)
         {
             var sfProcess = new Process
                                 {
@@ -95,7 +106,7 @@
                 sfProcess.StandardInput.WriteLine($"setoption name SyzygyPath value {this.options.SyzygyPath}");
             }
 
-            sfProcess.StandardInput.WriteLine($"go movetime {this.options.MoveTime}");
+            sfProcess.StandardInput.WriteLine($"go movetime {moveTime}");
 
             try
             {
@@ -135,7 +146,8 @@
                 sfProcess.Dispose();
             }
 
-            return "No active game? Please try again.";
+            Thread.Sleep(2000);
+            return $"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] No active game? Please try again.";
         }
 
         private async Task<string> GetLivePgn()
