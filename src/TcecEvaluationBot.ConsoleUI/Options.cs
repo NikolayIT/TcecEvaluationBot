@@ -27,6 +27,5 @@
 
         [Option("cooldownTime", Default = 30, HelpText = "Cooldown time (in seconds) for the evaluation command.")]
         public int CooldownTime { get; set; }
-
     }
 }

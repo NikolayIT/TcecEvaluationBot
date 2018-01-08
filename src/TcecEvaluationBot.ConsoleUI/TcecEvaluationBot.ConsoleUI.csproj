@@ -5,6 +5,11 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
 	<LangVersion>latest</LangVersion>
 	<Version>1.1.0</Version>
+	<Authors>Nikolay.IT</Authors>
+	<Company />
+	<Product>TcecEvaluationBot</Product>
+	<PackageId>TcecEvaluationBot</PackageId>
+	<AssemblyName>TcecEvaluationBot</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

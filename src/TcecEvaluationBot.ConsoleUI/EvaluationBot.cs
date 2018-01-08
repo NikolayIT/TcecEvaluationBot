@@ -65,7 +65,7 @@
             var fenPosition = this.ConvertPgnToFen(livePgnAsString);
             if (fenPosition == null)
             {
-                this.Log("Invalid fen! See if file.pgn contains valid PGN.");
+                this.Log("Invalid fen! See if file.pgn contains a valid PGN.");
                 return null;
             }
 
@@ -91,33 +91,53 @@
             sfProcess.StandardInput.WriteLine($"position fen \"{fenPosition}\"");
             sfProcess.StandardInput.WriteLine($"setoption name Threads value {this.options.Threads}");
             sfProcess.StandardInput.WriteLine($"setoption name Hash value {this.options.HashSize}");
-            sfProcess.StandardInput.WriteLine($"go movetime {this.options.MoveTime}");
-
-            string line = null;
-            while (!sfProcess.StandardOutput.EndOfStream)
+            if (!string.IsNullOrWhiteSpace(this.options.SyzygyPath))
             {
-                var currentLine = sfProcess.StandardOutput.ReadLine();
-                //// Console.WriteLine(currentLine);
-                if (currentLine?.StartsWith("bestmove") == true)
-                {
-                    Console.WriteLine(line);
-                    var depth = line.Split(" depth ")[1].Split(" ")[0];
-                    var cp = int.Parse(line.Split(" cp ")[1].Split(" ")[0]);
-                    if (fenPosition.Contains(" b "))
-                    {
-                        cp = -cp;
-                    }
-
-                    var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
-                    var ponder = currentLine.Split("ponder ")[1];
-                    //// var pv = line.Split(" pv ")[1].Split(" ");
-                    return $"{cp / 100.0M:0.00} d{depth} pv {best} {ponder}";
-                }
-
-                line = currentLine;
+                sfProcess.StandardInput.WriteLine($"setoption name SyzygyPath value {this.options.SyzygyPath}");
             }
 
-            return line;
+            sfProcess.StandardInput.WriteLine($"go movetime {this.options.MoveTime}");
+
+            try
+            {
+                string line = null;
+                while (!sfProcess.StandardOutput.EndOfStream)
+                {
+                    var currentLine = sfProcess.StandardOutput.ReadLine();
+                    //// Console.WriteLine(currentLine);
+                    if (currentLine?.StartsWith("bestmove") == true)
+                    {
+                        Console.WriteLine(line);
+                        var depth = line.Split(" depth ")[1].Split(" ")[0];
+                        var tbhits = line.Split(" tbhits ")[1].Split(" ")[0];
+                        var cp = int.Parse(line.Split(" cp ")[1].Split(" ")[0]);
+                        char currentPlayer = 'w';
+                        if (fenPosition.Contains(" b "))
+                        {
+                            cp = -cp;
+                            currentPlayer = 'b';
+                        }
+
+                        var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
+                        var ponder = currentLine.Contains("ponder ") ? currentLine.Split("ponder ")[1] : string.Empty;
+                        //// var pv = line.Split(" pv ")[1].Split(" ");
+                        return $"{cp / 100.0M:0.00} d{depth} (tb {tbhits}) pv {best} {ponder} ({currentPlayer})";
+                    }
+
+                    line = currentLine;
+                }
+            }
+            catch (Exception e)
+            {
+                this.Log("Error: " + e);
+                return $"Error has occurred: {e.Message}";
+            }
+            finally
+            {
+                sfProcess.Dispose();
+            }
+
+            return "No active game? Please try again.";
         }
 
         private async Task<string> GetLivePgn()
