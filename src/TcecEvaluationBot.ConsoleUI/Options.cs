@@ -10,6 +10,9 @@
         [Option('a', "twitchAccessToken", Required = true, HelpText = "Twitch access token. You can generate one from twitchtokengenerator.com")]
         public string TwitchAccessToken { get; set; }
 
+        [Option('c', "twitchChannelName", Required = true, HelpText = "The name of the Twitch chat channel.")]
+        public string TwitchChannelName { get; set; }
+
         [Option('s', "syzygyPath", Required = false, HelpText = "The path for syzygy table base.")]
         public string SyzygyPath { get; set; }
 
@@ -21,5 +24,9 @@
 
         [Option('h', "hash", Default = 128, HelpText = "The size of the hash (in MB) to be used by the engine.")]
         public int HashSize { get; set; }
+
+        [Option("cooldownTime", Default = 30, HelpText = "Cooldown time (in seconds) for the evaluation command.")]
+        public int CooldownTime { get; set; }
+
     }
 }
