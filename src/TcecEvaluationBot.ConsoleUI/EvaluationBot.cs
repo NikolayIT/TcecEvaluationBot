@@ -44,7 +44,7 @@
                             this.lastMessage = DateTime.Now;
                             this.twitchClient.SendMessage($"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] Thinking 10 seconds, please wait.");
                             var evaluation = this.Evaluate();
-                            this.twitchClient.SendMessage($"{evaluation} <SF040118>");
+                            this.twitchClient.SendMessage(evaluation);
                             // TODO: Emojis for eval 0.00  athUG 0.25  athSM 0.50  athS 1.00  athO 2.00  athC
                             this.Log($"Responded with {evaluation}");
                         }
@@ -68,7 +68,7 @@
             }
 
             var evaluationMessage = this.GetStockfishEvaluation(fenPosition);
-            return evaluationMessage;
+            return $"{evaluationMessage} <SF040118>";
         }
 
         private string GetStockfishEvaluation(string fenPosition)
@@ -99,11 +99,15 @@
                     Console.WriteLine(line);
                     var depth = line.Split(" depth ")[1].Split(" ")[0];
                     var cp = int.Parse(line.Split(" cp ")[1].Split(" ")[0]);
+                    if (fenPosition.Contains(" b "))
+                    {
+                        cp = -cp;
+                    }
 
                     var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
                     var ponder = currentLine.Split("ponder ")[1];
                     //// var pv = line.Split(" pv ")[1].Split(" ");
-                    return $"{(cp / 100):0.00} d{depth} pv {best} {ponder}";
+                    return $"{cp / 100.0M:0.00} d{depth} pv {best} {ponder}";
                 }
 
                 line = currentLine;
