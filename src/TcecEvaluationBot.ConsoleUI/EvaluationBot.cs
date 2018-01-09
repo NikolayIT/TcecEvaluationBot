@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.Net.Http;
     using System.Threading;
@@ -43,17 +44,24 @@
             this.twitchClient.OnJoinedChannel += (sender, arguments) => this.Log($"Joined to {arguments.Channel}!");
             this.twitchClient.OnMessageReceived += (sender, arguments) =>
                 {
-                    if (arguments.ChatMessage.Message == "!eval" || arguments.ChatMessage.Message.Trim().StartsWith("!eval "))
+                    if (arguments.ChatMessage.Message == "!eval"
+                        || arguments.ChatMessage.Message.Trim().StartsWith("!eval "))
                     {
-                        this.EvalCommand(arguments.ChatMessage.Message, arguments.ChatMessage.Username);
+                        this.Log($"Received \"{arguments.ChatMessage.Message}\" from {arguments.ChatMessage.Username}");
+                        this.EvalCommand(arguments.ChatMessage.Message);
+                    }
+                    else if (arguments.ChatMessage.Message == "!time"
+                             || arguments.ChatMessage.Message.Trim().StartsWith("!time "))
+                    {
+                        this.Log($"Received \"{arguments.ChatMessage.Message}\" from {arguments.ChatMessage.Username}");
+                        this.TimeCommand(arguments.ChatMessage.Message);
                     }
                 };
             this.twitchClient.Connect();
         }
 
-        private void EvalCommand(string message, string userName)
+        private void EvalCommand(string message)
         {
-            this.Log($"Received \"{message}\" from {userName}");
             if ((DateTime.Now - this.lastMessage).TotalSeconds >= this.options.CooldownTime)
             {
                 this.lastMessage = DateTime.Now;
@@ -85,9 +93,69 @@
             }
         }
 
+        private void TimeCommand(string message)
+        {
+            var gamesInfoString =
+                this.GetTextContent(
+                        "http://tcec.chessdom.com/archive/TCEC%20Season%2011%20-%20Division%203%20Schedule.txt")
+                    .GetAwaiter()
+                    .GetResult();
+            var stringReader = new StringReader(gamesInfoString);
+            var header = stringReader.ReadLine();
+            var startColumnIndex = header.IndexOf(" Start ", StringComparison.Ordinal) + 1;
+            var durationColumnIndex = header.IndexOf(" Duration ", StringComparison.Ordinal) + 1;
+            var ecoColumnIndex = header.IndexOf(" ECO ", StringComparison.Ordinal) + 1;
+            string line = null;
+            int countPlayed = 0;
+            int count = 0;
+            var totalTime = new TimeSpan();
+            var lastStarted = (DateTime?)null;
+            while ((line = stringReader.ReadLine()) != null)
+            {
+                count++;
+                var time = line.Substring(durationColumnIndex, ecoColumnIndex - durationColumnIndex).Trim();
+                if (!string.IsNullOrWhiteSpace(time))
+                {
+                    countPlayed++;
+                    var timeParts = time.Split(':');
+                    var timeSpan = new TimeSpan(0, int.Parse(timeParts[0]), int.Parse(timeParts[1]), int.Parse(timeParts[2]));
+                    totalTime += timeSpan;
+                    //// Console.WriteLine(timeSpan);
+                }
+                else
+                {
+                    if (lastStarted == null)
+                    {
+                        // "12:46:53 on 2018.01.09"
+                        var lastStartedAsString = line.Substring(startColumnIndex, durationColumnIndex - startColumnIndex).Trim();
+                        lastStarted = DateTime.ParseExact(lastStartedAsString, "HH:mm:ss on yyyy.MM.dd", CultureInfo.InvariantCulture);
+                    }
+                }
+            }
+
+            if (countPlayed == 0)
+            {
+                this.twitchClient.SendMessage("No games played.");
+                this.Log($"Responded with \"No games played.\"");
+            }
+            else
+            {
+                var averageGameTime = totalTime / countPlayed;
+                var remainingTime = (count - countPlayed) * (averageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
+                //// Console.WriteLine(lastStarted);
+                //// Console.WriteLine(remainingTime);
+                //// Console.WriteLine(lastStarted + remainingTime);
+                //// Console.WriteLine($"\"{totalTime / countPlayed}\"");
+                var response =
+                    $"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] {count - countPlayed} games left. Average duration: {(totalTime / countPlayed):hh\\:mm\\:ss}. Estimated division end: {lastStarted + remainingTime:R}.";
+                this.twitchClient.SendMessage(response);
+                this.Log($"Responded with \"{response}\"");
+            }
+        }
+
         private string Evaluate(int moveTime)
         {
-            var livePgnAsString = this.GetLivePgn().GetAwaiter().GetResult();
+            var livePgnAsString = this.GetTextContent("http://tcec.chessdom.com/live/live.pgn").GetAwaiter().GetResult();
             var fenPosition = this.ConvertPgnToFen(livePgnAsString);
             if (fenPosition == null)
             {
@@ -99,9 +167,9 @@
             return evaluationMessage;
         }
 
-        private async Task<string> GetLivePgn()
+        private async Task<string> GetTextContent(string url)
         {
-            var response = await this.httpClient.GetAsync("http://tcec.chessdom.com/live/live.pgn?noCache=" + this.random.Next());
+            var response = await this.httpClient.GetAsync($"{url}?noCache={this.random.Next()}");
             var stringResult = await response.Content.ReadAsStringAsync();
             return stringResult;
         }
