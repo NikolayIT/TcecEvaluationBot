@@ -126,9 +126,20 @@
                 {
                     if (lastStarted == null)
                     {
-                        // "12:46:53 on 2018.01.09"
                         var lastStartedAsString = line.Substring(startColumnIndex, durationColumnIndex - startColumnIndex).Trim();
-                        lastStarted = DateTime.ParseExact(lastStartedAsString, "HH:mm:ss on yyyy.MM.dd", CultureInfo.InvariantCulture);
+                        if (DateTime.TryParseExact(
+                            lastStartedAsString,
+                            "HH:mm:ss on yyyy.MM.dd",
+                            CultureInfo.InvariantCulture,
+                            DateTimeStyles.None,
+                            out var parsedValue))
+                        {
+                            lastStarted = parsedValue;
+                        }
+                        else
+                        {
+                            lastStarted = DateTime.Now;
+                        }
                     }
                 }
             }
