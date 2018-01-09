@@ -8,6 +8,7 @@
     using System.Threading.Tasks;
 
     using TwitchLib;
+    using TwitchLib.Events.Client;
     using TwitchLib.Models.Client;
 
     public class EvaluationBot
@@ -44,37 +45,44 @@
                 {
                     if (arguments.ChatMessage.Message == "!eval" || arguments.ChatMessage.Message.Trim().StartsWith("!eval "))
                     {
-                        this.Log($"Received \"{arguments.ChatMessage.Message}\" from {arguments.ChatMessage.Username}");
-                        if ((DateTime.Now - this.lastMessage).TotalSeconds >= this.options.CooldownTime)
-                        {
-                            this.lastMessage = DateTime.Now;
-
-                            var moveTime = this.options.MoveTime;
-                            var commandParts = arguments.ChatMessage.Message.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                            if (commandParts.Length > 1 && int.TryParse(commandParts[1], out var moveTimeArgument) && moveTimeArgument >= 5 && moveTimeArgument <= 30)
-                            {
-                                moveTime = moveTimeArgument * 1000;
-                            }
-
-                            if (this.options.ThinkingMessage)
-                            {
-                                this.twitchClient.SendMessage(
-                                    $"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] Thinking {moveTime / 1000} sec., please wait.");
-                            }
-
-                            var evaluation = this.Evaluate(moveTime);
-                            this.twitchClient.SendMessage(evaluation);
-                            this.Log($"Responded with \"{evaluation}\"");
-                        }
-                        else
-                        {
-                            var cooldownRemaining = this.options.CooldownTime - (DateTime.Now - this.lastMessage).TotalSeconds;
-                            this.twitchClient.SendMessage($"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] You evaluate! ({cooldownRemaining:0.0})");
-                            this.Log($"Cooldown: {cooldownRemaining:0.0} seconds remaining.");
-                        }
+                        this.EvalCommand(arguments.ChatMessage.Message, arguments.ChatMessage.Username);
                     }
                 };
             this.twitchClient.Connect();
+        }
+
+        private void EvalCommand(string message, string userName)
+        {
+            this.Log($"Received \"{message}\" from {userName}");
+            if ((DateTime.Now - this.lastMessage).TotalSeconds >= this.options.CooldownTime)
+            {
+                this.lastMessage = DateTime.Now;
+
+                var moveTime = this.options.MoveTime;
+                var commandParts = message.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                if (commandParts.Length > 1 && int.TryParse(commandParts[1], out var moveTimeArgument) && moveTimeArgument >= 5
+                    && moveTimeArgument <= 30)
+                {
+                    moveTime = moveTimeArgument * 1000;
+                }
+
+                if (this.options.ThinkingMessage)
+                {
+                    this.twitchClient.SendMessage(
+                        $"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] Thinking {moveTime / 1000} sec., please wait.");
+                }
+
+                var evaluation = this.Evaluate(moveTime);
+                this.twitchClient.SendMessage(evaluation);
+                this.Log($"Responded with \"{evaluation}\"");
+            }
+            else
+            {
+                var cooldownRemaining = this.options.CooldownTime - (DateTime.Now - this.lastMessage).TotalSeconds;
+                this.twitchClient.SendMessage(
+                    $"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] You evaluate! ({cooldownRemaining:0.0})");
+                this.Log($"Cooldown: {cooldownRemaining:0.0} seconds remaining.");
+            }
         }
 
         private string Evaluate(int moveTime)
