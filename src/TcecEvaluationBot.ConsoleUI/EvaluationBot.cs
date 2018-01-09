@@ -51,7 +51,7 @@
 
                             var moveTime = this.options.MoveTime;
                             var commandParts = arguments.ChatMessage.Message.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                            if (commandParts.Length > 1 && int.TryParse(commandParts[1], out var moveTimeArgument) && moveTimeArgument >= 5 && moveTimeArgument <= 25)
+                            if (commandParts.Length > 1 && int.TryParse(commandParts[1], out var moveTimeArgument) && moveTimeArgument >= 5 && moveTimeArgument <= 30)
                             {
                                 moveTime = moveTimeArgument * 1000;
                             }
@@ -68,7 +68,9 @@
                         }
                         else
                         {
-                            this.Log($"Cooldown: {(this.lastMessage - DateTime.Now).TotalSeconds} seconds.");
+                            var cooldownRemaining = this.options.CooldownTime - (DateTime.Now - this.lastMessage).TotalSeconds;
+                            this.twitchClient.SendMessage($"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] You evaluate! ({cooldownRemaining:0.0})");
+                            this.Log($"Cooldown: {cooldownRemaining:0.0} seconds remaining.");
                         }
                     }
                 };
