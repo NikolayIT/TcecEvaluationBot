@@ -80,7 +80,7 @@
             }
 
             Thread.Sleep(2000);
-            return $"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] No active game? Please try again.";
+            return $"[{DateTime.UtcNow:HH:mm:ss}] No active game? Please try again.";
         }
     }
 }

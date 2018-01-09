@@ -68,7 +68,7 @@
                         }
                         else
                         {
-                            lastStarted = DateTime.Now;
+                            lastStarted = DateTime.UtcNow;
                         }
                     }
                 }
@@ -87,7 +87,7 @@
                 //// Console.WriteLine(lastStarted + remainingTime);
                 //// Console.WriteLine($"\"{totalTime / countPlayed}\"");
                 var response =
-                    $"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] {count - countPlayed} games left. Average duration: {(totalTime / countPlayed):hh\\:mm\\:ss}. Estimated division end: {lastStarted + remainingTime:R}.";
+                    $"[{DateTime.UtcNow:HH:mm:ss}] {count - countPlayed} games left. Average duration: {(totalTime / countPlayed):hh\\:mm\\:ss}. Estimated division end: {lastStarted + remainingTime:R}.";
                 return response;
             }
         }

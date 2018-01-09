@@ -39,7 +39,7 @@
             if (this.options.ThinkingMessage)
             {
                 this.twitchClient.SendMessage(
-                    $"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] Thinking {moveTime / 1000} sec., please wait.");
+                    $"[{DateTime.UtcNow:HH:mm:ss}] Thinking {moveTime / 1000} sec., please wait.");
             }
 
             var evaluation = this.Evaluate(moveTime);

@@ -18,7 +18,7 @@
 
         private readonly TimeCommand timeCommand;
 
-        private DateTime lastMessage = DateTime.Now.AddDays(-1);
+        private DateTime lastMessage = DateTime.UtcNow.AddDays(-1);
 
         public EvaluationBot(Options options)
         {
@@ -40,18 +40,18 @@
                         || arguments.ChatMessage.Message.Trim().StartsWith("!eval "))
                     {
                         this.Log($"Received \"{arguments.ChatMessage.Message}\" from {arguments.ChatMessage.Username}");
-                        if ((DateTime.Now - this.lastMessage).TotalSeconds >= this.options.CooldownTime)
+                        if ((DateTime.UtcNow - this.lastMessage).TotalSeconds >= this.options.CooldownTime)
                         {
-                            this.lastMessage = DateTime.Now;
+                            this.lastMessage = DateTime.UtcNow;
                             var message = this.evalCommand.Execute(arguments.ChatMessage.Message);
                             this.twitchClient.SendMessage(message);
                             this.Log($"Responded with \"{message}\"");
                         }
                         else
                         {
-                            var cooldownRemaining = this.options.CooldownTime - (DateTime.Now - this.lastMessage).TotalSeconds;
+                            var cooldownRemaining = this.options.CooldownTime - (DateTime.UtcNow - this.lastMessage).TotalSeconds;
                             this.twitchClient.SendMessage(
-                                $"[{DateTime.Now.ToUniversalTime():HH:mm:ss}] You evaluate! ({cooldownRemaining:0.0})");
+                                $"[{DateTime.UtcNow:HH:mm:ss}] You evaluate! ({cooldownRemaining:0.0})");
                             this.Log($"Cooldown: {cooldownRemaining:0.0} seconds remaining.");
                         }
                     }
@@ -71,7 +71,7 @@
         private void Log(string message)
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.Write($"[{DateTime.Now}]");
+            Console.Write($"[{DateTime.UtcNow}]");
             Console.ResetColor();
             Console.WriteLine($" {message}");
         }
