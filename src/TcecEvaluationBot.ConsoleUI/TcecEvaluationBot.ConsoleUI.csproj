@@ -18,6 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="komodo.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="pgn-extract.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
