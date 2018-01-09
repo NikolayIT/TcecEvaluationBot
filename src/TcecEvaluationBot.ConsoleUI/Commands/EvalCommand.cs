@@ -14,7 +14,8 @@
 
         private readonly Options options;
 
-        private readonly IPositionEvaluator positionEvaluator;
+        private readonly IPositionEvaluator stockfishPositionEvaluator;
+        private readonly IPositionEvaluator komodoPositionEvaluator;
 
         private readonly HttpClient httpClient;
 
@@ -22,7 +23,8 @@
         {
             this.twitchClient = twitchClient;
             this.options = options;
-            this.positionEvaluator = new StockfishPositionEvaluator(options, "stockfish.exe");
+            this.stockfishPositionEvaluator = new UciEnginePositionEvaluator(options, "stockfish.exe", "SF_040118");
+            this.stockfishPositionEvaluator = new UciEnginePositionEvaluator(options, "komodo.exe", "Komodo_9.02");
             this.httpClient = new HttpClient();
         }
 
@@ -56,7 +58,7 @@
                 return null;
             }
 
-            var evaluationMessage = this.positionEvaluator.GetEvaluation(fenPosition, (int)moveTime);
+            var evaluationMessage = this.stockfishPositionEvaluator.GetEvaluation(fenPosition, (int)moveTime);
             return evaluationMessage;
         }
 

@@ -4,16 +4,19 @@
     using System.Diagnostics;
     using System.Threading;
 
-    public class StockfishPositionEvaluator : IPositionEvaluator
+    public class UciEnginePositionEvaluator : IPositionEvaluator
     {
         private readonly Options options;
 
-        private readonly string stockfishExecutableFileName;
+        private readonly string еxecutableFileName;
 
-        public StockfishPositionEvaluator(Options options, string stockfishExecutableFileName)
+        private readonly string engineSignature;
+
+        public UciEnginePositionEvaluator(Options options, string еxecutableFileName, string engineSignature)
         {
             this.options = options;
-            this.stockfishExecutableFileName = stockfishExecutableFileName;
+            this.еxecutableFileName = еxecutableFileName;
+            this.engineSignature = engineSignature;
         }
 
         public string GetEvaluation(string fenPosition, int moveTime)
@@ -22,7 +25,7 @@
                                 {
                                     StartInfo = new ProcessStartInfo
                                                     {
-                                                        FileName = this.stockfishExecutableFileName,
+                                                        FileName = this.еxecutableFileName,
                                                         UseShellExecute = false,
                                                         RedirectStandardOutput = true,
                                                         RedirectStandardInput = true,
@@ -63,7 +66,7 @@
 
                         var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
                         var ponder = currentLine.Contains("ponder ") ? currentLine.Split("ponder ")[1] : string.Empty;
-                        return $"{cp / 100.0M:0.00} d{depth} (tb {tbhits}) pv {best} {ponder} ({currentPlayer}) <SF040118>";
+                        return $"{cp / 100.0M:0.00} d{depth} (tb {tbhits}) pv {best} {ponder} ({currentPlayer}) <{this.engineSignature}>";
                     }
 
                     line = currentLine;
