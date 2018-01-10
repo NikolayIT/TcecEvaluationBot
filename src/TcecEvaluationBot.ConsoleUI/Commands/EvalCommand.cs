@@ -15,10 +15,11 @@
 
         private readonly Options options;
 
-        private readonly string[] availableEngines = new[] { "komodo", "stockfish" };
+        private readonly string[] availableEngines = new[] { "komodo", "stockfish", "laser" };
 
         private readonly IPositionEvaluator stockfishPositionEvaluator;
         private readonly IPositionEvaluator komodoPositionEvaluator;
+        private readonly IPositionEvaluator laserPositionEvaluator;
 
         private readonly HttpClient httpClient;
 
@@ -28,6 +29,7 @@
             this.options = options;
             this.stockfishPositionEvaluator = new UciEnginePositionEvaluator(options, "stockfish.exe", "SF_040118");
             this.komodoPositionEvaluator = new UciEnginePositionEvaluator(options, "komodo.exe", "Komodo_9.02");
+            this.laserPositionEvaluator = new UciEnginePositionEvaluator(options, "laser.exe", "Laser_1.5");
             this.httpClient = new HttpClient();
         }
 
@@ -76,6 +78,10 @@
             if (engine.ToLower().Trim() == "komodo")
             {
                 evaluationMessage = this.komodoPositionEvaluator.GetEvaluation(fenPosition, moveTime);
+            }
+            else if (engine.ToLower().Trim() == "laser")
+            {
+                evaluationMessage = this.laserPositionEvaluator.GetEvaluation(fenPosition, moveTime);
             }
             else
             {
