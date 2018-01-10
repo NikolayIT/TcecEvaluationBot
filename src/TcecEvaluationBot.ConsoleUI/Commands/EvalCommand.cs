@@ -56,8 +56,7 @@
 
             if (this.options.ThinkingMessage)
             {
-                this.twitchClient.SendMessage(
-                    $"[{DateTime.UtcNow:HH:mm:ss}] Thinking {moveTime / 1000} sec., please wait.");
+                this.twitchClient.SendMessage($"[{DateTime.UtcNow:HH:mm:ss}] Thinking {moveTime / 1000} sec., please wait.");
             }
 
             var evaluation = this.Evaluate(moveTime, engine);

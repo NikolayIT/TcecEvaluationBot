@@ -82,6 +82,11 @@
             }
             finally
             {
+                if (!process.HasExited)
+                {
+                    process.Kill();
+                }
+
                 process.Dispose();
             }
 
