@@ -21,7 +21,7 @@
 
         public string GetEvaluation(string fenPosition, int moveTime)
         {
-            var sfProcess = new Process
+            var process = new Process
                                 {
                                     StartInfo = new ProcessStartInfo
                                                     {
@@ -29,47 +29,49 @@
                                                         UseShellExecute = false,
                                                         RedirectStandardOutput = true,
                                                         RedirectStandardInput = true,
-                                                        CreateNoWindow = true
+                                                        RedirectStandardError = true,
+                                                        CreateNoWindow = true,
                                                     }
                                 };
-            sfProcess.Start();
 
-            sfProcess.StandardInput.WriteLine($"position fen \"{fenPosition}\"");
-            sfProcess.StandardInput.WriteLine($"setoption name Threads value {this.options.Threads}");
-            sfProcess.StandardInput.WriteLine($"setoption name Hash value {this.options.HashSize}");
+            process.Start();
+
+            process.StandardInput.WriteLine($"setoption name Threads value {this.options.Threads}");
+            process.StandardInput.WriteLine($"setoption name Hash value {this.options.HashSize}");
             if (!string.IsNullOrWhiteSpace(this.options.SyzygyPath))
             {
-                sfProcess.StandardInput.WriteLine($"setoption name SyzygyPath value {this.options.SyzygyPath}");
+                process.StandardInput.WriteLine($"setoption name SyzygyPath value {this.options.SyzygyPath}");
             }
 
-            sfProcess.StandardInput.WriteLine($"go movetime {moveTime}");
+            process.StandardInput.WriteLine($"position fen {fenPosition}");
+            process.StandardInput.WriteLine($"go movetime {moveTime}");
+            process.StandardInput.Flush();
 
             try
             {
-                string line = null;
-                while (!sfProcess.StandardOutput.EndOfStream)
+                string lastStatsLine = null;
+                while (!process.StandardOutput.EndOfStream)
                 {
-                    var currentLine = sfProcess.StandardOutput.ReadLine();
+                    var currentLine = process.StandardOutput.ReadLine();
                     //// Console.WriteLine(currentLine);
-                    if (currentLine?.StartsWith("bestmove") == true)
+                    if (currentLine?.StartsWith("bestmove") == true && lastStatsLine != null)
                     {
-                        Console.WriteLine(line);
-                        var depth = line.Split(" depth ")[1].Split(" ")[0];
-                        var tbhits = line.Split(" tbhits ")[1].Split(" ")[0];
-                        var cp = int.Parse(line.Split(" cp ")[1].Split(" ")[0]);
-                        char currentPlayer = 'w';
-                        if (fenPosition.Contains(" b "))
-                        {
-                            cp = -cp;
-                            currentPlayer = 'b';
-                        }
-
+                        var currentPlayer = fenPosition.Contains(" b ") ? 'b' : 'w';
+                        var depth = lastStatsLine.Split(" depth ")[1].Split(" ")[0];
+                        var tbhits = lastStatsLine.Split(" tbhits ")[1].Split(" ")[0];
+                        var cp = GetCp(fenPosition, lastStatsLine);
                         var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
                         var ponder = currentLine.Contains("ponder ") ? currentLine.Split("ponder ")[1] : string.Empty;
-                        return $"{cp / 100.0M:0.00} d{depth} (tb {tbhits}) pv {best} {ponder} ({currentPlayer}) <{this.engineSignature}>";
+                        var outputMessage = $"{cp} d{depth} (tb {tbhits}) pv {best} {ponder} ({currentPlayer}) <{this.engineSignature}>";
+                        return outputMessage;
                     }
 
-                    line = currentLine;
+                    // Komodo: info depth 99 time 33 nodes 197546 score mate -1 nps 5970267 hashfull 0 tbhits 0 pv a1a2 a7h7
+                    if (currentLine.Contains(" depth ") && currentLine.Contains(" tbhits ")
+                                                        && (currentLine.Contains(" cp ") || currentLine.Contains(" mate ")))
+                    {
+                        lastStatsLine = currentLine;
+                    }
                 }
             }
             catch (Exception e)
@@ -79,11 +81,36 @@
             }
             finally
             {
-                sfProcess.Dispose();
+                process.Dispose();
             }
 
             Thread.Sleep(2000);
             return $"[{DateTime.UtcNow:HH:mm:ss}] No active game? Please try again.";
+        }
+
+        private static string GetCp(string fenPosition, string lastStatsLine)
+        {
+            if (int.TryParse(lastStatsLine.Split(" cp ")[1].Split(" ")[0], out int cp))
+            {
+                if (fenPosition.Contains(" b "))
+                {
+                    cp = -cp;
+                }
+
+                return $"{cp / 100.0M:0.00}";
+            }
+
+            if (int.TryParse(lastStatsLine.Split(" mate ")[1].Split(" ")[0], out int mate))
+            {
+                if (fenPosition.Contains(" b "))
+                {
+                    mate = -mate;
+                }
+
+                return $"M{mate}";
+            }
+
+            return "?.??";
         }
     }
 }

@@ -3,6 +3,7 @@
     using System;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
 
@@ -14,6 +15,8 @@
 
         private readonly Options options;
 
+        private readonly string[] availableEngines = new[] { "komodo", "stockfish" };
+
         private readonly IPositionEvaluator stockfishPositionEvaluator;
         private readonly IPositionEvaluator komodoPositionEvaluator;
 
@@ -24,18 +27,31 @@
             this.twitchClient = twitchClient;
             this.options = options;
             this.stockfishPositionEvaluator = new UciEnginePositionEvaluator(options, "stockfish.exe", "SF_040118");
-            this.stockfishPositionEvaluator = new UciEnginePositionEvaluator(options, "komodo.exe", "Komodo_9.02");
+            this.komodoPositionEvaluator = new UciEnginePositionEvaluator(options, "komodo.exe", "Komodo_9.02");
             this.httpClient = new HttpClient();
+
+            // Console.WriteLine(this.Execute("!eval komodo 4"));
         }
 
         public string Execute(string message)
         {
+            var engine = "stockfish"; // TODO: Add default engine to options
             var moveTime = this.options.MoveTime;
             var commandParts = message.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-            if (commandParts.Length > 1 && int.TryParse(commandParts[1], out var moveTimeArgument) && moveTimeArgument >= 5
-                && moveTimeArgument <= 30)
+            if (commandParts.Length > 1)
             {
-                moveTime = moveTimeArgument * 1000;
+                for (int i = 1; i < commandParts.Length; i++)
+                {
+                    if (int.TryParse(commandParts[i], out var moveTimeArgument) && moveTimeArgument >= 5
+                                                                                && moveTimeArgument <= 30)
+                    {
+                        moveTime = moveTimeArgument * 1000;
+                    }
+                    else if (this.availableEngines.Contains(commandParts[i].ToLower().Trim()))
+                    {
+                        engine = commandParts[i].ToLower().Trim();
+                    }
+                }
             }
 
             if (this.options.ThinkingMessage)
@@ -44,11 +60,11 @@
                     $"[{DateTime.UtcNow:HH:mm:ss}] Thinking {moveTime / 1000} sec., please wait.");
             }
 
-            var evaluation = this.Evaluate(moveTime);
+            var evaluation = this.Evaluate(moveTime, engine);
             return evaluation;
         }
 
-        private string Evaluate(int moveTime)
+        private string Evaluate(int moveTime, string engine)
         {
             var livePgnAsString = this.GetTextContent("http://tcec.chessdom.com/live/live.pgn").GetAwaiter().GetResult();
             var fenPosition = this.ConvertPgnToFen(livePgnAsString);
@@ -58,7 +74,16 @@
                 return null;
             }
 
-            var evaluationMessage = this.stockfishPositionEvaluator.GetEvaluation(fenPosition, (int)moveTime);
+            string evaluationMessage = null;
+            if (engine.ToLower().Trim() == "komodo")
+            {
+                evaluationMessage = this.komodoPositionEvaluator.GetEvaluation(fenPosition, (int)moveTime);
+            }
+            else
+            {
+                evaluationMessage = this.stockfishPositionEvaluator.GetEvaluation(fenPosition, (int)moveTime);
+            }
+
             return evaluationMessage;
         }
 
@@ -73,8 +98,9 @@
                                                       Arguments = "-F file.pgn",
                                                       UseShellExecute = false,
                                                       RedirectStandardOutput = true,
-                                                      CreateNoWindow = true
-                                                  }
+                                                      CreateNoWindow = true,
+                                                      // Verb = "runas",
+                                  }
                               };
             process.Start();
 
