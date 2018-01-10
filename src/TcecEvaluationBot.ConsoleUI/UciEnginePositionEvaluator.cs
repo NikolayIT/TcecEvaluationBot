@@ -56,6 +56,7 @@
                     //// Console.WriteLine(currentLine);
                     if (currentLine?.StartsWith("bestmove") == true && lastStatsLine != null)
                     {
+                        Console.WriteLine(lastStatsLine);
                         var currentPlayer = fenPosition.Contains(" b ") ? 'b' : 'w';
                         var depth = lastStatsLine.Split(" depth ")[1].Split(" ")[0];
                         var tbhits = lastStatsLine.Split(" tbhits ")[1].Split(" ")[0];

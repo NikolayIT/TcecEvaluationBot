@@ -29,8 +29,6 @@
             this.stockfishPositionEvaluator = new UciEnginePositionEvaluator(options, "stockfish.exe", "SF_040118");
             this.komodoPositionEvaluator = new UciEnginePositionEvaluator(options, "komodo.exe", "Komodo_9.02");
             this.httpClient = new HttpClient();
-
-            // Console.WriteLine(this.Execute("!eval komodo 4"));
         }
 
         public string Execute(string message)
@@ -74,14 +72,14 @@
                 return null;
             }
 
-            string evaluationMessage = null;
+            string evaluationMessage;
             if (engine.ToLower().Trim() == "komodo")
             {
-                evaluationMessage = this.komodoPositionEvaluator.GetEvaluation(fenPosition, (int)moveTime);
+                evaluationMessage = this.komodoPositionEvaluator.GetEvaluation(fenPosition, moveTime);
             }
             else
             {
-                evaluationMessage = this.stockfishPositionEvaluator.GetEvaluation(fenPosition, (int)moveTime);
+                evaluationMessage = this.stockfishPositionEvaluator.GetEvaluation(fenPosition, moveTime);
             }
 
             return evaluationMessage;
@@ -99,8 +97,7 @@
                                                       UseShellExecute = false,
                                                       RedirectStandardOutput = true,
                                                       CreateNoWindow = true,
-                                                      // Verb = "runas",
-                                  }
+                                                  }
                               };
             process.Start();
 

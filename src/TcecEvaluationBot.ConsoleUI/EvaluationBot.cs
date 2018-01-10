@@ -1,7 +1,6 @@
 ﻿namespace TcecEvaluationBot.ConsoleUI
 {
     using System;
-    using System.Net.Http;
 
     using TcecEvaluationBot.ConsoleUI.Commands;
 

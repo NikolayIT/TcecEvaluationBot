@@ -8,7 +8,7 @@
     {
         public static void Main(string[] args)
         {
-            var parserResult = CommandLine.Parser.Default.ParseArguments<Options>(args);
+            var parserResult = Parser.Default.ParseArguments<Options>(args);
             parserResult.WithParsed(RunBot);
         }
 

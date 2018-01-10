@@ -35,7 +35,7 @@
             var startColumnIndex = header.IndexOf(" Start ", StringComparison.Ordinal) + 1;
             var durationColumnIndex = header.IndexOf(" Duration ", StringComparison.Ordinal) + 1;
             var ecoColumnIndex = header.IndexOf(" ECO ", StringComparison.Ordinal) + 1;
-            string line = null;
+            string line;
             int countPlayed = 0;
             int count = 0;
             var totalTime = new TimeSpan();
@@ -78,18 +78,16 @@
             {
                 return "No games played.";
             }
-            else
-            {
-                var averageGameTime = totalTime / countPlayed;
-                var remainingTime = (count - countPlayed) * (averageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
-                //// Console.WriteLine(lastStarted);
-                //// Console.WriteLine(remainingTime);
-                //// Console.WriteLine(lastStarted + remainingTime);
-                //// Console.WriteLine($"\"{totalTime / countPlayed}\"");
-                var response =
-                    $"[{DateTime.UtcNow:HH:mm:ss}] {count - countPlayed} games left. Average duration: {(totalTime / countPlayed):hh\\:mm\\:ss}. Estimated division end: {lastStarted + remainingTime:R}.";
-                return response;
-            }
+
+            var averageGameTime = totalTime / countPlayed;
+            var remainingTime = (count - countPlayed) * (averageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
+            //// Console.WriteLine(lastStarted);
+            //// Console.WriteLine(remainingTime);
+            //// Console.WriteLine(lastStarted + remainingTime);
+            //// Console.WriteLine($"\"{totalTime / countPlayed}\"");
+            var response =
+                $"[{DateTime.UtcNow:HH:mm:ss}] {count - countPlayed} games left. Average duration: {(totalTime / countPlayed):hh\\:mm\\:ss}. Estimated division end: {lastStarted + remainingTime:R}.";
+            return response;
         }
 
         private async Task<string> GetTextContent(string url)
