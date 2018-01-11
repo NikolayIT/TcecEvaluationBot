@@ -41,26 +41,76 @@
             }
 
             var games = this.ReadGames(stringReader);
+            if (games.Count(x => x.IsPlayed) == 0)
+            {
+                return "No games played.";
+            }
 
+            var messageParts = message.Split(" ");
+            var gameId = messageParts.Any(x => int.TryParse(x, out _))
+                             ? int.Parse(messageParts.FirstOrDefault(x => int.TryParse(x, out _)))
+                             : (int?)null;
+            if (gameId.HasValue && gameId >= 1 && gameId <= games.Count)
+            {
+                return GetGameInfo(games, gameId.Value);
+            }
+            else
+            {
+                var response = GetRemainingDivisionTime(games);
+                return response;
+            }
+        }
+
+        private static string GetGameInfo(IList<Game> games, int gameId)
+        {
+            // Check game start time
+            var game = games.FirstOrDefault(x => x.Number == gameId);
+            if (game == null)
+            {
+                return $"Game with number {gameId} not found!";
+            }
+
+            if (game.IsPlayed)
+            {
+                return $"Game \"{game.WhiteName}\" vs \"{game.BlackName}\" finished with result \"{game.Result}\"";
+            }
+
+            if (game.Started.HasValue)
+            {
+                return $"Game \"{game.WhiteName}\" vs \"{game.BlackName}\" started at {game.Started}";
+            }
+
+            var totalTime = games.Where(x => x.Duration.HasValue)
+                .Aggregate(TimeSpan.Zero, (sumSoFar, x) => sumSoFar + x.Duration.Value);
             var countPlayed = games.Count(x => x.IsPlayed);
-            var totalTime = games.Where(x => x.Duration.HasValue).Aggregate(TimeSpan.Zero, (sumSoFar, x) => sumSoFar + x.Duration.Value);
-            var lastStarted = games.Where(x => x.Started.HasValue).Select(x => x.Started.Value)
-                .OrderByDescending(x => x).FirstOrDefault();
+            var averageGameTime = totalTime / countPlayed;
+            var lastStarted = games.Where(x => x.Started.HasValue).Select(x => x.Started.Value).OrderByDescending(x => x)
+                .FirstOrDefault();
             if (games.Count(x => x.Duration.HasValue) == games.Count(x => x.Started.HasValue))
             {
                 lastStarted = DateTime.UtcNow;
             }
 
-            if (countPlayed == 0)
+            var estimatedTime = lastStarted + ((gameId - countPlayed - 1) * (averageGameTime + new TimeSpan(0, 0, 1, 0))); // +1 minute between games
+            return $"Game \"{game.WhiteName}\" vs \"{game.BlackName}\" is estimated to start on {estimatedTime}";
+        }
+
+        private static string GetRemainingDivisionTime(IList<Game> games)
+        {
+            var countPlayed = games.Count(x => x.IsPlayed);
+            var totalTime = games.Where(x => x.Duration.HasValue)
+                .Aggregate(TimeSpan.Zero, (sumSoFar, x) => sumSoFar + x.Duration.Value);
+            var lastStarted = games.Where(x => x.Started.HasValue).Select(x => x.Started.Value).OrderByDescending(x => x)
+                .FirstOrDefault();
+            if (games.Count(x => x.Duration.HasValue) == games.Count(x => x.Started.HasValue))
             {
-                return "No games played.";
+                lastStarted = DateTime.UtcNow;
             }
 
             var averageGameTime = totalTime / countPlayed;
-            var remainingTime = (games.Count - countPlayed) * (averageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
-            var response =
-                $"[{DateTime.UtcNow:HH:mm:ss}] {games.Count - countPlayed} games left. Average duration: {(totalTime / countPlayed):hh\\:mm\\:ss}. Estimated division end: {lastStarted + remainingTime:R}.";
-            return response;
+            var remainingTime =
+                (games.Count - countPlayed) * (averageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
+            return $"[{DateTime.UtcNow:HH:mm:ss}] {games.Count - countPlayed} games left. Average duration: {(totalTime / countPlayed):hh\\:mm\\:ss}. Estimated division end: {lastStarted + remainingTime:R}.";
         }
 
         private IList<Game> ReadGames(StringReader stringReader)
@@ -72,8 +122,11 @@
                 return new List<Game>();
             }
 
+            var numberColumnIndex = header.IndexOf("Nr ", StringComparison.Ordinal) + 1;
             var whiteColumnIndex = header.IndexOf(" White ", StringComparison.Ordinal) + 1;
             var blackColumnIndex = header.IndexOf(" Black ", StringComparison.Ordinal) + 1;
+            var resultColumnIndex = whiteColumnIndex + "White".Length;
+            var terminationColumnIndex = header.IndexOf(" Termination ", StringComparison.Ordinal) + 1;
             var startColumnIndex = header.IndexOf(" Start ", StringComparison.Ordinal) + 1;
             var durationColumnIndex = header.IndexOf(" Duration ", StringComparison.Ordinal) + 1;
             var ecoColumnIndex = header.IndexOf(" ECO ", StringComparison.Ordinal) + 1;
@@ -107,6 +160,15 @@
                     game.Started = parsedValue;
                 }
 
+                var whiteText = line.Substring(numberColumnIndex + 2, whiteColumnIndex - numberColumnIndex + 4).Trim();
+                game.WhiteName = whiteText.Trim();
+
+                var blackText = line.Substring(blackColumnIndex, terminationColumnIndex - blackColumnIndex).Trim();
+                game.BlackName = blackText.Trim();
+
+                var resultText = line.Substring(resultColumnIndex, blackColumnIndex - resultColumnIndex).Trim();
+                game.Result = resultText.Trim();
+
                 games.Add(game);
             }
 
@@ -122,6 +184,12 @@
 
         private class Game
         {
+            public string WhiteName { get; set; }
+
+            public string BlackName { get; set; }
+
+            public string Result { get; set; }
+
             public int Number { get; set; }
 
             public TimeSpan? Duration { get; set; }
