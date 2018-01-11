@@ -25,12 +25,27 @@
 
         public string Execute(string message)
         {
-            var gamesInfoString =
-                this.GetTextContent(
-                        "http://tcec.chessdom.com/archive/TCEC%20Season%2011%20-%20Division%203%20Schedule.txt")
-                    .GetAwaiter()
-                    .GetResult();
-            var stringReader = new StringReader(gamesInfoString);
+            StringReader stringReader;
+            try
+            {
+                var gamesInfoString =
+                    this.GetTextContent(
+                            "http://tcec.chessdom.com/archive/TCEC%20Season%2011%20-%20Division%203%20Schedule.txt")
+                        .GetAwaiter()
+                        .GetResult();
+
+                if (string.IsNullOrWhiteSpace(gamesInfoString))
+                {
+                    throw new Exception();
+                }
+
+                stringReader = new StringReader(gamesInfoString);
+            }
+            catch (Exception)
+            {
+                return "Unable to retrieve schedule data.";
+            }
+
             var header = stringReader.ReadLine();
             var startColumnIndex = header.IndexOf(" Start ", StringComparison.Ordinal) + 1;
             var durationColumnIndex = header.IndexOf(" Duration ", StringComparison.Ordinal) + 1;
