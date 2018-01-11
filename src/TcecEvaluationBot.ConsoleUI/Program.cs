@@ -14,7 +14,7 @@
 
         private static void RunBot(Options options)
         {
-            var bot = new EvaluationBot(options);
+            var bot = new TwitchBot(options);
             bot.Run();
             Console.ReadLine();
         }

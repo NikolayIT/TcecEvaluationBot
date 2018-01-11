@@ -9,7 +9,7 @@
 
     using TwitchLib;
 
-    public class EvalCommand
+    public class EvalCommand : ICommand
     {
         private readonly TwitchClient twitchClient;
 

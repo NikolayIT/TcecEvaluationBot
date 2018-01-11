@@ -8,7 +8,7 @@
 
     using TwitchLib;
 
-    public class TimeCommand
+    public class TimeCommand : ICommand
     {
         private readonly TwitchClient twitchClient;
 
