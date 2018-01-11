@@ -9,7 +9,7 @@
 
     using TwitchLib;
 
-    public class EvalCommand : ICommand
+    public class EvaluationCommand : ICommand
     {
         private readonly TwitchClient twitchClient;
 
@@ -21,11 +21,11 @@
         private readonly IPositionEvaluator komodoPositionEvaluator;
         private readonly IPositionEvaluator laserPositionEvaluator;
 
-        private DateTime lastMessage = DateTime.UtcNow.AddDays(-1);
-
         private readonly HttpClient httpClient;
 
-        public EvalCommand(TwitchClient twitchClient, Options options)
+        private DateTime lastMessage = DateTime.UtcNow.AddDays(-1);
+
+        public EvaluationCommand(TwitchClient twitchClient, Options options)
         {
             this.twitchClient = twitchClient;
             this.options = options;

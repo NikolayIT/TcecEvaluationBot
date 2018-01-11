@@ -2,30 +2,36 @@
 {
     using System;
     using System.Diagnostics;
+    using System.IO;
     using System.Threading;
 
     public class UciEnginePositionEvaluator : IPositionEvaluator
     {
         private readonly Options options;
 
-        private readonly string еxecutableFileName;
+        private readonly string executableFileName;
 
         private readonly string engineSignature;
 
-        public UciEnginePositionEvaluator(Options options, string еxecutableFileName, string engineSignature)
+        public UciEnginePositionEvaluator(Options options, string executableFileName, string engineSignature)
         {
             this.options = options;
-            this.еxecutableFileName = еxecutableFileName;
+            this.executableFileName = executableFileName;
             this.engineSignature = engineSignature;
         }
 
         public string GetEvaluation(string fenPosition, int moveTime)
         {
+            if (!File.Exists(this.executableFileName))
+            {
+                return $"File \"{this.executableFileName}\" not found!";
+            }
+
             var process = new Process
                                 {
                                     StartInfo = new ProcessStartInfo
                                                     {
-                                                        FileName = this.еxecutableFileName,
+                                                        FileName = this.executableFileName,
                                                         UseShellExecute = false,
                                                         RedirectStandardOutput = true,
                                                         RedirectStandardInput = true,
@@ -53,17 +59,22 @@
                 while (!process.StandardOutput.EndOfStream)
                 {
                     var currentLine = process.StandardOutput.ReadLine();
+                    if (currentLine == null)
+                    {
+                        continue;
+                    }
+
                     //// Console.WriteLine(currentLine);
-                    if (currentLine?.StartsWith("bestmove") == true && lastStatsLine != null)
+                    if (currentLine.StartsWith("bestmove") && lastStatsLine != null)
                     {
                         Console.WriteLine(lastStatsLine);
                         var currentPlayer = fenPosition.Contains(" b ") ? 'b' : 'w';
                         var depth = lastStatsLine.Split(" depth ")[1].Split(" ")[0];
-                        var tbhits = lastStatsLine.Split(" tbhits ")[1].Split(" ")[0];
+                        var tableBaseHits = lastStatsLine.Split(" tbhits ")[1].Split(" ")[0];
                         var cp = GetCp(fenPosition, lastStatsLine);
                         var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
                         var ponder = currentLine.Contains("ponder ") ? currentLine.Split("ponder ")[1] : string.Empty;
-                        var outputMessage = $"{cp} d{depth} (tb {tbhits}) pv {best} {ponder} ({currentPlayer}) <{this.engineSignature}>";
+                        var outputMessage = $"{cp} d{depth} (tb {tableBaseHits}) pv {best} {ponder} ({currentPlayer}) <{this.engineSignature}>";
                         return outputMessage;
                     }
 

@@ -8,17 +8,12 @@
     using System.Net.Http;
     using System.Threading.Tasks;
 
-    using TwitchLib;
-
     public class TimeCommand : ICommand
     {
-        private readonly Options options;
-
         private readonly HttpClient httpClient;
 
-        public TimeCommand(Options options)
+        public TimeCommand()
         {
-            this.options = options;
             this.httpClient = new HttpClient();
         }
 
@@ -48,7 +43,7 @@
             var games = this.ReadGames(stringReader);
 
             var countPlayed = games.Count(x => x.IsPlayed);
-            var totalTime = games.Where(x => x.IsPlayed).Aggregate(TimeSpan.Zero, (sumSoFar, x) => sumSoFar + x.Duration.Value);
+            var totalTime = games.Where(x => x.Duration.HasValue).Aggregate(TimeSpan.Zero, (sumSoFar, x) => sumSoFar + x.Duration.Value);
             var lastStarted = games.Where(x => x.Started.HasValue).Select(x => x.Started.Value)
                 .OrderByDescending(x => x).FirstOrDefault();
             if (countPlayed == 0)
@@ -57,13 +52,9 @@
             }
 
             var averageGameTime = totalTime / countPlayed;
-            var remainingTime = (games.Count() - countPlayed) * (averageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
-            //// Console.WriteLine(lastStarted);
-            //// Console.WriteLine(remainingTime);
-            //// Console.WriteLine(lastStarted + remainingTime);
-            //// Console.WriteLine($"\"{totalTime / countPlayed}\"");
+            var remainingTime = (games.Count - countPlayed) * (averageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
             var response =
-                $"[{DateTime.UtcNow:HH:mm:ss}] {games.Count() - countPlayed} games left. Average duration: {(totalTime / countPlayed):hh\\:mm\\:ss}. Estimated division end: {lastStarted + remainingTime:R}.";
+                $"[{DateTime.UtcNow:HH:mm:ss}] {games.Count - countPlayed} games left. Average duration: {(totalTime / countPlayed):hh\\:mm\\:ss}. Estimated division end: {lastStarted + remainingTime:R}.";
             return response;
         }
 
@@ -71,6 +62,11 @@
         {
             // Columns
             var header = stringReader.ReadLine();
+            if (header == null)
+            {
+                return new List<Game>();
+            }
+
             var whiteColumnIndex = header.IndexOf(" White ", StringComparison.Ordinal) + 1;
             var blackColumnIndex = header.IndexOf(" Black ", StringComparison.Ordinal) + 1;
             var startColumnIndex = header.IndexOf(" Start ", StringComparison.Ordinal) + 1;
@@ -83,7 +79,6 @@
 
             while ((line = stringReader.ReadLine()) != null)
             {
-                var time = line.Substring(durationColumnIndex, ecoColumnIndex - durationColumnIndex).Trim();
                 gameIndex++;
                 var game = new Game { Number = gameIndex };
 
