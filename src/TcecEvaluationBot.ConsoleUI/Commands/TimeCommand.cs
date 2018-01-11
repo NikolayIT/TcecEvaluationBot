@@ -46,6 +46,11 @@
             var totalTime = games.Where(x => x.Duration.HasValue).Aggregate(TimeSpan.Zero, (sumSoFar, x) => sumSoFar + x.Duration.Value);
             var lastStarted = games.Where(x => x.Started.HasValue).Select(x => x.Started.Value)
                 .OrderByDescending(x => x).FirstOrDefault();
+            if (games.Count(x => x.Duration.HasValue) == games.Count(x => x.Started.HasValue))
+            {
+                lastStarted = DateTime.UtcNow;
+            }
+
             if (countPlayed == 0)
             {
                 return "No games played.";
