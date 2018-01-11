@@ -21,6 +21,8 @@
         private readonly IPositionEvaluator komodoPositionEvaluator;
         private readonly IPositionEvaluator laserPositionEvaluator;
 
+        private DateTime lastMessage = DateTime.UtcNow.AddDays(-1);
+
         private readonly HttpClient httpClient;
 
         public EvalCommand(TwitchClient twitchClient, Options options)
@@ -35,6 +37,13 @@
 
         public string Execute(string message)
         {
+            if ((DateTime.UtcNow - this.lastMessage).TotalSeconds < this.options.CooldownTime)
+            {
+                var cooldownRemaining = this.options.CooldownTime - (DateTime.UtcNow - this.lastMessage).TotalSeconds;
+                return $"[{DateTime.UtcNow:HH:mm:ss}] \"eval\" command will be available in {cooldownRemaining:0.0} seconds.";
+            }
+            
+            this.lastMessage = DateTime.UtcNow;
             var engine = "stockfish"; // TODO: Add default engine to options
             var moveTime = this.options.MoveTime;
             var commandParts = message.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);

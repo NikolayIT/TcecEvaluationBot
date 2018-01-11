@@ -17,8 +17,6 @@
 
         private readonly TimeCommand timeCommand;
 
-        private DateTime lastMessage = DateTime.UtcNow.AddDays(-1);
-
         public EvaluationBot(Options options)
         {
             this.options = options;
@@ -39,20 +37,10 @@
                         || arguments.ChatMessage.Message.Trim().StartsWith("!eval "))
                     {
                         this.Log($"Received \"{arguments.ChatMessage.Message}\" from {arguments.ChatMessage.Username}");
-                        if ((DateTime.UtcNow - this.lastMessage).TotalSeconds >= this.options.CooldownTime)
-                        {
-                            this.lastMessage = DateTime.UtcNow;
-                            var message = this.evalCommand.Execute(arguments.ChatMessage.Message);
-                            this.twitchClient.SendMessage(message);
-                            this.Log($"Responded with \"{message}\"");
-                        }
-                        else
-                        {
-                            var cooldownRemaining = this.options.CooldownTime - (DateTime.UtcNow - this.lastMessage).TotalSeconds;
-                            this.twitchClient.SendMessage(
-                                $"[{DateTime.UtcNow:HH:mm:ss}] You evaluate! ({cooldownRemaining:0.0})");
-                            this.Log($"Cooldown: {cooldownRemaining:0.0} seconds remaining.");
-                        }
+                        var response = this.evalCommand.Execute(arguments.ChatMessage.Message);
+                        this.twitchClient.SendMessage(response);
+                        this.Log($"Responded with \"{response}\"");
+                        
                     }
                     else if (arguments.ChatMessage.Message == "!time"
                              || arguments.ChatMessage.Message.Trim().StartsWith("!time "))
