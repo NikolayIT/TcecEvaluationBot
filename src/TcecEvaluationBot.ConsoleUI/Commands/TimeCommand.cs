@@ -77,7 +77,7 @@
 
             if (game.Started.HasValue)
             {
-                return $"Game \"{game.WhiteName}\" vs \"{game.BlackName}\" started at {game.Started}";
+                return $"Game \"{game.WhiteName}\" vs \"{game.BlackName}\" started at {game.Started:R}";
             }
 
             var totalTime = games.Where(x => x.Duration.HasValue)
@@ -91,8 +91,8 @@
                 lastStarted = DateTime.UtcNow;
             }
 
-            var estimatedTime = lastStarted + ((gameId - countPlayed - 1) * (averageGameTime + new TimeSpan(0, 0, 1, 0))); // +1 minute between games
-            return $"Game \"{game.WhiteName}\" vs \"{game.BlackName}\" is estimated to start on {estimatedTime}";
+            var estimatedStartTime = lastStarted + ((gameId - countPlayed - 1) * (averageGameTime + new TimeSpan(0, 0, 1, 0))); // +1 minute between games
+            return $"Game \"{game.WhiteName}\" vs \"{game.BlackName}\" is estimated to start on {estimatedStartTime:R}";
         }
 
         private static string GetRemainingDivisionTime(IList<Game> games)
