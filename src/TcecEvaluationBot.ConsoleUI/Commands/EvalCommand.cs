@@ -30,7 +30,7 @@
             this.twitchClient = twitchClient;
             this.options = options;
             this.stockfishPositionEvaluator = new UciEnginePositionEvaluator(options, "stockfish.exe", "SF_040118");
-            this.komodoPositionEvaluator = new UciEnginePositionEvaluator(options, "komodo.exe", "Komodo_9.02");
+            this.komodoPositionEvaluator = new UciEnginePositionEvaluator(options, "komodo.exe", "Komodo_11.2.2, Courtesy of K authors");
             this.laserPositionEvaluator = new UciEnginePositionEvaluator(options, "laser.exe", "Laser_1.5");
             this.httpClient = new HttpClient();
         }
@@ -40,7 +40,7 @@
             if ((DateTime.UtcNow - this.lastMessage).TotalSeconds < this.options.CooldownTime)
             {
                 var cooldownRemaining = this.options.CooldownTime - (DateTime.UtcNow - this.lastMessage).TotalSeconds;
-                return $"[{DateTime.UtcNow:HH:mm:ss}] \"eval\" command will be available in {cooldownRemaining:0.0} seconds.";
+                return $"[{DateTime.UtcNow:HH:mm:ss}] \"eval\" will be available in {cooldownRemaining:0.0} sec.";
             }
             
             this.lastMessage = DateTime.UtcNow;
