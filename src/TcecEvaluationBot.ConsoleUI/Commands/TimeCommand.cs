@@ -10,15 +10,28 @@
 
     public class TimeCommand : ICommand
     {
+        private readonly Options options;
+
         private readonly HttpClient httpClient;
 
-        public TimeCommand()
+        private DateTime lastMessage = DateTime.UtcNow.AddDays(-1);
+
+        public TimeCommand(Options options)
         {
+            this.options = options;
             this.httpClient = new HttpClient();
         }
 
         public string Execute(string message)
         {
+            if ((DateTime.UtcNow - this.lastMessage).TotalSeconds < this.options.CooldownTime)
+            {
+                var cooldownRemaining = this.options.CooldownTime - (DateTime.UtcNow - this.lastMessage).TotalSeconds;
+                return $"[{DateTime.UtcNow:HH:mm:ss}] \"time\" will be available in {cooldownRemaining:0.0} sec.";
+            }
+
+            this.lastMessage = DateTime.UtcNow;
+
             StringReader stringReader;
             try
             {
@@ -67,17 +80,17 @@
             var game = games.FirstOrDefault(x => x.Number == gameId);
             if (game == null)
             {
-                return $"Game with number {gameId} not found!";
+                return $"[{DateTime.UtcNow:HH:mm:ss}] Game with number {gameId} not found!";
             }
 
             if (game.IsPlayed)
             {
-                return $"Game \"{game.WhiteName}\" vs \"{game.BlackName}\" finished with result \"{game.Result}\"";
+                return $"[{DateTime.UtcNow:HH:mm:ss}] Game \"{game.WhiteName}\" vs \"{game.BlackName}\" finished with result \"{game.Result}\"";
             }
 
             if (game.Started.HasValue)
             {
-                return $"Game \"{game.WhiteName}\" vs \"{game.BlackName}\" started at {game.Started:R}";
+                return $"[{DateTime.UtcNow:HH:mm:ss}] Game \"{game.WhiteName}\" vs \"{game.BlackName}\" started at {game.Started:R}";
             }
 
             var totalTime = games.Where(x => x.Duration.HasValue)
@@ -92,7 +105,7 @@
             }
 
             var estimatedStartTime = lastStarted + ((gameId - countPlayed - 1) * (averageGameTime + new TimeSpan(0, 0, 1, 0))); // +1 minute between games
-            return $"Game \"{game.WhiteName}\" vs \"{game.BlackName}\" is estimated to start on {estimatedStartTime:R}";
+            return $"[{DateTime.UtcNow:HH:mm:ss}] Game \"{game.WhiteName}\" vs \"{game.BlackName}\" is estimated to start on {estimatedStartTime:R}";
         }
 
         private static string GetRemainingDivisionTime(IList<Game> games)

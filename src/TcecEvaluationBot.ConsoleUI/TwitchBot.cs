@@ -19,7 +19,7 @@
             var credentials = new ConnectionCredentials(options.TwitchUserName, options.TwitchAccessToken);
             this.twitchClient = new TwitchClient(credentials, options.TwitchChannelName);
             this.commands.Add(("eval", new EvaluationCommand(this.twitchClient, options)));
-            this.commands.Add(("time", new TimeCommand()));
+            this.commands.Add(("time", new TimeCommand(options)));
             //// Console.WriteLine(new TimeCommand().Execute("!time 99"));
             //// Console.ReadLine();
         }

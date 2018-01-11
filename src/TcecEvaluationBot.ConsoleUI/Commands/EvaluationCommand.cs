@@ -44,6 +44,7 @@
             }
             
             this.lastMessage = DateTime.UtcNow;
+
             var engine = "stockfish"; // TODO: Add default engine to options
             var moveTime = this.options.MoveTime;
             var commandParts = message.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
