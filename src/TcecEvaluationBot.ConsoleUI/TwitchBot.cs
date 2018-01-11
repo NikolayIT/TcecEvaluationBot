@@ -19,7 +19,9 @@
             var credentials = new ConnectionCredentials(options.TwitchUserName, options.TwitchAccessToken);
             this.twitchClient = new TwitchClient(credentials, options.TwitchChannelName);
             this.commands.Add(("eval", new EvalCommand(this.twitchClient, options)));
-            this.commands.Add(("time", new TimeCommand(this.twitchClient, options)));
+            this.commands.Add(("time", new TimeCommand(options)));
+            Console.WriteLine(new TimeCommand(options).Execute("!time"));
+            Console.ReadLine();
         }
 
         public void Run()

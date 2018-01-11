@@ -1,8 +1,10 @@
 ﻿namespace TcecEvaluationBot.ConsoleUI.Commands
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
 
@@ -10,15 +12,12 @@
 
     public class TimeCommand : ICommand
     {
-        private readonly TwitchClient twitchClient;
-
         private readonly Options options;
 
         private readonly HttpClient httpClient;
 
-        public TimeCommand(TwitchClient twitchClient, Options options)
+        public TimeCommand(Options options)
         {
-            this.twitchClient = twitchClient;
             this.options = options;
             this.httpClient = new HttpClient();
         }
@@ -46,63 +45,72 @@
                 return "Unable to retrieve schedule data.";
             }
 
-            var header = stringReader.ReadLine();
-            var startColumnIndex = header.IndexOf(" Start ", StringComparison.Ordinal) + 1;
-            var durationColumnIndex = header.IndexOf(" Duration ", StringComparison.Ordinal) + 1;
-            var ecoColumnIndex = header.IndexOf(" ECO ", StringComparison.Ordinal) + 1;
-            string line;
-            int countPlayed = 0;
-            int count = 0;
-            var totalTime = new TimeSpan();
-            var lastStarted = (DateTime?)null;
-            while ((line = stringReader.ReadLine()) != null)
-            {
-                count++;
-                var time = line.Substring(durationColumnIndex, ecoColumnIndex - durationColumnIndex).Trim();
-                if (!string.IsNullOrWhiteSpace(time))
-                {
-                    countPlayed++;
-                    var timeParts = time.Split(':');
-                    var timeSpan = new TimeSpan(0, int.Parse(timeParts[0]), int.Parse(timeParts[1]), int.Parse(timeParts[2]));
-                    totalTime += timeSpan;
-                    //// Console.WriteLine(timeSpan);
-                }
-                else
-                {
-                    if (lastStarted == null)
-                    {
-                        var lastStartedAsString = line.Substring(startColumnIndex, durationColumnIndex - startColumnIndex).Trim();
-                        if (DateTime.TryParseExact(
-                            lastStartedAsString,
-                            "HH:mm:ss on yyyy.MM.dd",
-                            CultureInfo.InvariantCulture,
-                            DateTimeStyles.None,
-                            out var parsedValue))
-                        {
-                            lastStarted = parsedValue;
-                        }
-                        else
-                        {
-                            lastStarted = DateTime.UtcNow;
-                        }
-                    }
-                }
-            }
+            var games = this.ReadGames(stringReader);
 
+            var countPlayed = games.Count(x => x.IsPlayed);
+            var totalTime = games.Where(x => x.IsPlayed).Aggregate(TimeSpan.Zero, (sumSoFar, x) => sumSoFar + x.Duration.Value);
+            var lastStarted = games.Where(x => x.Started.HasValue).Select(x => x.Started.Value)
+                .OrderByDescending(x => x).FirstOrDefault();
             if (countPlayed == 0)
             {
                 return "No games played.";
             }
 
             var averageGameTime = totalTime / countPlayed;
-            var remainingTime = (count - countPlayed) * (averageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
+            var remainingTime = (games.Count() - countPlayed) * (averageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
             //// Console.WriteLine(lastStarted);
             //// Console.WriteLine(remainingTime);
             //// Console.WriteLine(lastStarted + remainingTime);
             //// Console.WriteLine($"\"{totalTime / countPlayed}\"");
             var response =
-                $"[{DateTime.UtcNow:HH:mm:ss}] {count - countPlayed} games left. Average duration: {(totalTime / countPlayed):hh\\:mm\\:ss}. Estimated division end: {lastStarted + remainingTime:R}.";
+                $"[{DateTime.UtcNow:HH:mm:ss}] {games.Count() - countPlayed} games left. Average duration: {(totalTime / countPlayed):hh\\:mm\\:ss}. Estimated division end: {lastStarted + remainingTime:R}.";
             return response;
+        }
+
+        private IList<Game> ReadGames(StringReader stringReader)
+        {
+            // Columns
+            var header = stringReader.ReadLine();
+            var whiteColumnIndex = header.IndexOf(" White ", StringComparison.Ordinal) + 1;
+            var blackColumnIndex = header.IndexOf(" Black ", StringComparison.Ordinal) + 1;
+            var startColumnIndex = header.IndexOf(" Start ", StringComparison.Ordinal) + 1;
+            var durationColumnIndex = header.IndexOf(" Duration ", StringComparison.Ordinal) + 1;
+            var ecoColumnIndex = header.IndexOf(" ECO ", StringComparison.Ordinal) + 1;
+
+            var games = new List<Game>();
+            string line;
+            int gameIndex = 0;
+
+            while ((line = stringReader.ReadLine()) != null)
+            {
+                var time = line.Substring(durationColumnIndex, ecoColumnIndex - durationColumnIndex).Trim();
+                gameIndex++;
+                var game = new Game { Number = gameIndex };
+
+                var durationText = line.Substring(durationColumnIndex, ecoColumnIndex - durationColumnIndex).Trim();
+                if (!string.IsNullOrWhiteSpace(durationText))
+                {
+                    var timeParts = durationText.Split(':');
+                    var duration = new TimeSpan(0, int.Parse(timeParts[0]), int.Parse(timeParts[1]), int.Parse(timeParts[2]));
+                    game.Duration = duration;
+                    //// Console.WriteLine(timeSpan);
+                }
+
+                var lastStartedAsString = line.Substring(startColumnIndex, durationColumnIndex - startColumnIndex).Trim();
+                if (DateTime.TryParseExact(
+                    lastStartedAsString,
+                    "HH:mm:ss on yyyy.MM.dd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var parsedValue))
+                {
+                    game.Started = parsedValue;
+                }
+
+                games.Add(game);
+            }
+
+            return games;
         }
 
         private async Task<string> GetTextContent(string url)
@@ -110,6 +118,17 @@
             var response = await this.httpClient.GetAsync($"{url}?noCache={Guid.NewGuid()}");
             var stringResult = await response.Content.ReadAsStringAsync();
             return stringResult;
+        }
+
+        private class Game
+        {
+            public int Number { get; set; }
+
+            public TimeSpan? Duration { get; set; }
+
+            public DateTime? Started { get; set; }
+
+            public bool IsPlayed => this.Duration.HasValue;
         }
     }
 }
