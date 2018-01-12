@@ -76,7 +76,8 @@
             var estimatedEndTime = games.LastStarted
                                    + ((games.Count - games.CountPlayed)
                                       * (games.AverageGameTime + new TimeSpan(0, 0, 1, 0))); // +1 minute between games
-            return $"[{DateTime.UtcNow:HH:mm:ss}] {games.Count - games.CountPlayed} games left. Average duration: {games.AverageGameTime:hh\\:mm\\:ss}. Estimated division end: {estimatedEndTime:R}.";
+            var endingS = (games.Count - games.CountPlayed) != 1 ? 's' : '\0';
+            return $"[{DateTime.UtcNow:HH:mm:ss}] {games.Count - games.CountPlayed} game{endingS} left. Average duration: {games.AverageGameTime:hh\\:mm\\:ss}. Estimated division end: {estimatedEndTime:R}.";
         }
     }
 }

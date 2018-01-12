@@ -45,7 +45,7 @@
                             if ((DateTime.UtcNow - command.LastMessage).TotalSeconds < this.options.CooldownTime)
                             {
                                 var cooldownRemaining = this.options.CooldownTime - (DateTime.UtcNow - command.LastMessage).TotalSeconds;
-                                message = $"[{DateTime.UtcNow:HH:mm:ss}] \"{command.Text}\" will be available in {cooldownRemaining:0.0} sec.";
+                                message = $"[{DateTime.UtcNow:HH:mm:ss}] \"!{command.Text}\" will be available in {cooldownRemaining:0.0} sec.";
                             }
                             else
                             {

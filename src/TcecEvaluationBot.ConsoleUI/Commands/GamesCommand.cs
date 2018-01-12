@@ -69,8 +69,11 @@
             var losses = games.Games.Count(x => x.WhiteName == engineName && x.Result == "0 1")
                        + games.Games.Count(x => x.BlackName == engineName && x.Result == "1 0");
 
+            // "Laser 1.5" 25 games(s): +10=14-3
+            var gamesCount = wins + draws + losses;
+            var endingS = gamesCount != 1 ? 's' : '\0';
             return
-                $"[{DateTime.UtcNow:HH:mm:ss}] {wins + draws + losses} played game(s) for \"{engineName}\": Wins:{wins}/Draws:{draws}/Losses:{losses}";
+                $"[{DateTime.UtcNow:HH:mm:ss}] \"{engineName}\": {wins + draws + losses} game{endingS}: +{wins}={draws}-{losses}";
         }
 
         private string GetAllStats()
@@ -79,7 +82,6 @@
             var draws = games.Games.Count(x => x.Result == "1/2 1/2");
             var whiteWins = games.Games.Count(x => x.Result == "1 0");
             var blackWins = games.Games.Count(x => x.Result == "0 1");
-
             return
                 $"[{DateTime.UtcNow:HH:mm:ss}] {whiteWins + draws + blackWins} played game(s): White:{whiteWins}/Draws:{draws}/Black:{blackWins}";
         }
