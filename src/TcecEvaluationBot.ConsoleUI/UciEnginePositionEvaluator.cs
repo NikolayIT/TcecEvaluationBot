@@ -53,18 +53,19 @@
             process.StandardInput.WriteLine($"go movetime {moveTime}");
             process.StandardInput.Flush();
 
+            string currentLine = null;
             try
             {
                 string lastStatsLine = null;
                 while (!process.StandardOutput.EndOfStream)
                 {
-                    var currentLine = process.StandardOutput.ReadLine();
+                    currentLine = process.StandardOutput.ReadLine();
                     if (currentLine == null)
                     {
                         continue;
                     }
 
-                    //// Console.WriteLine(currentLine);
+                    // Console.WriteLine(currentLine);
                     if (currentLine.StartsWith("bestmove") && lastStatsLine != null)
                     {
                         Console.WriteLine(lastStatsLine);
@@ -102,6 +103,7 @@
             }
 
             Thread.Sleep(2000);
+            Console.WriteLine($"Last line: \"{currentLine}\"");
             return $"[{DateTime.UtcNow:HH:mm:ss}] No active game? Please try again.";
         }
 

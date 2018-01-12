@@ -170,7 +170,7 @@
                     DateTimeStyles.None,
                     out var parsedValue))
                 {
-                    game.Started = parsedValue;
+                    game.Started = parsedValue.AddHours(-2);
                 }
 
                 var whiteText = line.Substring(numberColumnIndex + 2, whiteColumnIndex - numberColumnIndex + 4).Trim();
