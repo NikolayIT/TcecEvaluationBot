@@ -20,7 +20,8 @@
             this.twitchClient = new TwitchClient(credentials, options.TwitchChannelName);
             this.commands.Add(("eval", new EvaluationCommand(this.twitchClient, options)));
             this.commands.Add(("time", new TimeCommand(options)));
-            //// Console.WriteLine(new TimeCommand().Execute("!time 99"));
+            this.commands.Add(("games", new GamesCommand(options)));
+            //// Console.WriteLine(new GamesCommand(options).Execute("!games laser"));
             //// Console.ReadLine();
         }
 

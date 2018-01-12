@@ -37,12 +37,12 @@
             }
             catch (Exception)
             {
-                return "Unable to retrieve schedule data.";
+                return $"[{DateTime.UtcNow:HH:mm:ss}] Unable to retrieve schedule data.";
             }
 
             if (games.CountPlayed == 0)
             {
-                return "No games played.";
+                return $"[{DateTime.UtcNow:HH:mm:ss}] No games played.";
             }
 
             var messageParts = message.Split(" ");
