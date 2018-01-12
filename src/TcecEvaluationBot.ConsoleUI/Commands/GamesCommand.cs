@@ -79,11 +79,11 @@
             var draws = games.Games.Count(x => x.Result == "1/2 1/2" && (x.WhiteName == engineName || x.BlackName == engineName));
             var wins = games.Games.Count(x => x.WhiteName == engineName && x.Result == "1 0")
                        + games.Games.Count(x => x.BlackName == engineName && x.Result == "0 1");
-            var loses = games.Games.Count(x => x.WhiteName == engineName && x.Result == "0 1")
+            var losses = games.Games.Count(x => x.WhiteName == engineName && x.Result == "0 1")
                        + games.Games.Count(x => x.BlackName == engineName && x.Result == "1 0");
 
             return
-                $"[{DateTime.UtcNow:HH:mm:ss}] {wins + draws + loses} played game(s) for \"{engineName}\": W:{wins}/D:{draws}/L:{loses}";
+                $"[{DateTime.UtcNow:HH:mm:ss}] {wins + draws + losses} played game(s) for \"{engineName}\": Wins:{wins}/Draws:{draws}/Losses:{losses}";
         }
 
         private string GetAllStats()
