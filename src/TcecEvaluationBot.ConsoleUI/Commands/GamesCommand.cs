@@ -9,28 +9,15 @@
 
     public class GamesCommand : ICommand
     {
-        private readonly Options options;
-
         private readonly GamesInfoProvider gamesInfoProvider;
 
-        private DateTime lastMessage = DateTime.UtcNow.AddDays(-1);
-
-        public GamesCommand(Options options)
+        public GamesCommand()
         {
-            this.options = options;
             this.gamesInfoProvider = new GamesInfoProvider();
         }
 
         public string Execute(string message)
         {
-            if ((DateTime.UtcNow - this.lastMessage).TotalSeconds < this.options.CooldownTime)
-            {
-                var cooldownRemaining = this.options.CooldownTime - (DateTime.UtcNow - this.lastMessage).TotalSeconds;
-                return $"[{DateTime.UtcNow:HH:mm:ss}] \"games\" will be available in {cooldownRemaining:0.0} sec.";
-            }
-
-            this.lastMessage = DateTime.UtcNow;
-
             GamesList games;
             try
             {

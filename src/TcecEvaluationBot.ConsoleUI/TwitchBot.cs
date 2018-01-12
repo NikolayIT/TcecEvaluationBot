@@ -10,18 +10,21 @@
 
     public class TwitchBot
     {
+        private readonly Options options;
+
         private readonly TwitchClient twitchClient;
 
-        private readonly IList<(string Text, ICommand Command)> commands = new List<(string, ICommand)>();
+        private readonly IList<CommandInfo> commands = new List<CommandInfo>();
 
         public TwitchBot(Options options)
         {
+            this.options = options;
             var credentials = new ConnectionCredentials(options.TwitchUserName, options.TwitchAccessToken);
             this.twitchClient = new TwitchClient(credentials, options.TwitchChannelName);
-            this.commands.Add(("eval", new EvaluationCommand(this.twitchClient, options)));
-            this.commands.Add(("time", new TimeCommand(options)));
-            this.commands.Add(("games", new GamesCommand(options)));
-            //// Console.WriteLine(new GamesCommand(options).Execute("!games laser"));
+            this.commands.Add(new CommandInfo("eval", new EvaluationCommand(this.twitchClient, options)));
+            this.commands.Add(new CommandInfo("time", new TimeCommand()));
+            this.commands.Add(new CommandInfo("games", new GamesCommand()));
+            //// Console.WriteLine(new GamesCommand().Execute("!games laser"));
             //// Console.ReadLine();
         }
 
@@ -37,9 +40,21 @@
                             || arguments.ChatMessage.Message.Trim().StartsWith($"!{command.Text} "))
                         {
                             this.Log($"Received \"{arguments.ChatMessage.Message}\" from {arguments.ChatMessage.Username}");
-                            var response = command.Command.Execute(arguments.ChatMessage.Message);
-                            this.twitchClient.SendMessage(response);
-                            this.Log($"Responded with \"{response}\"");
+
+                            string message;
+                            if ((DateTime.UtcNow - command.LastMessage).TotalSeconds < this.options.CooldownTime)
+                            {
+                                var cooldownRemaining = this.options.CooldownTime - (DateTime.UtcNow - command.LastMessage).TotalSeconds;
+                                message = $"[{DateTime.UtcNow:HH:mm:ss}] \"{command.Text}\" will be available in {cooldownRemaining:0.0} sec.";
+                            }
+                            else
+                            {
+                                command.LastMessage = DateTime.UtcNow;
+                                message = command.Command.Execute(arguments.ChatMessage.Message);
+                            }
+
+                            this.twitchClient.SendMessage(message);
+                            this.Log($"Responded with \"{message}\"");
                         }
                     }
                 };
@@ -52,6 +67,22 @@
             Console.Write($"[{DateTime.UtcNow}]");
             Console.ResetColor();
             Console.WriteLine($" {message}");
+        }
+
+        private class CommandInfo
+        {
+            public CommandInfo(string text, ICommand command)
+            {
+                this.Text = text;
+                this.Command = command;
+                this.LastMessage = DateTime.UtcNow.AddDays(-1);
+            }
+
+            public string Text { get; }
+
+            public ICommand Command { get; }
+
+            public DateTime LastMessage { get; set; }
         }
     }
 }

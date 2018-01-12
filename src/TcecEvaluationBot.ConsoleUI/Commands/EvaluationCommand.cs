@@ -17,15 +17,13 @@
 
         private readonly Options options;
 
-        private readonly string[] availableEngines = new[] { "komodo", "stockfish", "laser" };
+        private readonly string[] availableEngines = { "komodo", "stockfish", "laser" };
 
         private readonly IPositionEvaluator stockfishPositionEvaluator;
         private readonly IPositionEvaluator komodoPositionEvaluator;
         private readonly IPositionEvaluator laserPositionEvaluator;
 
         private readonly HttpClient httpClient;
-
-        private DateTime lastMessage = DateTime.UtcNow.AddDays(-1);
 
         public EvaluationCommand(TwitchClient twitchClient, Options options)
         {
@@ -39,14 +37,6 @@
 
         public string Execute(string message)
         {
-            if ((DateTime.UtcNow - this.lastMessage).TotalSeconds < this.options.CooldownTime)
-            {
-                var cooldownRemaining = this.options.CooldownTime - (DateTime.UtcNow - this.lastMessage).TotalSeconds;
-                return $"[{DateTime.UtcNow:HH:mm:ss}] \"eval\" will be available in {cooldownRemaining:0.0} sec.";
-            }
-            
-            this.lastMessage = DateTime.UtcNow;
-
             var engine = "stockfish"; // TODO: Add default engine to options
             var moveTime = this.options.MoveTime;
             var commandParts = message.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
