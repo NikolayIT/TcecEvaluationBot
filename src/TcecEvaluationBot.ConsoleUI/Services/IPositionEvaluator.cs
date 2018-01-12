@@ -1,4 +1,4 @@
-﻿namespace TcecEvaluationBot.ConsoleUI
+﻿namespace TcecEvaluationBot.ConsoleUI.Services
 {
     public interface IPositionEvaluator
     {

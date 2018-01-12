@@ -7,6 +7,8 @@
     using System.Net.Http;
     using System.Threading.Tasks;
 
+    using TcecEvaluationBot.ConsoleUI.Services;
+
     using TwitchLib;
 
     public class EvaluationCommand : ICommand

@@ -1,4 +1,4 @@
-﻿namespace TcecEvaluationBot.ConsoleUI
+﻿namespace TcecEvaluationBot.ConsoleUI.Services
 {
     using System;
     using System.Diagnostics;
