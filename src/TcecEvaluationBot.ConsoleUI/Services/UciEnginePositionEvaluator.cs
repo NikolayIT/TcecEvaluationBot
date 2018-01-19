@@ -69,13 +69,15 @@
                     if (currentLine.StartsWith("bestmove") && lastStatsLine != null)
                     {
                         Console.WriteLine(lastStatsLine);
+                        var fenParts = fenPosition.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                        var moveNumber = fenParts[fenParts.Length - 1].Trim();
                         var currentPlayer = fenPosition.Contains(" b ") ? 'b' : 'w';
                         var depth = lastStatsLine.Split(" depth ")[1].Split(" ")[0];
                         var tableBaseHits = lastStatsLine.Split(" tbhits ")[1].Split(" ")[0];
                         var cp = GetCp(fenPosition, lastStatsLine);
                         var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
                         var ponder = currentLine.Contains("ponder ") ? currentLine.Split("ponder ")[1] : string.Empty;
-                        var outputMessage = $"{cp} d{depth} (tb {tableBaseHits}) pv {best} {ponder} ({currentPlayer}) <{this.engineSignature}>";
+                        var outputMessage = $"{cp} d{depth} (tb {tableBaseHits}) pv {best} {ponder} ({moveNumber}{currentPlayer}) <{this.engineSignature}>";
                         return outputMessage;
                     }
 
