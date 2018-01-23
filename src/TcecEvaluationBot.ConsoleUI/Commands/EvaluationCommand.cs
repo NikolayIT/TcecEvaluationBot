@@ -29,7 +29,7 @@
         {
             this.twitchClient = twitchClient;
             this.options = options;
-            this.stockfishPositionEvaluator = new UciEnginePositionEvaluator(options, "stockfish.exe", "SF_130118");
+            this.stockfishPositionEvaluator = new UciEnginePositionEvaluator(options, "stockfish.exe", "SF_180123");
             this.komodoPositionEvaluator = new UciEnginePositionEvaluator(options, "komodo.exe", "Komodo_11.2.2, Courtesy of K authors");
             this.laserPositionEvaluator = new UciEnginePositionEvaluator(options, "laser.exe", "Laser_1.5");
             this.httpClient = new HttpClient();
