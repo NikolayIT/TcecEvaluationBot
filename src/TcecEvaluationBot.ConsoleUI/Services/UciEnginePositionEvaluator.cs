@@ -48,6 +48,7 @@
             {
                 process.StandardInput.WriteLine($"setoption name SyzygyPath value {this.options.SyzygyPath}");
             }
+            process.StandardInput.WriteLine($"setoption name Contempt value 0");
 
             process.StandardInput.WriteLine($"position fen {fenPosition}");
             process.StandardInput.WriteLine($"go movetime {moveTime}");
