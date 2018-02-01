@@ -82,11 +82,12 @@
             var draws = games.Games.Count(x => x.Result == "1/2 1/2");
             var whiteWins = games.Games.Count(x => x.Result == "1 0");
             var blackWins = games.Games.Count(x => x.Result == "0 1");
-            var whitePercentage = (decimal)games.Count == 0 ? 0.0M : (whiteWins / (decimal)games.Count) * 100.0M;
-            var blackPercentage = (decimal)games.Count == 0 ? 0.0M : (blackWins / (decimal)games.Count) * 100.0M;
-            var drawPercentage = (decimal)games.Count == 0 ? 0.0M : 100.0M - whitePercentage - blackPercentage;
+            decimal playedGames = draws + whiteWins + blackWins;
+            var whitePercentage = playedGames == 0 ? 0.0M : (whiteWins / playedGames) * 100.0M;
+            var blackPercentage = playedGames == 0 ? 0.0M : (blackWins / playedGames) * 100.0M;
+            var drawPercentage = playedGames == 0 ? 0.0M : 100.0M - whitePercentage - blackPercentage;
             return
-                $"[{DateTime.UtcNow:HH:mm:ss}] {whiteWins + draws + blackWins} played game(s): W:{whiteWins}({whitePercentage:0.0}%) / D:{draws}({drawPercentage:0.0}%) / B:{blackWins}({blackPercentage:0.0}%)";
+                $"[{DateTime.UtcNow:HH:mm:ss}] {playedGames} played game(s): W:{whiteWins}({whitePercentage:0.0}%) / D:{draws}({drawPercentage:0.0}%) / B:{blackWins}({blackPercentage:0.0}%)";
         }
     }
 }
