@@ -28,17 +28,17 @@
             }
 
             var process = new Process
-                                {
-                                    StartInfo = new ProcessStartInfo
-                                                    {
-                                                        FileName = this.executableFileName,
-                                                        UseShellExecute = false,
-                                                        RedirectStandardOutput = true,
-                                                        RedirectStandardInput = true,
-                                                        RedirectStandardError = true,
-                                                        CreateNoWindow = true,
-                                                    }
-                                };
+                              {
+                                  StartInfo = new ProcessStartInfo
+                                                  {
+                                                      FileName = this.executableFileName,
+                                                      UseShellExecute = false,
+                                                      RedirectStandardOutput = true,
+                                                      RedirectStandardInput = true,
+                                                      RedirectStandardError = true,
+                                                      CreateNoWindow = true,
+                                                  }
+                              };
 
             process.Start();
 
@@ -48,10 +48,10 @@
             {
                 process.StandardInput.WriteLine($"setoption name SyzygyPath value {this.options.SyzygyPath}");
             }
-            process.StandardInput.WriteLine($"setoption name Contempt value 0");
 
             process.StandardInput.WriteLine($"position fen {fenPosition}");
             process.StandardInput.WriteLine($"go movetime {moveTime}");
+            process.StandardInput.WriteLine($"setoption name Contempt value 0");
             process.StandardInput.Flush();
 
             string currentLine = null;
