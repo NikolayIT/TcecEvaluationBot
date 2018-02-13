@@ -51,7 +51,7 @@
 
             process.StandardInput.WriteLine($"position fen {fenPosition}");
             process.StandardInput.WriteLine($"go movetime {moveTime}");
-            process.StandardInput.WriteLine($"setoption name Contempt value 0");
+            process.StandardInput.WriteLine($"setoption name Contempt value {this.options.Contempt}");
             process.StandardInput.Flush();
 
             string currentLine = null;

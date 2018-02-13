@@ -30,5 +30,8 @@
 
         [Option("thinkingMessage", Default = true, HelpText = "Show thinking message before starting the evaluation.")]
         public bool ThinkingMessage { get; set; }
+
+        [Option("contempt", Default = 0, HelpText = "The contempt value for chess engines.")]
+        public int Contempt { get; set; }
     }
 }
