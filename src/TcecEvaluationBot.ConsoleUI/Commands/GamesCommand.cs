@@ -34,14 +34,7 @@
             }
 
             var messageParts = message.Split(" ");
-            if (messageParts.Length == 1)
-            {
-                return this.GetAllStats();
-            }
-            else
-            {
-                return this.GetEngineStats(messageParts.Skip(1));
-            }
+            return messageParts.Length == 1 ? this.GetAllStats() : this.GetEngineStats(messageParts.Skip(1));
         }
 
         private string GetEngineStats(IEnumerable<string> engineNames)
@@ -83,8 +76,8 @@
             var whiteWins = games.Games.Count(x => x.Result == "1 0");
             var blackWins = games.Games.Count(x => x.Result == "0 1");
             decimal playedGames = draws + whiteWins + blackWins;
-            var whitePercentage = playedGames == 0 ? 0.0M : (whiteWins / playedGames) * 100.0M;
-            var blackPercentage = playedGames == 0 ? 0.0M : (blackWins / playedGames) * 100.0M;
+            var whitePercentage = playedGames == 0 ? 0.0M : whiteWins / playedGames * 100.0M;
+            var blackPercentage = playedGames == 0 ? 0.0M : blackWins / playedGames * 100.0M;
             var drawPercentage = playedGames == 0 ? 0.0M : 100.0M - whitePercentage - blackPercentage;
             return
                 $"[{DateTime.UtcNow:HH:mm:ss}] {playedGames} played game(s): W:{whiteWins}({whitePercentage:0.0}%) / D:{draws}({drawPercentage:0.0}%) / B:{blackWins}({blackPercentage:0.0}%)";

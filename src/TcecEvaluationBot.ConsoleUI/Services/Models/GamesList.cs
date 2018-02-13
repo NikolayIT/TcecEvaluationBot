@@ -30,12 +30,9 @@
             {
                 var lastStarted = this.Games.Where(x => x.Started.HasValue).Select(x => x.Started.Value)
                     .OrderByDescending(x => x).FirstOrDefault();
-                if (this.Games.Count(x => x.Duration.HasValue) == this.Games.Count(x => x.Started.HasValue))
-                {
-                    return DateTime.UtcNow;
-                }
-
-                return lastStarted;
+                return this.Games.Count(x => x.Duration.HasValue) == this.Games.Count(x => x.Started.HasValue)
+                           ? DateTime.UtcNow
+                           : lastStarted;
             }
         }
     }

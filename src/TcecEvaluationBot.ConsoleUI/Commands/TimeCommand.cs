@@ -36,14 +36,9 @@
             var gameId = messageParts.Any(x => int.TryParse(x, out _))
                              ? int.Parse(messageParts.FirstOrDefault(x => int.TryParse(x, out _)))
                              : (int?)null;
-            if (gameId.HasValue && gameId >= 1 && gameId <= games.Count)
-            {
-                return GetGameInfo(games, gameId.Value);
-            }
-            else
-            {
-                return GetRemainingDivisionTime(games);
-            }
+            return gameId.HasValue && gameId >= 1 && gameId <= games.Count
+                       ? GetGameInfo(games, gameId.Value)
+                       : GetRemainingDivisionTime(games);
         }
 
         private static string GetGameInfo(GamesList games, int gameId)
@@ -65,18 +60,16 @@
                 return $"[{DateTime.UtcNow:HH:mm:ss}] Game \"{game.WhiteName}\" vs \"{game.BlackName}\" started at {game.Started:R}";
             }
 
-            var estimatedStartTime = games.LastStarted
-                                     + ((gameId - games.CountPlayed - 1)
-                                        * (games.AverageGameTime + new TimeSpan(0, 0, 1, 0))); // +1 minute between games
+            var remainingTime = (gameId - games.CountPlayed - 1) * (games.AverageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
+            var estimatedStartTime = games.LastStarted + remainingTime;
             return $"[{DateTime.UtcNow:HH:mm:ss}] Game \"{game.WhiteName}\" vs \"{game.BlackName}\" is estimated to start on {estimatedStartTime:R}";
         }
 
         private static string GetRemainingDivisionTime(GamesList games)
         {
-            var estimatedEndTime = games.LastStarted
-                                   + ((games.Count - games.CountPlayed)
-                                      * (games.AverageGameTime + new TimeSpan(0, 0, 1, 0))); // +1 minute between games
-            var endingS = (games.Count - games.CountPlayed) != 1 ? 's' : '\0';
+            var remainingTime = (games.Count - games.CountPlayed) * (games.AverageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
+            var estimatedEndTime = games.LastStarted + remainingTime;
+            var endingS = games.Count - games.CountPlayed != 1 ? 's' : '\0';
             return $"[{DateTime.UtcNow:HH:mm:ss}] {games.Count - games.CountPlayed} game{endingS} left. Average duration: {games.AverageGameTime:hh\\:mm\\:ss}. Estimated division end: {estimatedEndTime:R}.";
         }
     }

@@ -57,7 +57,7 @@
 
             var games = new List<Game>();
             string line;
-            int gameIndex = 0;
+            var gameIndex = 0;
 
             while ((line = stringReader.ReadLine()) != null)
             {

@@ -112,7 +112,7 @@
 
         private static string GetCp(string fenPosition, string lastStatsLine)
         {
-            if (int.TryParse(lastStatsLine.Split(" cp ")[1].Split(" ")[0], out int cp))
+            if (int.TryParse(lastStatsLine.Split(" cp ")[1].Split(" ")[0], out var cp))
             {
                 if (fenPosition.Contains(" b "))
                 {
@@ -122,7 +122,7 @@
                 return $"{cp / 100.0M:0.00}";
             }
 
-            if (int.TryParse(lastStatsLine.Split(" mate ")[1].Split(" ")[0], out int mate))
+            if (int.TryParse(lastStatsLine.Split(" mate ")[1].Split(" ")[0], out var mate))
             {
                 if (fenPosition.Contains(" b "))
                 {

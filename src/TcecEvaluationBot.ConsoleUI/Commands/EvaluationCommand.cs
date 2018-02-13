@@ -42,7 +42,7 @@
             var commandParts = message.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
             if (commandParts.Length > 1)
             {
-                for (int i = 1; i < commandParts.Length; i++)
+                for (var i = 1; i < commandParts.Length; i++)
                 {
                     if (int.TryParse(commandParts[i], out var moveTimeArgument) && moveTimeArgument >= 5
                                                                                 && moveTimeArgument <= 30)
@@ -76,17 +76,17 @@
             }
 
             string evaluationMessage;
-            if (engine.ToLower().Trim() == "komodo")
+            switch (engine.ToLower().Trim())
             {
-                evaluationMessage = this.komodoPositionEvaluator.GetEvaluation(fenPosition, moveTime);
-            }
-            else if (engine.ToLower().Trim() == "laser")
-            {
-                evaluationMessage = this.laserPositionEvaluator.GetEvaluation(fenPosition, moveTime);
-            }
-            else
-            {
-                evaluationMessage = this.stockfishPositionEvaluator.GetEvaluation(fenPosition, moveTime);
+                case "komodo":
+                    evaluationMessage = this.komodoPositionEvaluator.GetEvaluation(fenPosition, moveTime);
+                    break;
+                case "laser":
+                    evaluationMessage = this.laserPositionEvaluator.GetEvaluation(fenPosition, moveTime);
+                    break;
+                default:
+                    evaluationMessage = this.stockfishPositionEvaluator.GetEvaluation(fenPosition, moveTime);
+                    break;
             }
 
             return evaluationMessage;
