@@ -16,8 +16,8 @@
         [Option('s', "syzygyPath", Required = false, HelpText = "The path for syzygy table base.")]
         public string SyzygyPath { get; set; }
 
-        [Option('m', "moveTime", Default = 10000, HelpText = "Time (in milliseconds) for the engine to think.")]
-        public int MoveTime { get; set; }
+        [Option('m', "moveTime", Default = 10, HelpText = "Default time (in seconds) for the engine to think.")]
+        public int DefaultEvaluationTime { get; set; }
 
         [Option('t', "threads", Default = 2, HelpText = "The number of threads for the engine to run on.")]
         public int Threads { get; set; }
@@ -33,5 +33,11 @@
 
         [Option("contempt", Default = 0, HelpText = "The contempt value for chess engines.")]
         public int Contempt { get; set; }
+
+        [Option("minEvalTime", Default = 5, HelpText = "The minimum evaluation time (in seconds).")]
+        public int MinEvaluationTime { get; set; }
+
+        [Option("maxEvalTime", Default = 30, HelpText = "The maximum evaluation time (in seconds).")]
+        public int MaxEvaluationTime { get; set; }
     }
 }

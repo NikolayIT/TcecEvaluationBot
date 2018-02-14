@@ -38,14 +38,14 @@
         public string Execute(string message)
         {
             var engine = "stockfish"; // TODO: Add default engine to options
-            var moveTime = this.options.MoveTime;
+            var moveTime = this.options.DefaultEvaluationTime * 1000;
             var commandParts = message.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
             if (commandParts.Length > 1)
             {
                 for (var i = 1; i < commandParts.Length; i++)
                 {
-                    if (int.TryParse(commandParts[i], out var moveTimeArgument) && moveTimeArgument >= 5
-                                                                                && moveTimeArgument <= 30)
+                    if (int.TryParse(commandParts[i], out var moveTimeArgument) && moveTimeArgument >= this.options.MinEvaluationTime
+                                                                                && moveTimeArgument <= this.options.MaxEvaluationTime)
                     {
                         moveTime = moveTimeArgument * 1000;
                     }
