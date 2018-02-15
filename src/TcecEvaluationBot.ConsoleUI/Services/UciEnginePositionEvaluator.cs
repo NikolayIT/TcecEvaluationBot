@@ -74,7 +74,7 @@
                         var moveNumber = fenParts[fenParts.Length - 1].Trim();
                         var currentPlayer = fenPosition.Contains(" b ") ? 'b' : 'w';
                         var depth = lastStatsLine.Split(" depth ")[1].Split(" ")[0];
-                        var tableBaseHits = lastStatsLine.Split(" tbhits ")[1].Split(" ")[0];
+                        var tableBaseHits = lastStatsLine.Contains(" tbhits ") ? lastStatsLine.Split(" tbhits ")[1].Split(" ")[0] : "0";
                         var cp = GetCp(fenPosition, lastStatsLine);
                         var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
                         var ponder = currentLine.Contains("ponder ") ? currentLine.Split("ponder ")[1] : string.Empty;
@@ -83,8 +83,8 @@
                     }
 
                     // Komodo: info depth 99 time 33 nodes 197546 score mate -1 nps 5970267 hashfull 0 tbhits 0 pv a1a2 a7h7
-                    if (currentLine.Contains(" depth ") && currentLine.Contains(" tbhits ")
-                                                        && (currentLine.Contains(" cp ") || currentLine.Contains(" mate ")))
+                    if (currentLine.Contains(" depth ")
+                        && (currentLine.Contains(" cp ") || currentLine.Contains(" mate ")))
                     {
                         lastStatsLine = currentLine;
                     }
