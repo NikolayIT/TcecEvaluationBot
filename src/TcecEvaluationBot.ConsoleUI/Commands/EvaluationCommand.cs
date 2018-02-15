@@ -19,7 +19,9 @@
 
         private readonly Options options;
 
-        private readonly IList<Engine> engines;
+        private readonly IDictionary<string, IPositionEvaluator> engines;
+
+        private readonly string defaultEngine;
 
         private readonly HttpClient httpClient;
 
@@ -28,10 +30,21 @@
             this.twitchClient = twitchClient;
             this.options = options;
 
-            this.engines = new List<Engine>();
+            if (settings.Engines.Length == 0)
+            {
+                throw new Exception("No engines are registered.");
+            }
+
+            this.defaultEngine = settings.Engines.FirstOrDefault()?.Name?.ToLower().Trim();
+            this.engines = new Dictionary<string, IPositionEvaluator>();
             foreach (var engineSettings in settings.Engines)
             {
-                this.engines.Add(new Engine(engineSettings, options));
+                var typeName = $"TcecEvaluationBot.ConsoleUI.Services.{engineSettings.PositionEvaluator}";
+                var type = typeof(IPositionEvaluator).Assembly.GetType(typeName);
+                if (Activator.CreateInstance(type, options, engineSettings.Executable, engineSettings.Title) is IPositionEvaluator evaluator)
+                {
+                    this.engines.Add(engineSettings.Name.ToLower().Trim(), evaluator);
+                }
             }
 
             this.httpClient = new HttpClient();
@@ -39,7 +52,7 @@
 
         public string Execute(string message)
         {
-            var engine = this.engines.FirstOrDefault()?.Name; // First registered engine will be default one
+            var engine = this.defaultEngine;
             var moveTime = this.options.DefaultEvaluationTime * 1000;
             var commandParts = message.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
             if (commandParts.Length > 1)
@@ -51,7 +64,7 @@
                     {
                         moveTime = moveTimeArgument * 1000;
                     }
-                    else if (this.engines.Select(x => x.Name).Contains(commandParts[i].ToLower().Trim()))
+                    else if (this.engines.Keys.Contains(commandParts[i].ToLower().Trim()))
                     {
                         engine = commandParts[i].ToLower().Trim();
                     }
@@ -77,10 +90,7 @@
                 return null;
             }
 
-            var engine =
-                this.engines.FirstOrDefault(x => x.Name.ToLower().Trim() == engineName.ToLower().Trim())?.Evaluator
-                ?? this.engines.FirstOrDefault()?.Evaluator;
-
+            var engine = this.engines[engineName];
             var evaluationMessage = engine?.GetEvaluation(fenPosition, moveTime);
             return evaluationMessage;
         }
@@ -128,23 +138,6 @@
             var response = await this.httpClient.GetAsync($"{url}?noCache={Guid.NewGuid()}");
             var stringResult = await response.Content.ReadAsStringAsync();
             return stringResult;
-        }
-
-        private class Engine : EngineSettings
-        {
-            public Engine(EngineSettings engineSettings, Options options)
-            {
-                this.Name = engineSettings.Name;
-                this.Title = engineSettings.Title;
-                this.Executable = engineSettings.Executable;
-                this.PositionEvaluator = engineSettings.PositionEvaluator;
-
-                var typeName = $"TcecEvaluationBot.ConsoleUI.Services.{this.PositionEvaluator}";
-                var type = typeof(IPositionEvaluator).Assembly.GetType(typeName);
-                this.Evaluator = (IPositionEvaluator)Activator.CreateInstance(type, options, this.Executable, this.Title);
-            }
-
-            public IPositionEvaluator Evaluator { get; }
         }
     }
 }
