@@ -1,6 +1,7 @@
 ﻿namespace TcecEvaluationBot.ConsoleUI.Commands
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
@@ -8,6 +9,7 @@
     using System.Threading.Tasks;
 
     using TcecEvaluationBot.ConsoleUI.Services;
+    using TcecEvaluationBot.ConsoleUI.Settings;
 
     using TwitchLib;
 
@@ -17,29 +19,27 @@
 
         private readonly Options options;
 
-        private readonly string[] availableEngines = { "komodo", "stockfish", "laser", "ginkgo" };
-
-        private readonly IPositionEvaluator stockfishPositionEvaluator;
-        private readonly IPositionEvaluator komodoPositionEvaluator;
-        private readonly IPositionEvaluator laserPositionEvaluator;
-        private readonly IPositionEvaluator ginkgoPositionEvaluator;
+        private readonly IList<Engine> engines;
 
         private readonly HttpClient httpClient;
 
-        public EvaluationCommand(TwitchClient twitchClient, Options options)
+        public EvaluationCommand(TwitchClient twitchClient, Options options, Settings settings)
         {
             this.twitchClient = twitchClient;
             this.options = options;
-            this.stockfishPositionEvaluator = new UciEnginePositionEvaluator(options, "stockfish.exe", "SF_120218");
-            this.komodoPositionEvaluator = new UciEnginePositionEvaluator(options, "komodo.exe", "Komodo_11.2.2, Courtesy of K authors");
-            this.laserPositionEvaluator = new UciEnginePositionEvaluator(options, "laser.exe", "Laser_1.5");
-            this.ginkgoPositionEvaluator = new UciEnginePositionEvaluator(options, "ginkgo.exe", "Ginkgo_2.03, Courtesy of G authors");
+
+            this.engines = new List<Engine>();
+            foreach (var engineSettings in settings.Engines)
+            {
+                this.engines.Add(new Engine(engineSettings, options));
+            }
+
             this.httpClient = new HttpClient();
         }
 
         public string Execute(string message)
         {
-            var engine = "stockfish"; // TODO: Add default engine to options
+            var engine = this.engines.FirstOrDefault()?.Name; // First registered engine will be default one
             var moveTime = this.options.DefaultEvaluationTime * 1000;
             var commandParts = message.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
             if (commandParts.Length > 1)
@@ -51,7 +51,7 @@
                     {
                         moveTime = moveTimeArgument * 1000;
                     }
-                    else if (this.availableEngines.Contains(commandParts[i].ToLower().Trim()))
+                    else if (this.engines.Select(x => x.Name).Contains(commandParts[i].ToLower().Trim()))
                     {
                         engine = commandParts[i].ToLower().Trim();
                     }
@@ -67,7 +67,7 @@
             return evaluation;
         }
 
-        private string Evaluate(int moveTime, string engine)
+        private string Evaluate(int moveTime, string engineName)
         {
             var livePgnAsString = this.GetTextContent("http://tcec.chessdom.com/live/live.pgn").GetAwaiter().GetResult();
             var fenPosition = this.ConvertPgnToFen(livePgnAsString);
@@ -77,23 +77,11 @@
                 return null;
             }
 
-            string evaluationMessage;
-            switch (engine.ToLower().Trim())
-            {
-                case "komodo":
-                    evaluationMessage = this.komodoPositionEvaluator.GetEvaluation(fenPosition, moveTime);
-                    break;
-                case "laser":
-                    evaluationMessage = this.laserPositionEvaluator.GetEvaluation(fenPosition, moveTime);
-                    break;
-                case "ginkgo":
-                    evaluationMessage = this.ginkgoPositionEvaluator.GetEvaluation(fenPosition, moveTime);
-                    break;
-                default:
-                    evaluationMessage = this.stockfishPositionEvaluator.GetEvaluation(fenPosition, moveTime);
-                    break;
-            }
+            var engine =
+                this.engines.FirstOrDefault(x => x.Name.ToLower().Trim() == engineName.ToLower().Trim())?.Evaluator
+                ?? this.engines.FirstOrDefault()?.Evaluator;
 
+            var evaluationMessage = engine?.GetEvaluation(fenPosition, moveTime);
             return evaluationMessage;
         }
 
@@ -140,6 +128,23 @@
             var response = await this.httpClient.GetAsync($"{url}?noCache={Guid.NewGuid()}");
             var stringResult = await response.Content.ReadAsStringAsync();
             return stringResult;
+        }
+
+        private class Engine : EngineSettings
+        {
+            public Engine(EngineSettings engineSettings, Options options)
+            {
+                this.Name = engineSettings.Name;
+                this.Title = engineSettings.Title;
+                this.Executable = engineSettings.Executable;
+                this.PositionEvaluator = engineSettings.PositionEvaluator;
+
+                var typeName = $"TcecEvaluationBot.ConsoleUI.Services.{this.PositionEvaluator}";
+                var type = typeof(IPositionEvaluator).Assembly.GetType(typeName);
+                this.Evaluator = (IPositionEvaluator)Activator.CreateInstance(type, options, this.Executable, this.Title);
+            }
+
+            public IPositionEvaluator Evaluator { get; }
         }
     }
 }

@@ -26,6 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="laser.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

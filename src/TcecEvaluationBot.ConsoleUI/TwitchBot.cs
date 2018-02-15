@@ -16,15 +16,15 @@
 
         private readonly IList<CommandInfo> commands = new List<CommandInfo>();
 
-        public TwitchBot(Options options)
+        public TwitchBot(Options options, Settings.Settings settings)
         {
             this.options = options;
             var credentials = new ConnectionCredentials(options.TwitchUserName, options.TwitchAccessToken);
             this.twitchClient = new TwitchClient(credentials, options.TwitchChannelName);
-            this.commands.Add(new CommandInfo("eval", new EvaluationCommand(this.twitchClient, options)));
+            this.commands.Add(new CommandInfo("eval", new EvaluationCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("time", new TimeCommand()));
             this.commands.Add(new CommandInfo("games", new GamesCommand()));
-            //// Console.WriteLine(new GamesCommand().Execute("!games laser"));
+            //// Console.WriteLine(new GamesCommand().Execute("!time"));
             //// Console.ReadLine();
         }
 
