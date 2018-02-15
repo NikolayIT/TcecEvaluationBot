@@ -17,11 +17,12 @@
 
         private readonly Options options;
 
-        private readonly string[] availableEngines = { "komodo", "stockfish", "laser" };
+        private readonly string[] availableEngines = { "komodo", "stockfish", "laser", "ginkgo" };
 
         private readonly IPositionEvaluator stockfishPositionEvaluator;
         private readonly IPositionEvaluator komodoPositionEvaluator;
         private readonly IPositionEvaluator laserPositionEvaluator;
+        private readonly IPositionEvaluator ginkgoPositionEvaluator;
 
         private readonly HttpClient httpClient;
 
@@ -32,6 +33,7 @@
             this.stockfishPositionEvaluator = new UciEnginePositionEvaluator(options, "stockfish.exe", "SF_120218");
             this.komodoPositionEvaluator = new UciEnginePositionEvaluator(options, "komodo.exe", "Komodo_11.2.2, Courtesy of K authors");
             this.laserPositionEvaluator = new UciEnginePositionEvaluator(options, "laser.exe", "Laser_1.5");
+            this.ginkgoPositionEvaluator = new UciEnginePositionEvaluator(options, "ginkgo.exe", "Ginkgo_2.03, Courtesy of G authors");
             this.httpClient = new HttpClient();
         }
 
@@ -83,6 +85,9 @@
                     break;
                 case "laser":
                     evaluationMessage = this.laserPositionEvaluator.GetEvaluation(fenPosition, moveTime);
+                    break;
+                case "ginkgo":
+                    evaluationMessage = this.ginkgoPositionEvaluator.GetEvaluation(fenPosition, moveTime);
                     break;
                 default:
                     evaluationMessage = this.stockfishPositionEvaluator.GetEvaluation(fenPosition, moveTime);

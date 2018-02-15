@@ -44,6 +44,7 @@
 
             process.StandardInput.WriteLine($"setoption name Threads value {this.options.Threads}");
             process.StandardInput.WriteLine($"setoption name Hash value {this.options.HashSize}");
+            process.StandardInput.WriteLine($"setoption name Contempt value {this.options.Contempt}");
             if (!string.IsNullOrWhiteSpace(this.options.SyzygyPath))
             {
                 process.StandardInput.WriteLine($"setoption name SyzygyPath value {this.options.SyzygyPath}");
@@ -51,7 +52,6 @@
 
             process.StandardInput.WriteLine($"position fen {fenPosition}");
             process.StandardInput.WriteLine($"go movetime {moveTime}");
-            process.StandardInput.WriteLine($"setoption name Contempt value {this.options.Contempt}");
             process.StandardInput.Flush();
 
             string currentLine = null;
