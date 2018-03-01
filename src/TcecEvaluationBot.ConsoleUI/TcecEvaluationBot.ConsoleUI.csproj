@@ -29,9 +29,6 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="laser.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="pgn-extract.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
