@@ -28,7 +28,7 @@
         [Option("cooldownTime", Default = 30, HelpText = "Cooldown time (in seconds) for the evaluation command.")]
         public int CooldownTime { get; set; }
 
-        [Option("noThinkingMessage", Default = false, HelpText = "Show thinking message before starting the evaluation.")]
+        [Option("noThinkingMessage", Default = false, HelpText = "Do not show thinking message before starting the evaluation.")]
         public bool NoThinkingMessage { get; set; }
 
         [Option("contempt", Default = 0, HelpText = "The contempt value for chess engines.")]
