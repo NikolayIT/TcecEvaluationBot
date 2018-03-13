@@ -36,9 +36,44 @@
             var gameId = messageParts.Any(x => int.TryParse(x, out _))
                              ? int.Parse(messageParts.FirstOrDefault(x => int.TryParse(x, out _)))
                              : (int?)null;
-            return gameId.HasValue && gameId >= 1 && gameId <= games.Count
-                       ? GetGameInfo(games, gameId.Value)
-                       : GetRemainingDivisionTime(games);
+            if (gameId.HasValue && gameId >= 1 && gameId <= games.Count)
+            {
+                return GetGameInfo(games, gameId.Value);
+            }
+            else if (messageParts.Contains("last"))
+            {
+                return GetLastGameInfo(games);
+            }
+            else if (messageParts.Contains("next"))
+            {
+                return GetNextGameInfo(games);
+            }
+            else
+            {
+                return GetRemainingDivisionTime(games);
+            }
+        }
+
+        private static string GetLastGameInfo(GamesList games)
+        {
+            var lastGame = games.Games.OrderBy(x => x.Number).LastOrDefault(x => x.IsPlayed);
+            if (lastGame == null)
+            {
+                return $"[{DateTime.UtcNow:HH:mm:ss}] The division just started.";
+            }
+
+            return GetGameInfo(games, lastGame.Number);
+        }
+
+        private static string GetNextGameInfo(GamesList games)
+        {
+            var nextGame = games.Games.OrderBy(x => x.Number).FirstOrDefault(x => !x.Started.HasValue);
+            if (nextGame == null)
+            {
+                return $"[{DateTime.UtcNow:HH:mm:ss}] The next division will start soon.";
+            }
+
+            return GetGameInfo(games, nextGame.Number);
         }
 
         private static string GetGameInfo(GamesList games, int gameId)
