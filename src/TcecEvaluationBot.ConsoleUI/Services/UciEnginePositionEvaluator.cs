@@ -13,11 +13,14 @@
 
         private readonly string engineSignature;
 
-        public UciEnginePositionEvaluator(Options options, string executableFileName, string engineSignature)
+        private readonly string arguments;
+
+        public UciEnginePositionEvaluator(Options options, string executableFileName, string engineSignature, string arguments)
         {
             this.options = options;
             this.executableFileName = executableFileName;
             this.engineSignature = engineSignature;
+            this.arguments = arguments;
         }
 
         public string GetEvaluation(string fenPosition, int moveTime)
@@ -37,6 +40,7 @@
                                                       RedirectStandardInput = true,
                                                       RedirectStandardError = true,
                                                       CreateNoWindow = true,
+                                                      Arguments = this.arguments,
                                                   }
                               };
 
@@ -83,6 +87,7 @@
                     }
 
                     // Komodo: info depth 99 time 33 nodes 197546 score mate -1 nps 5970267 hashfull 0 tbhits 0 pv a1a2 a7h7
+                    // LCZero: info depth 22 nodes 23197 nps 2320 score cp 23 winrate 50.90% time 9995 pv e2e4 e7e5 g1f3 d7d6 d2d4 
                     if (currentLine.Contains(" depth ")
                         && (currentLine.Contains(" cp ") || currentLine.Contains(" mate ")))
                     {
