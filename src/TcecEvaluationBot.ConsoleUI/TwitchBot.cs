@@ -22,8 +22,8 @@
             var credentials = new ConnectionCredentials(options.TwitchUserName, options.TwitchAccessToken);
             this.twitchClient = new TwitchClient(credentials, options.TwitchChannelName);
             this.commands.Add(new CommandInfo("eval", new EvaluationCommand(this.twitchClient, options, settings)));
-            this.commands.Add(new CommandInfo("time", new TimeCommand()));
-            this.commands.Add(new CommandInfo("games", new GamesCommand()));
+            this.commands.Add(new CommandInfo("time", new TimeCommand(settings)));
+            this.commands.Add(new CommandInfo("games", new GamesCommand(settings)));
             this.commands.Add(new CommandInfo("rand", new RandCommand()));
             //// Console.WriteLine(new EvaluationCommand(this.twitchClient, options, settings).Execute("!eval lczero"));
             //// Console.ReadLine();

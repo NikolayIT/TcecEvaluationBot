@@ -11,20 +11,19 @@
 
     public class GamesInfoProvider
     {
+        private readonly string scheduleUrl;
+
         private readonly HttpClient httpClient;
 
-        public GamesInfoProvider()
+        public GamesInfoProvider(string scheduleUrl)
         {
+            this.scheduleUrl = scheduleUrl;
             this.httpClient = new HttpClient();
         }
 
         public GamesList GetGames()
         {
-            var gamesInfoString =
-                this.GetTextContent(
-                        "http://tcec.chessdom.com/archive/TCEC%20Season%2011%20-%20Superfinal%20Schedule.txt")
-                    .GetAwaiter()
-                    .GetResult();
+            var gamesInfoString = this.GetTextContent(this.scheduleUrl).GetAwaiter().GetResult();
 
             if (string.IsNullOrWhiteSpace(gamesInfoString))
             {

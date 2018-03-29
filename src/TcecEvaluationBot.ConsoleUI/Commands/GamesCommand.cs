@@ -6,14 +6,15 @@
 
     using TcecEvaluationBot.ConsoleUI.Services;
     using TcecEvaluationBot.ConsoleUI.Services.Models;
+    using TcecEvaluationBot.ConsoleUI.Settings;
 
     public class GamesCommand : ICommand
     {
         private readonly GamesInfoProvider gamesInfoProvider;
 
-        public GamesCommand()
+        public GamesCommand(Settings settings)
         {
-            this.gamesInfoProvider = new GamesInfoProvider();
+            this.gamesInfoProvider = new GamesInfoProvider(settings.ScheduleUrl);
         }
 
         public string Execute(string message)
