@@ -24,7 +24,8 @@
             this.commands.Add(new CommandInfo("eval", new EvaluationCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("time", new TimeCommand()));
             this.commands.Add(new CommandInfo("games", new GamesCommand()));
-            //// Console.WriteLine(new GamesCommand().Execute("!time"));
+            this.commands.Add(new CommandInfo("rand", new RandCommand()));
+            //// Console.WriteLine(new EvaluationCommand(this.twitchClient, options, settings).Execute("!eval lczero"));
             //// Console.ReadLine();
         }
 

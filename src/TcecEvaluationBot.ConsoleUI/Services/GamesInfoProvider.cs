@@ -22,7 +22,7 @@
         {
             var gamesInfoString =
                 this.GetTextContent(
-                        "http://tcec.chessdom.com/archive/TCEC%20Season%2011%20-%20Division%20P%20Schedule.txt")
+                        "http://tcec.chessdom.com/archive/TCEC%20Season%2011%20-%20Superfinal%20Schedule.txt")
                     .GetAwaiter()
                     .GetResult();
 
