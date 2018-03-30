@@ -4,7 +4,7 @@
     using System.Collections.Generic;
 
     using TcecEvaluationBot.ConsoleUI.Commands;
-    
+
     using TwitchLib.Client;
     using TwitchLib.Client.Models;
 

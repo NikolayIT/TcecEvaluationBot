@@ -107,7 +107,7 @@
                                                       UseShellExecute = false,
                                                       RedirectStandardOutput = true,
                                                       CreateNoWindow = true,
-                                                  }
+                                                  },
                               };
             process.Start();
 

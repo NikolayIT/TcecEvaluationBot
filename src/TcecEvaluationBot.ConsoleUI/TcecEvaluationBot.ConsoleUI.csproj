@@ -20,9 +20,17 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>..\Rules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\stylecop.json" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.2.1" />
     <PackageReference Include="TwitchLib" Version="2.0.1" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta006" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
