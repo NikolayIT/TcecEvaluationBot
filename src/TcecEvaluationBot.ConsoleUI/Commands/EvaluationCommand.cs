@@ -11,7 +11,7 @@
     using TcecEvaluationBot.ConsoleUI.Services;
     using TcecEvaluationBot.ConsoleUI.Settings;
 
-    using TwitchLib;
+    using TwitchLib.Client;
 
     public class EvaluationCommand : ICommand
     {

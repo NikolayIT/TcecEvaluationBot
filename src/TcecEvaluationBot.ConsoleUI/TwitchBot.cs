@@ -4,9 +4,9 @@
     using System.Collections.Generic;
 
     using TcecEvaluationBot.ConsoleUI.Commands;
-
-    using TwitchLib;
-    using TwitchLib.Models.Client;
+    
+    using TwitchLib.Client;
+    using TwitchLib.Client.Models;
 
     public class TwitchBot
     {
@@ -19,8 +19,8 @@
         public TwitchBot(Options options, Settings.Settings settings)
         {
             this.options = options;
-            var credentials = new ConnectionCredentials(options.TwitchUserName, options.TwitchAccessToken);
-            this.twitchClient = new TwitchClient(credentials, options.TwitchChannelName);
+            this.twitchClient = new TwitchClient();
+
             this.commands.Add(new CommandInfo("eval", new EvaluationCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("time", new TimeCommand(settings)));
             this.commands.Add(new CommandInfo("games", new GamesCommand(settings)));
@@ -31,6 +31,8 @@
 
         public void Run()
         {
+            var credentials = new ConnectionCredentials(this.options.TwitchUserName, this.options.TwitchAccessToken);
+            this.twitchClient.Initialize(credentials, this.options.TwitchChannelName);
             this.twitchClient.OnConnected += (sender, arguments) => this.Log("Connected!");
             this.twitchClient.OnJoinedChannel += (sender, arguments) => this.Log($"Joined to {arguments.Channel}!");
             this.twitchClient.OnMessageReceived += (sender, arguments) =>

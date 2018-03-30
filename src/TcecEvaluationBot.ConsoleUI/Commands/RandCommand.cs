@@ -18,7 +18,7 @@
             {
                 var randomNumber = this.LongRandom(Math.Min(firstValue, secondValue), Math.Max(firstValue, secondValue) + 1);
                 return
-                    $"[{DateTime.UtcNow:HH:mm:ss}] Random number between {Math.Min(firstValue, secondValue)} and {Math.Max(firstValue, secondValue)}: {randomNumber}";
+                    $"[{DateTime.UtcNow:HH:mm:ss}] Random number [{Math.Min(firstValue, secondValue)}-{Math.Max(firstValue, secondValue)}]: {randomNumber}";
             }
             else
             {
