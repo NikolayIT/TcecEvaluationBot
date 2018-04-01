@@ -8,12 +8,9 @@
     {
         public Settings ParseSettings(string appSettingsFileName)
         {
-            if (File.Exists(appSettingsFileName))
-            {
-                return JsonConvert.DeserializeObject<Settings>(File.ReadAllText(appSettingsFileName));
-            }
-
-            return new Settings();
+            return File.Exists(appSettingsFileName)
+                       ? JsonConvert.DeserializeObject<Settings>(File.ReadAllText(appSettingsFileName))
+                       : new Settings();
         }
     }
 }

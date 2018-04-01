@@ -58,23 +58,17 @@
         private static string GetLastGameInfo(GamesList games)
         {
             var lastGame = games.Games.OrderBy(x => x.Number).LastOrDefault(x => x.IsPlayed);
-            if (lastGame == null)
-            {
-                return $"[{DateTime.UtcNow:HH:mm:ss}] The division just started.";
-            }
-
-            return GetGameInfo(games, lastGame.Number);
+            return lastGame == null
+                       ? $"[{DateTime.UtcNow:HH:mm:ss}] The division just started."
+                       : GetGameInfo(games, lastGame.Number);
         }
 
         private static string GetNextGameInfo(GamesList games)
         {
             var nextGame = games.Games.OrderBy(x => x.Number).FirstOrDefault(x => !x.Started.HasValue);
-            if (nextGame == null)
-            {
-                return $"[{DateTime.UtcNow:HH:mm:ss}] The next division will start soon.";
-            }
-
-            return GetGameInfo(games, nextGame.Number);
+            return nextGame == null
+                       ? $"[{DateTime.UtcNow:HH:mm:ss}] The next division will start soon."
+                       : GetGameInfo(games, nextGame.Number);
         }
 
         private static string GetGameInfo(GamesList games, int gameId)
