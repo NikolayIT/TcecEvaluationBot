@@ -7,7 +7,7 @@
     using TcecEvaluationBot.ConsoleUI.Services.Models;
     using TcecEvaluationBot.ConsoleUI.Settings;
 
-    public class TimeCommand : ICommand
+    public class TimeCommand : BaseCommand
     {
         private readonly GamesInfoProvider gamesInfoProvider;
 
@@ -16,7 +16,7 @@
             this.gamesInfoProvider = new GamesInfoProvider(settings.ScheduleUrl);
         }
 
-        public string Execute(string message)
+        public override string Execute(string message)
         {
             GamesList games;
             try

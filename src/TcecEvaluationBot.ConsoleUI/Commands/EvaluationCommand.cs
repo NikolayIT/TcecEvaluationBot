@@ -2,18 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
     using System.Linq;
-    using System.Net.Http;
-    using System.Threading.Tasks;
 
     using TcecEvaluationBot.ConsoleUI.Services;
     using TcecEvaluationBot.ConsoleUI.Settings;
 
     using TwitchLib.Client;
 
-    public class EvaluationCommand : ICommand
+    public class EvaluationCommand : BaseCommand
     {
         private readonly TwitchClient twitchClient;
 
@@ -23,7 +19,7 @@
 
         private readonly string defaultEngine;
 
-        private readonly HttpClient httpClient;
+        private readonly CurrentGameInfoProvider currentGameInfoProvider;
 
         public EvaluationCommand(TwitchClient twitchClient, Options options, Settings settings)
         {
@@ -47,10 +43,10 @@
                 }
             }
 
-            this.httpClient = new HttpClient();
+            this.currentGameInfoProvider = new CurrentGameInfoProvider();
         }
 
-        public string Execute(string message)
+        public override string Execute(string message)
         {
             var engine = this.defaultEngine;
             var moveTime = this.options.DefaultEvaluationTime * 1000;
@@ -82,62 +78,15 @@
 
         private string Evaluate(int moveTime, string engineName)
         {
-            var livePgnAsString = this.GetTextContent("http://tcec.chessdom.com/live/live.pgn").GetAwaiter().GetResult();
-            var fenPosition = this.ConvertPgnToFen(livePgnAsString);
+            var fenPosition = this.currentGameInfoProvider.GetFen();
             if (fenPosition == null)
             {
-                Console.WriteLine("Invalid fen! See if file.pgn contains a valid PGN.");
-                return null;
+                return "fenPosition is null. No active game?";
             }
 
             var engine = this.engines[engineName];
             var evaluationMessage = engine?.GetEvaluation(fenPosition, moveTime);
             return evaluationMessage;
-        }
-
-        private string ConvertPgnToFen(string livePgnAsString)
-        {
-            File.WriteAllText("file.pgn", livePgnAsString);
-            var process = new Process
-                              {
-                                  StartInfo = new ProcessStartInfo
-                                                  {
-                                                      FileName = "pgn-extract.exe",
-                                                      Arguments = "-F file.pgn",
-                                                      UseShellExecute = false,
-                                                      RedirectStandardOutput = true,
-                                                      CreateNoWindow = true,
-                                                  },
-                              };
-            process.Start();
-
-            var lastMeaningfulLine = string.Empty;
-            while (!process.StandardOutput.EndOfStream)
-            {
-                var currentLine = process.StandardOutput.ReadLine();
-                if (currentLine != string.Empty && currentLine != "*")
-                {
-                    lastMeaningfulLine = currentLine;
-                    //// Console.WriteLine(lastMeaningfulLine);
-                }
-            }
-
-            var outputParts = lastMeaningfulLine?.Split("\"");
-            string fenPosition = null;
-            if (outputParts?.Length > 2)
-            {
-                fenPosition = outputParts[1];
-                //// Console.WriteLine(fenPosition);
-            }
-
-            return fenPosition;
-        }
-
-        private async Task<string> GetTextContent(string url)
-        {
-            var response = await this.httpClient.GetAsync($"{url}?noCache={Guid.NewGuid()}");
-            var stringResult = await response.Content.ReadAsStringAsync();
-            return stringResult;
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class RandCommand : ICommand
+    public class RandCommand : BaseCommand
     {
         private readonly Random random;
 
@@ -11,7 +11,7 @@
             this.random = new Random();
         }
 
-        public string Execute(string message)
+        public override string Execute(string message)
         {
             var parts = message.Split(" ");
             if (parts.Length >= 3 && long.TryParse(parts[1], out var firstValue) && long.TryParse(parts[2], out var secondValue))
