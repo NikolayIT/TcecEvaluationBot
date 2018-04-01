@@ -20,19 +20,16 @@
                 return
                     $"[{DateTime.UtcNow:HH:mm:ss}] Random number [{Math.Min(firstValue, secondValue)}-{Math.Max(firstValue, secondValue)}]: {randomNumber}";
             }
-            else
-            {
-                return
-                    $"[{DateTime.UtcNow:HH:mm:ss}] Usage: !eval [minNumber] [maxNumber]";
-            }
+
+            return $"[{DateTime.UtcNow:HH:mm:ss}] Usage: !eval [minNumber] [maxNumber]";
         }
 
-        private long LongRandom(long min, long max)
+        public long LongRandom(long min, long max)
         {
-            long result = this.random.Next((int)(min >> 32), (int)(max >> 32));
-            result = result << 32;
-            result = result | (long)this.random.Next((int)min, (int)max);
-            return result;
+            var buf = new byte[8];
+            this.random.NextBytes(buf);
+            var longRand = BitConverter.ToInt64(buf, 0);
+            return Math.Abs(longRand % (max - min)) + min;
         }
     }
 }
