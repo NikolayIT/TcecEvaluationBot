@@ -25,8 +25,8 @@
             this.commands.Add(new CommandInfo("time", new TimeCommand(settings)));
             this.commands.Add(new CommandInfo("games", new GamesCommand(settings)));
             this.commands.Add(new CommandInfo("rand", new RandCommand()));
-            //// Console.WriteLine(new EvaluationCommand(this.twitchClient, options, settings).Execute("!eval lczero"));
-            //// Console.ReadLine();
+            this.commands.Add(new CommandInfo("db", new DbCommand()));
+            //// Console.WriteLine(new DbCommand().Execute("!db")); Console.ReadLine();
         }
 
         public void Run()
@@ -43,21 +43,28 @@
                             || arguments.ChatMessage.Message.Trim().StartsWith($"!{command.Text} "))
                         {
                             this.Log($"Received \"{arguments.ChatMessage.Message}\" from {arguments.ChatMessage.Username}");
-
-                            string message;
-                            if ((DateTime.UtcNow - command.LastMessage).TotalSeconds < this.options.CooldownTime)
+                            try
                             {
-                                var cooldownRemaining = this.options.CooldownTime - (DateTime.UtcNow - command.LastMessage).TotalSeconds;
-                                message = $"[{DateTime.UtcNow:HH:mm:ss}] \"!{command.Text}\" will be available in {cooldownRemaining:0.0} sec.";
-                            }
-                            else
-                            {
-                                command.LastMessage = DateTime.UtcNow;
-                                message = command.Command.Execute(arguments.ChatMessage.Message);
-                            }
+                                string message;
+                                if ((DateTime.UtcNow - command.LastMessage).TotalSeconds < this.options.CooldownTime)
+                                {
+                                    var cooldownRemaining = this.options.CooldownTime - (DateTime.UtcNow - command.LastMessage).TotalSeconds;
+                                    message = $"[{DateTime.UtcNow:HH:mm:ss}] \"!{command.Text}\" will be available in {cooldownRemaining:0.0} sec.";
+                                }
+                                else
+                                {
+                                    command.LastMessage = DateTime.UtcNow;
+                                    message = command.Command.Execute(arguments.ChatMessage.Message);
+                                }
 
-                            this.twitchClient.SendMessage(message);
-                            this.Log($"Responded with \"{message}\"");
+                                this.twitchClient.SendMessage(message);
+                                this.Log($"Responded with \"{message}\"");
+                            }
+                            catch (Exception ex)
+                            {
+                                this.twitchClient.SendMessage($"[{DateTime.UtcNow:HH:mm:ss}] Error: {ex.Message}");
+                                this.Log($"Error while executing \"{arguments.ChatMessage.Message}\": {ex.ToString()}");
+                            }
                         }
                     }
                 };
