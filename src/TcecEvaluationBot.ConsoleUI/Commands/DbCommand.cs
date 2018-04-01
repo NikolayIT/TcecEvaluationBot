@@ -26,7 +26,7 @@
             sb.Append($"[{DateTime.UtcNow:HH:mm:ss}] ");
 
             // Stats
-            sb.Append($"W:{positionInfo.White} / D:{positionInfo.Draws} / B:{positionInfo.Black} -- ");
+            sb.Append($"+{positionInfo.White}={positionInfo.Draws}-{positionInfo.Black} -- ");
 
             // Moves
             if (positionInfo.Moves.Length == 0)
@@ -35,10 +35,10 @@
             }
             else
             {
-                for (int i = 0; i < Math.Min(positionInfo.Moves.Length, 2); i++)
+                for (int i = 0; i < Math.Min(positionInfo.Moves.Length, 3); i++)
                 {
                     var move = positionInfo.Moves[i];
-                    sb.Append($"Move {move.San} (W:{move.White}/D:{move.Draws}/B:{move.Black}) -- ");
+                    sb.Append($"{move.San} (+{move.White}={move.Draws}-{move.Black}) -- ");
                 }
             }
 
@@ -52,11 +52,11 @@
                 for (int i = 0; i < Math.Min(positionInfo.TopGames.Length, 2); i++)
                 {
                     var topGame = positionInfo.TopGames[i];
-                    sb.Append($"Game: [{topGame.Year}] {topGame.White.Name} ({topGame.White.Rating}) vs {topGame.Black.Name} ({topGame.Black.Rating}): {topGame.Winner} -- ");
+                    sb.Append($"[{topGame.Year}] {topGame.White.Name} ({topGame.White.Rating}) vs {topGame.Black.Name} ({topGame.Black.Rating}): {topGame.Winner} -- ");
                 }
             }
 
-            return sb.ToString().Trim('-', ' ');
+            return sb.ToString().Trim('-', ' ') + " <Lichess DB>";
         }
     }
 }
