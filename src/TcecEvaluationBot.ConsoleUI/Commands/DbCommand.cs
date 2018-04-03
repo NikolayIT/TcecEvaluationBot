@@ -20,10 +20,15 @@
         public override string Execute(string message)
         {
             var fen = this.currentGameInfoProvider.GetFen();
+            if (string.IsNullOrWhiteSpace(fen))
+            {
+                return $"[{DateTime.UtcNow:HH:mm:ss}] No active game?";
+            }
+
             var positionInfo = this.lichessPositionDataProvider.GetPositionInfo(fen);
             var sb = new StringBuilder();
 
-            sb.Append($"[{DateTime.UtcNow:HH:mm:ss}] ");
+            sb.Append($"[{DateTime.UtcNow:HH:mm:ss}] ({fen.GetMoveInfoFromFen()}) ");
 
             // Stats
             sb.Append($"+{positionInfo.White}={positionInfo.Draws}-{positionInfo.Black} -- ");
@@ -31,7 +36,7 @@
             // Moves
             if (positionInfo.Moves.Length == 0)
             {
-                sb.Append("No moves info -- ");
+                sb.Append("No moves -- ");
             }
             else
             {
@@ -45,7 +50,7 @@
             // Games
             if (positionInfo.TopGames.Length == 0)
             {
-                sb.Append("No games info -- ");
+                sb.Append("No games -- ");
             }
             else
             {
