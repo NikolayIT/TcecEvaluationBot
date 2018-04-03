@@ -26,7 +26,8 @@
             this.commands.Add(new CommandInfo("games", new GamesCommand(settings)));
             this.commands.Add(new CommandInfo("rand", new RandCommand()));
             this.commands.Add(new CommandInfo("db", new DbCommand()));
-            //// Console.WriteLine(new DbCommand().Execute("!db")); Console.ReadLine();
+            this.commands.Add(new CommandInfo("position", new PositionCommand()));
+            //// Console.WriteLine(new PositionCommand().Execute("!position")); Console.ReadLine();
         }
 
         public void Run()
