@@ -2,17 +2,16 @@
 {
     using System;
     using System.Diagnostics;
-    using System.IO;
     using System.Text;
     using System.Threading;
 
     using TcecEvaluationBot.ConsoleUI.Services;
 
-    public class PositionCommand : BaseCommand
+    public class StaticCommand : BaseCommand
     {
         private readonly CurrentGameInfoProvider currentGameInfoProvider;
 
-        public PositionCommand()
+        public StaticCommand()
         {
             this.currentGameInfoProvider = new CurrentGameInfoProvider();
         }
