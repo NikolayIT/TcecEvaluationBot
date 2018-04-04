@@ -27,6 +27,7 @@
             this.commands.Add(new CommandInfo("rand", new RandCommand()));
             this.commands.Add(new CommandInfo("db", new DbCommand()));
             this.commands.Add(new CommandInfo("static", new StaticCommand()));
+            this.commands.Add(new CommandInfo("evalhelp", new EvalHelpCommand()));
             //// Console.WriteLine(new PositionCommand().Execute("!position")); Console.ReadLine();
         }
 
@@ -58,7 +59,7 @@
                                     message = command.Command.Execute(arguments.ChatMessage.Message);
                                 }
 
-                                this.twitchClient.SendMessage(message);
+                                this.twitchClient.SendMessage($"/me {message}");
                                 this.Log($"Responded with \"{message}\"");
                             }
                             catch (Exception ex)

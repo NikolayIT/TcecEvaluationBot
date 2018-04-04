@@ -61,7 +61,7 @@
                 }
             }
 
-            return sb.ToString().Trim('-', ' ') + " <Lichess DB>";
+            return sb.ToString().Trim('-', ' ') + " <Lichess>";
         }
     }
 }
