@@ -24,34 +24,15 @@
                 return $"[{DateTime.UtcNow:HH:mm:ss}] No active game?";
             }
 
-            var process = new Process
-                              {
-                                  StartInfo = new ProcessStartInfo
-                                                  {
-                                                      FileName = "stockfish.exe",
-                                                      UseShellExecute = false,
-                                                      RedirectStandardOutput = true,
-                                                      RedirectStandardInput = true,
-                                                      RedirectStandardError = true,
-                                                      CreateNoWindow = true,
-                                                  },
-                              };
-
-            process.Start();
-
-            process.StandardInput.WriteLine($"position fen {fen}");
-            process.StandardInput.WriteLine("eval");
-            process.StandardInput.Flush();
-            Thread.Sleep(200);
-            if (!process.HasExited)
+            var info = GetStaticEvaluationLines(fen);
+            if (info.Length == 0)
             {
-                process.Kill();
+                return $"[{DateTime.UtcNow:HH:mm:ss}] Unable to get static evaluation";
             }
 
             var result = new StringBuilder();
             result.Append($"[{DateTime.UtcNow:HH:mm:ss}] ({fen.GetMoveInfoFromFen()}) ");
 
-            var info = process.StandardOutput.ReadToEnd().Split(Environment.NewLine);
             result.Append(this.GetPositionInfoFromLine(info[18]));
             for (var i = 4; i < 17; i++)
             {
@@ -61,6 +42,44 @@
             result.Append("<Stockfish>");
 
             return result.ToString();
+        }
+
+        private static string[] GetStaticEvaluationLines(string fen)
+        {
+            for (var i = 0; i < 4; i++)
+            {
+                var process = new Process
+                                  {
+                                      StartInfo = new ProcessStartInfo
+                                                      {
+                                                          FileName = "stockfish.exe",
+                                                          UseShellExecute = false,
+                                                          RedirectStandardOutput = true,
+                                                          RedirectStandardInput = true,
+                                                          RedirectStandardError = true,
+                                                          CreateNoWindow = true,
+                                                      },
+                                  };
+
+                process.Start();
+
+                process.StandardInput.WriteLine($"position fen {fen}");
+                process.StandardInput.WriteLine("eval");
+                process.StandardInput.Flush();
+                Thread.Sleep(300);
+                if (!process.HasExited)
+                {
+                    process.Kill();
+                }
+
+                var info = process.StandardOutput.ReadToEnd().Split(Environment.NewLine);
+                if (info.Length > 18)
+                {
+                    return info;
+                }
+            }
+
+            return new string[0];
         }
 
         private string GetPositionInfoFromLine(string line)
