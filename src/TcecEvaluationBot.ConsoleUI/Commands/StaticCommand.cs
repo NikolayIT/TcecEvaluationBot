@@ -21,17 +21,17 @@
             var fen = this.currentGameInfoProvider.GetFen();
             if (string.IsNullOrWhiteSpace(fen))
             {
-                return $"[{DateTime.UtcNow:HH:mm:ss}] No active game?";
+                return "No active game?";
             }
 
             var info = GetStaticEvaluationLines(fen);
             if (info.Length == 0)
             {
-                return $"[{DateTime.UtcNow:HH:mm:ss}] Unable to get static evaluation";
+                return "Unable to get static evaluation";
             }
 
             var result = new StringBuilder();
-            result.Append($"[{DateTime.UtcNow:HH:mm:ss}] ({fen.GetMoveInfoFromFen()}) ");
+            result.Append($"({fen.GetMoveInfoFromFen()}) ");
 
             result.Append(this.GetPositionInfoFromLine(info[18]));
             for (var i = 4; i < 17; i++)

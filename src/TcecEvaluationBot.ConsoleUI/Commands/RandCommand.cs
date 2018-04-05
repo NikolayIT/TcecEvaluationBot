@@ -17,11 +17,10 @@
             if (parts.Length >= 3 && long.TryParse(parts[1], out var firstValue) && long.TryParse(parts[2], out var secondValue))
             {
                 var randomNumber = this.LongRandom(Math.Min(firstValue, secondValue), Math.Max(firstValue, secondValue) + 1);
-                return
-                    $"[{DateTime.UtcNow:HH:mm:ss}] Random number [{Math.Min(firstValue, secondValue)}-{Math.Max(firstValue, secondValue)}]: {randomNumber}";
+                return $"Random number [{Math.Min(firstValue, secondValue)}-{Math.Max(firstValue, secondValue)}]: {randomNumber}";
             }
 
-            return $"[{DateTime.UtcNow:HH:mm:ss}] Usage: !eval [minNumber] [maxNumber]";
+            return "Usage: !eval [minNumber] [maxNumber]";
         }
 
         public long LongRandom(long min, long max)

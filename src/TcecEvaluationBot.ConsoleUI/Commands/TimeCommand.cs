@@ -25,12 +25,12 @@
             }
             catch (Exception)
             {
-                return $"[{DateTime.UtcNow:HH:mm:ss}] Unable to retrieve schedule data.";
+                return "Unable to retrieve schedule data.";
             }
 
             if (games.CountPlayed == 0)
             {
-                return $"[{DateTime.UtcNow:HH:mm:ss}] No games played.";
+                return "No games played.";
             }
 
             var messageParts = message.Split(" ");
@@ -58,17 +58,13 @@
         private static string GetLastGameInfo(GamesList games)
         {
             var lastGame = games.Games.OrderBy(x => x.Number).LastOrDefault(x => x.IsPlayed);
-            return lastGame == null
-                       ? $"[{DateTime.UtcNow:HH:mm:ss}] The division just started."
-                       : GetGameInfo(games, lastGame.Number);
+            return lastGame == null ? "The division has just started." : GetGameInfo(games, lastGame.Number);
         }
 
         private static string GetNextGameInfo(GamesList games)
         {
             var nextGame = games.Games.OrderBy(x => x.Number).FirstOrDefault(x => !x.Started.HasValue);
-            return nextGame == null
-                       ? $"[{DateTime.UtcNow:HH:mm:ss}] The next division will start soon."
-                       : GetGameInfo(games, nextGame.Number);
+            return nextGame == null ? "The next division will start soon." : GetGameInfo(games, nextGame.Number);
         }
 
         private static string GetGameInfo(GamesList games, int gameId)
@@ -77,22 +73,22 @@
             var game = games.Games.FirstOrDefault(x => x.Number == gameId);
             if (game == null)
             {
-                return $"[{DateTime.UtcNow:HH:mm:ss}] Game with number {gameId} not found!";
+                return $"Game with number {gameId} not found!";
             }
 
             if (game.IsPlayed)
             {
-                return $"[{DateTime.UtcNow:HH:mm:ss}] Game \"{game.WhiteName}\" vs \"{game.BlackName}\" finished with result \"{game.Result}\"";
+                return $"Game \"{game.WhiteName}\" vs \"{game.BlackName}\" finished with result \"{game.Result}\"";
             }
 
             if (game.Started.HasValue)
             {
-                return $"[{DateTime.UtcNow:HH:mm:ss}] Game \"{game.WhiteName}\" vs \"{game.BlackName}\" started at {game.Started:R}";
+                return $"Game \"{game.WhiteName}\" vs \"{game.BlackName}\" started at {game.Started:R}";
             }
 
             var remainingTime = (gameId - games.CountPlayed - 1) * (games.AverageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
             var estimatedStartTime = games.LastStarted + remainingTime;
-            return $"[{DateTime.UtcNow:HH:mm:ss}] Game \"{game.WhiteName}\" vs \"{game.BlackName}\" is estimated to start on {estimatedStartTime:R}";
+            return $"Game \"{game.WhiteName}\" vs \"{game.BlackName}\" is estimated to start on {estimatedStartTime:R}";
         }
 
         private static string GetRemainingDivisionTime(GamesList games)
@@ -100,7 +96,7 @@
             var remainingTime = (games.Count - games.CountPlayed) * (games.AverageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
             var estimatedEndTime = games.LastStarted + remainingTime;
             var endingS = games.Count - games.CountPlayed != 1 ? 's' : '\0';
-            return $"[{DateTime.UtcNow:HH:mm:ss}] {games.Count - games.CountPlayed} game{endingS} left. Average duration: {games.AverageGameTime:hh\\:mm\\:ss}. Estimated division end: {estimatedEndTime:R}.";
+            return $"{games.Count - games.CountPlayed} game{endingS} left. Average duration: {games.AverageGameTime:hh\\:mm\\:ss}. Estimated division end: {estimatedEndTime:R}.";
         }
     }
 }

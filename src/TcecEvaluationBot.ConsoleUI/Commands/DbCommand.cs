@@ -22,13 +22,13 @@
             var fen = this.currentGameInfoProvider.GetFen();
             if (string.IsNullOrWhiteSpace(fen))
             {
-                return $"[{DateTime.UtcNow:HH:mm:ss}] No active game?";
+                return "No active game?";
             }
 
             var positionInfo = this.lichessPositionDataProvider.GetPositionInfo(fen);
             var sb = new StringBuilder();
 
-            sb.Append($"[{DateTime.UtcNow:HH:mm:ss}] ({fen.GetMoveInfoFromFen()}) ");
+            sb.Append($"({fen.GetMoveInfoFromFen()}) ");
 
             // Stats
             sb.Append($"+{positionInfo.White}={positionInfo.Draws}-{positionInfo.Black} -- ");

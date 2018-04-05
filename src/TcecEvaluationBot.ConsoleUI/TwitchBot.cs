@@ -51,7 +51,7 @@
                                 if ((DateTime.UtcNow - command.LastMessage).TotalSeconds < this.options.CooldownTime)
                                 {
                                     var cooldownRemaining = this.options.CooldownTime - (DateTime.UtcNow - command.LastMessage).TotalSeconds;
-                                    message = $"[{DateTime.UtcNow:HH:mm:ss}] \"!{command.Text}\" will be available in {cooldownRemaining:0.0} sec.";
+                                    message = $"\"!{command.Text}\" will be available in {cooldownRemaining:0.0} sec.";
                                 }
                                 else
                                 {
@@ -59,7 +59,14 @@
                                     message = command.Command.Execute(arguments.ChatMessage.Message);
                                 }
 
-                                this.twitchClient.SendMessage($"/me {message}");
+                                if (message.Contains(" pv ") && message.Contains(" (tb "))
+                                {
+                                    // TODO: This workaround should be removed when duplicate message handler is implemented
+                                    // Evaluation command should not start with time
+                                    this.twitchClient.SendMessage($"/me {message}");
+                                }
+
+                                this.twitchClient.SendMessage($"/me [{DateTime.UtcNow:HH:mm:ss}] {message}");
                                 this.Log($"Responded with \"{message}\"");
                             }
                             catch (Exception ex)

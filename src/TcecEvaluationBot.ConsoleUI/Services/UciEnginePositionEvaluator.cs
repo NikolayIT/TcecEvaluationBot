@@ -109,7 +109,7 @@
 
             Thread.Sleep(2000);
             Console.WriteLine($"Last line: \"{currentLine}\"");
-            return $"[{DateTime.UtcNow:HH:mm:ss}] No active game? Please try again.";
+            return "No active game? Please try again.";
         }
 
         private static string GetCp(string fenPosition, string lastStatsLine)
