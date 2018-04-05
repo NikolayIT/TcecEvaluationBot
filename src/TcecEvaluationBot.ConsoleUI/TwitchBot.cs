@@ -33,6 +33,7 @@
 
         public void Run()
         {
+            string lastMessage = null;
             var credentials = new ConnectionCredentials(this.options.TwitchUserName, this.options.TwitchAccessToken);
             this.twitchClient.Initialize(credentials, this.options.TwitchChannelName);
             this.twitchClient.OnConnected += (sender, arguments) => this.Log("Connected!");
@@ -48,25 +49,23 @@
                             try
                             {
                                 string message;
-                                if ((DateTime.UtcNow - command.LastMessage).TotalSeconds < this.options.CooldownTime)
+                                var cooldownRemaining = this.options.CooldownTime - (DateTime.UtcNow - command.LastMessage).TotalSeconds;
+                                if (cooldownRemaining >= 0.1)
                                 {
-                                    var cooldownRemaining = this.options.CooldownTime - (DateTime.UtcNow - command.LastMessage).TotalSeconds;
-                                    message = $"\"!{command.Text}\" will be available in {cooldownRemaining:0.0} sec.";
+                                    message = $"[{DateTime.UtcNow:HH:mm:ss}] \"!{command.Text}\" will be available in {cooldownRemaining:0.0} sec.";
+                                    this.twitchClient.SendMessage(message);
                                 }
                                 else
                                 {
                                     command.LastMessage = DateTime.UtcNow;
                                     message = command.Command.Execute(arguments.ChatMessage.Message);
+                                    this.twitchClient.SendMessage(
+                                        message != lastMessage
+                                            ? $"/me {message}"
+                                            : $"/me [{DateTime.UtcNow:HH:mm:ss}] {message}");
+                                    lastMessage = message;
                                 }
 
-                                if (message.Contains(" pv ") && message.Contains(" (tb "))
-                                {
-                                    // TODO: This workaround should be removed when duplicate message handler is implemented
-                                    // Evaluation command should not start with time
-                                    this.twitchClient.SendMessage($"/me {message}");
-                                }
-
-                                this.twitchClient.SendMessage($"/me [{DateTime.UtcNow:HH:mm:ss}] {message}");
                                 this.Log($"Responded with \"{message}\"");
                             }
                             catch (Exception ex)
