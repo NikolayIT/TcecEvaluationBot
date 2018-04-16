@@ -6,14 +6,15 @@
     using System.Threading;
 
     using TcecEvaluationBot.ConsoleUI.Services;
+    using TcecEvaluationBot.ConsoleUI.Settings;
 
     public class StaticCommand : BaseCommand
     {
         private readonly CurrentGameInfoProvider currentGameInfoProvider;
 
-        public StaticCommand()
+        public StaticCommand(Settings settings)
         {
-            this.currentGameInfoProvider = new CurrentGameInfoProvider();
+            this.currentGameInfoProvider = new CurrentGameInfoProvider(settings.LivePgnUrl);
         }
 
         public override string Execute(string message)

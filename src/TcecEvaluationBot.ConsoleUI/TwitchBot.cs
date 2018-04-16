@@ -25,8 +25,8 @@
             this.commands.Add(new CommandInfo("time", new TimeCommand(settings)));
             this.commands.Add(new CommandInfo("games", new GamesCommand(settings)));
             this.commands.Add(new CommandInfo("rand", new RandCommand()));
-            this.commands.Add(new CommandInfo("db", new DbCommand()));
-            this.commands.Add(new CommandInfo("static", new StaticCommand()));
+            this.commands.Add(new CommandInfo("db", new DbCommand(settings)));
+            this.commands.Add(new CommandInfo("static", new StaticCommand(settings)));
             this.commands.Add(new CommandInfo("evalhelp", new EvalHelpCommand()));
             //// Console.WriteLine(new PositionCommand().Execute("!position")); Console.ReadLine();
         }

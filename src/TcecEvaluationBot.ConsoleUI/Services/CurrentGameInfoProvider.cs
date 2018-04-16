@@ -8,16 +8,19 @@
 
     public class CurrentGameInfoProvider
     {
+        private readonly string livePgnUrl;
+
         private readonly HttpClient httpClient;
 
-        public CurrentGameInfoProvider()
+        public CurrentGameInfoProvider(string livePgnUrl)
         {
+            this.livePgnUrl = livePgnUrl;
             this.httpClient = new HttpClient();
         }
 
         public string GetFen()
         {
-            var livePgnAsString = this.GetTextContent("http://tcec.chessdom.com/live/live.pgn").GetAwaiter().GetResult();
+            var livePgnAsString = this.GetTextContent(this.livePgnUrl).GetAwaiter().GetResult();
             var fenPosition = this.ConvertPgnToFen(livePgnAsString);
             if (fenPosition == null)
             {

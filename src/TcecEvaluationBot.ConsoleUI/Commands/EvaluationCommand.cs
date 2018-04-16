@@ -43,7 +43,7 @@
                 }
             }
 
-            this.currentGameInfoProvider = new CurrentGameInfoProvider();
+            this.currentGameInfoProvider = new CurrentGameInfoProvider(settings.LivePgnUrl);
         }
 
         public override string Execute(string message)

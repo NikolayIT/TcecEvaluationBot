@@ -4,6 +4,7 @@
     using System.Text;
 
     using TcecEvaluationBot.ConsoleUI.Services;
+    using TcecEvaluationBot.ConsoleUI.Settings;
 
     public class DbCommand : BaseCommand
     {
@@ -11,9 +12,9 @@
 
         private readonly LichessPositionDataProvider lichessPositionDataProvider;
 
-        public DbCommand()
+        public DbCommand(Settings settings)
         {
-            this.currentGameInfoProvider = new CurrentGameInfoProvider();
+            this.currentGameInfoProvider = new CurrentGameInfoProvider(settings.LivePgnUrl);
             this.lichessPositionDataProvider = new LichessPositionDataProvider();
         }
 
