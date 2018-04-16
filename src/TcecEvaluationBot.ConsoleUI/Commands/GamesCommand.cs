@@ -62,10 +62,12 @@
                        + games.Games.Count(x => x.BlackName == engineName && x.Result == "0 1");
             var losses = games.Games.Count(x => x.WhiteName == engineName && x.Result == "0 1")
                        + games.Games.Count(x => x.BlackName == engineName && x.Result == "1 0");
+            var points = wins + (0.5M * draws);
 
             var gamesCount = wins + draws + losses;
-            var endingS = gamesCount != 1 ? 's' : '\0';
-            return $"\"{engineName}\": {wins + draws + losses} game{endingS}: +{wins}={draws}-{losses}";
+            var gamesEndingS = gamesCount != 1 ? 's' : '\0';
+            var pointsEndingS = points != 1 ? 's' : '\0';
+            return $"\"{engineName}\": {wins + draws + losses} game{gamesEndingS}: +{wins}={draws}-{losses} ({points} point{pointsEndingS})";
         }
 
         private string GetAllStats()
