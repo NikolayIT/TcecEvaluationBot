@@ -37,22 +37,23 @@
             var gameId = messageParts.Any(x => int.TryParse(x, out _))
                              ? int.Parse(messageParts.FirstOrDefault(x => int.TryParse(x, out _)))
                              : (int?)null;
+
             if (gameId.HasValue && gameId >= 1 && gameId <= games.Count)
             {
                 return GetGameInfo(games, gameId.Value);
             }
-            else if (messageParts.Contains("last"))
+
+            if (messageParts.Contains("last"))
             {
                 return GetLastGameInfo(games);
             }
-            else if (messageParts.Contains("next"))
+
+            if (messageParts.Contains("next"))
             {
                 return GetNextGameInfo(games);
             }
-            else
-            {
-                return GetRemainingDivisionTime(games);
-            }
+
+            return GetRemainingDivisionTime(games);
         }
 
         private static string GetLastGameInfo(GamesList games)
