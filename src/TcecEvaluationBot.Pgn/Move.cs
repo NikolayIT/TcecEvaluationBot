@@ -7,5 +7,7 @@
         public Color Color { get; set; }
 
         public string San { get; set; }
+
+        public string Comment { get; set; }
     }
 }
