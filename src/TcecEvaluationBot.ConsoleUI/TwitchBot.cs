@@ -28,7 +28,8 @@
             this.commands.Add(new CommandInfo("db", new DbCommand(settings)));
             this.commands.Add(new CommandInfo("static", new StaticCommand(settings)));
             this.commands.Add(new CommandInfo("evalhelp", new EvalHelpCommand()));
-            //// Console.WriteLine(new PositionCommand().Execute("!position")); Console.ReadLine();
+            this.commands.Add(new CommandInfo("reverse", new ReverseCommand(settings)));
+            //// Console.WriteLine(new ReverseCommand(settings).Execute("!reverse")); Console.ReadLine();
         }
 
         public void Run()
