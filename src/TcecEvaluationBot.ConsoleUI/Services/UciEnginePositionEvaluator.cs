@@ -5,6 +5,7 @@
     using System.IO;
     using System.Threading;
 
+    // ReSharper disable once UnusedMember.Global
     public class UciEnginePositionEvaluator : IPositionEvaluator
     {
         private readonly Options options;

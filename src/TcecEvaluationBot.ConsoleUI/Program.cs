@@ -1,6 +1,9 @@
 ﻿namespace TcecEvaluationBot.ConsoleUI
 {
     using System;
+    using System.Globalization;
+    using System.Text;
+    using System.Threading;
 
     using CommandLine;
 
@@ -10,6 +13,9 @@
     {
         public static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.Unicode;
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
             var settingsParser = new SettingsParser();
             var settings = settingsParser.ParseSettings("appsettings.json");
 

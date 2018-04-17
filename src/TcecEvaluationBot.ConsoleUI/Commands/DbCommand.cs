@@ -15,7 +15,7 @@
         public DbCommand(Settings settings)
         {
             this.currentGameInfoProvider = new CurrentGameInfoProvider(settings.LivePgnUrl);
-            this.lichessPositionDataProvider = new LichessPositionDataProvider();
+            this.lichessPositionDataProvider = new LichessPositionDataProvider(settings.LichessDbUrl);
         }
 
         public override string Execute(string message)
@@ -32,33 +32,33 @@
             sb.Append($"({fen.GetMoveInfoFromFen()}) ");
 
             // Stats
-            sb.Append($"+{positionInfo.White}={positionInfo.Draws}-{positionInfo.Black} -- ");
+            sb.Append($"+{positionInfo.White}={positionInfo.Draws}-{positionInfo.Black} • ");
 
             // Moves
             if (positionInfo.Moves.Length == 0)
             {
-                sb.Append("No moves -- ");
+                sb.Append("No moves • ");
             }
             else
             {
-                for (int i = 0; i < Math.Min(positionInfo.Moves.Length, 3); i++)
+                for (var i = 0; i < Math.Min(positionInfo.Moves.Length, 3); i++)
                 {
                     var move = positionInfo.Moves[i];
-                    sb.Append($"{move.San} (+{move.White}={move.Draws}-{move.Black}) -- ");
+                    sb.Append($"{move.San} (+{move.White}={move.Draws}-{move.Black}) • ");
                 }
             }
 
             // Games
             if (positionInfo.TopGames.Length == 0)
             {
-                sb.Append("No games -- ");
+                sb.Append("No games • ");
             }
             else
             {
-                for (int i = 0; i < Math.Min(positionInfo.TopGames.Length, 2); i++)
+                for (var i = 0; i < Math.Min(positionInfo.TopGames.Length, 2); i++)
                 {
                     var topGame = positionInfo.TopGames[i];
-                    sb.Append($"[{topGame.Year}] {topGame.White.Name} ({topGame.White.Rating}) vs {topGame.Black.Name} ({topGame.Black.Rating}): {topGame.Winner} -- ");
+                    sb.Append($"[{topGame.Year}] {topGame.White.Name} ({topGame.White.Rating}) vs {topGame.Black.Name} ({topGame.Black.Rating}): {topGame.Winner} • ");
                 }
             }
 
