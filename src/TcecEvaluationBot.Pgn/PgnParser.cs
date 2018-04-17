@@ -33,7 +33,7 @@
                                 games.Add(currentGame);
                             }
 
-                            currentGame = new Game();
+                            currentGame = new Game { Id = games.Count + 1 };
                             inTags = true;
                             currentMove = 1;
                             currentColor = Color.White;
@@ -138,7 +138,10 @@
                 moveInfo.Append(ch);
             }
 
-            if (moveInfo.Length > 0 && moveInfo[moveInfo.Length - 1] != '.' && moveInfo.ToString() != "1/2-1/2" && moveInfo.ToString() != "1-0" && moveInfo.ToString() != "0-1")
+            var moveInfoString = moveInfo.ToString();
+            if (moveInfoString.Length > 0 && moveInfoString[moveInfoString.Length - 1] != '.'
+                                          && moveInfoString != "1/2-1/2" && moveInfoString != "1-0"
+                                          && moveInfoString != "0-1" && moveInfoString != "*")
             {
                 moves.Add(new Move { San = moveInfo.ToString() });
             }
