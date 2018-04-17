@@ -36,12 +36,24 @@
             return $"Game #{reverseGame.Id} \"{reverseGame.White}\" vs. \"{reverseGame.Black}\": {this.ToShortNotation(reverseGame)}";
         }
 
-        public string ToShortNotation(Game game, int firstNMoves = 30)
+        public string ToShortNotation(Game game, int firstNPlies = 30)
         {
             var movesBuilder = new StringBuilder();
-            for (var index = 0; index < Math.Min(game.Moves.Count, firstNMoves * 2); index++)
+
+            if (game.Moves.Any(x => x.Comment == "book"))
             {
-                var move = game.Moves[index];
+                movesBuilder.Append("[book] ");
+            }
+
+            var moves = game.Moves.Where(x => x.Comment != "book").ToList();
+            for (var index = 0; index < Math.Min(moves.Count, firstNPlies); index++)
+            {
+                var move = moves[index];
+                if (index == 0 && move.Color == Color.Black)
+                {
+                    movesBuilder.Append($"{move.Number}... ");
+                }
+
                 if (move.Color == Color.White)
                 {
                     movesBuilder.Append($"{move.Number}. ");
@@ -50,7 +62,7 @@
                 movesBuilder.Append($"{move.San} ");
             }
 
-            if (game.Moves.Count > firstNMoves)
+            if (moves.Count > firstNPlies)
             {
                 movesBuilder.Append("... ");
             }
