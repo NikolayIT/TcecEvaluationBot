@@ -1,16 +1,31 @@
 ﻿namespace TcecEvaluationBot.ConsoleUI.Commands
 {
+    using System.Linq;
+
+    using TcecEvaluationBot.ConsoleUI.Settings;
+
     public class EvalHelpCommand : BaseCommand
     {
+        private readonly Settings settings;
+
+        private readonly Options options;
+
+        public EvalHelpCommand(Settings settings, Options options)
+        {
+            this.settings = settings;
+            this.options = options;
+        }
+
         public override string Execute(string message)
         {
-            return @"Available commands: 
-!eval [engine] [time] - evaluates current position; 
-!time [gameNum] - estimates start time for a given game or the end time for the division; 
-!games [engine] - calculates wins/draws/loses for a given engine; 
-!rand [min] [max] - generates a random number between min and max; 
-!db - looks up the current position in the Lichess DB; 
-!static - runs static evaluation for the current position with SF";
+            return $@"Commands: 
+!eval {{engine({this.settings.Engines.FirstOrDefault()?.Name})}} {{time({this.options.DefaultEvaluationTime})}} • 
+!time {{gameNum|last|next}} • 
+!games {{engine}} • 
+!rand [min] [max] • 
+!db • 
+!static • 
+!reverse";
         }
     }
 }

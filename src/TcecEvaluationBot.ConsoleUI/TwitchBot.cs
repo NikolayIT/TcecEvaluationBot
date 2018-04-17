@@ -27,7 +27,7 @@
             this.commands.Add(new CommandInfo("rand", new RandCommand()));
             this.commands.Add(new CommandInfo("db", new DbCommand(settings)));
             this.commands.Add(new CommandInfo("static", new StaticCommand(settings)));
-            this.commands.Add(new CommandInfo("evalhelp", new EvalHelpCommand()));
+            this.commands.Add(new CommandInfo("evalhelp", new EvalHelpCommand(settings, options)));
             this.commands.Add(new CommandInfo("reverse", new ReverseCommand(settings)));
             //// Console.WriteLine(new ReverseCommand(settings).Execute("!reverse")); Console.ReadLine();
         }
