@@ -18,14 +18,9 @@
 
         public override string Execute(string message)
         {
-            return $@"Commands: 
+            return $@"commands: 
 !eval {{engine({this.settings.Engines.FirstOrDefault()?.Name})}} {{time({this.options.DefaultEvaluationTime})}} • 
-!time {{gameNum|last|next}} • 
-!games {{engine}} • 
-!rand [min] [max] • 
-!db • 
-!static • 
-!reverse";
+!db • !time {{gameNum|last|next}} • !games {{engine}} • !static • !reverse • !rand [min] [max]";
         }
     }
 }

@@ -37,7 +37,7 @@
             result.Append(this.GetPositionInfoFromLine(info[18]));
             for (var i = 4; i < 17; i++)
             {
-                result.Append(this.GetPositionInfoFromLine(info[i]));
+                result.Append(" • " + this.GetPositionInfoFromLine(info[i]));
             }
 
             result.Append("<Stockfish>");

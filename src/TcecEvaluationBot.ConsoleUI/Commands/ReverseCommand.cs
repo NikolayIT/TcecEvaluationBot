@@ -27,6 +27,15 @@
             }
 
             var currentGame = this.archiveInfoProvider.GetCurrentGame();
+
+            var countOfTheSameGame = gamesList.Games.Count(
+                x => (x.White == currentGame.White && x.Black == currentGame.Black)
+                     || (x.White == currentGame.Black && x.Black == currentGame.White));
+            if (countOfTheSameGame % 2 == 0)
+            {
+                return "Reverse game not found.";
+            }
+
             var reverseGame = gamesList.Games.LastOrDefault(x => x.White == currentGame.Black && x.Black == currentGame.White);
             if (reverseGame == null)
             {

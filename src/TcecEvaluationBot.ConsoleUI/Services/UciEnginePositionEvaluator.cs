@@ -80,7 +80,7 @@
                         var cp = GetCp(fenPosition, lastStatsLine);
                         var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
                         var ponder = currentLine.Contains("ponder ") ? currentLine.Split("ponder ")[1] : string.Empty;
-                        var outputMessage = $"{cp} d{depth} (tb {tableBaseHits}) pv {best} {ponder} ({fenPosition.GetMoveInfoFromFen()}) <{this.engineSignature}>";
+                        var outputMessage = $"({fenPosition.GetMoveInfoFromFen()}) {cp} d{depth} (tb {tableBaseHits}) pv {best} {ponder} <{this.engineSignature}>";
                         return outputMessage;
                     }
 
