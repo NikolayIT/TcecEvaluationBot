@@ -4,6 +4,7 @@
     using System.Collections.Generic;
 
     using TcecEvaluationBot.ConsoleUI.Commands;
+    using TcecEvaluationBot.ConsoleUI.Services;
 
     using TwitchLib.Client;
     using TwitchLib.Client.Models;
@@ -14,12 +15,15 @@
 
         private readonly TwitchClient twitchClient;
 
+        private readonly ILogger logger;
+
         private readonly IList<CommandInfo> commands = new List<CommandInfo>();
 
         public TwitchBot(Options options, Settings.Settings settings)
         {
             this.options = options;
             this.twitchClient = new TwitchClient();
+            this.logger = new FileLogger("log.txt");
 
             this.commands.Add(new CommandInfo("eval", new EvaluationCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("time", new TimeCommand(settings)));
@@ -41,6 +45,7 @@
             this.twitchClient.OnJoinedChannel += (sender, arguments) => this.Log($"Joined to {arguments.Channel}!");
             this.twitchClient.OnMessageReceived += (sender, arguments) =>
                 {
+                    this.logger.Log($"RECEIVED: {arguments.ChatMessage.Username}: {arguments.ChatMessage.Message}");
                     foreach (var command in this.commands)
                     {
                         if (arguments.ChatMessage.Message == $"!{command.Text}"
@@ -55,15 +60,18 @@
                                 {
                                     message = $"[{DateTime.UtcNow:HH:mm:ss}] \"!{command.Text}\" will be available in {cooldownRemaining:0.0} sec.";
                                     this.twitchClient.SendMessage(message);
+                                    this.logger.Log($"SENT: {message}");
                                 }
                                 else
                                 {
                                     command.LastMessage = DateTime.UtcNow;
                                     message = command.Command.Execute(arguments.ChatMessage.Message);
-                                    this.twitchClient.SendMessage(
+                                    var messageToSend =
                                         message != lastMessage
                                             ? $"/me {message}"
-                                            : $"/me [{DateTime.UtcNow:HH:mm:ss}] {message}");
+                                            : $"/me [{DateTime.UtcNow:HH:mm:ss}] {message}";
+                                    this.twitchClient.SendMessage(messageToSend);
+                                    this.logger.Log($"SENT: {messageToSend}");
                                     lastMessage = message;
                                 }
 
@@ -71,6 +79,7 @@
                             }
                             catch (Exception ex)
                             {
+                                this.logger.Log($"ERROR: {ex}");
                                 this.twitchClient.SendMessage($"[{DateTime.UtcNow:HH:mm:ss}] Error: {ex.Message}");
                                 this.Log($"Error while executing \"{arguments.ChatMessage.Message}\": {ex.ToString()}");
                             }
