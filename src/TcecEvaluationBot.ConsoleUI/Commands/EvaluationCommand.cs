@@ -31,7 +31,7 @@
                 throw new Exception("No engines are registered.");
             }
 
-            this.defaultEngine = settings.Engines.FirstOrDefault()?.Name?.ToLower().Trim();
+            this.defaultEngine = settings.Engines.FirstOrDefault()?.Names?.FirstOrDefault()?.ToLower().Trim();
             this.engines = new Dictionary<string, IPositionEvaluator>();
             foreach (var engineSettings in settings.Engines)
             {
@@ -39,7 +39,10 @@
                 var type = typeof(IPositionEvaluator).Assembly.GetType(typeName);
                 if (Activator.CreateInstance(type, options, engineSettings.Executable, engineSettings.Title, engineSettings.Arguments) is IPositionEvaluator evaluator)
                 {
-                    this.engines.Add(engineSettings.Name.ToLower().Trim(), evaluator);
+                    foreach (var engineName in engineSettings.Names)
+                    {
+                        this.engines.Add(engineName.ToLower().Trim(), evaluator);
+                    }
                 }
             }
 

@@ -1,8 +1,10 @@
 ﻿namespace TcecEvaluationBot.ConsoleUI.Settings
 {
+    using System.Collections.Generic;
+
     public class EngineSettings
     {
-        public string Name { get; set; }
+        public IEnumerable<string> Names { get; set; }
 
         public string Executable { get; set; }
 
