@@ -67,7 +67,11 @@
                 if (!string.IsNullOrWhiteSpace(durationText))
                 {
                     var timeParts = durationText.Split(':');
-                    var duration = new TimeSpan(0, int.Parse(timeParts[0]), int.Parse(timeParts[1]), int.Parse(timeParts[2]));
+                    var duration = new TimeSpan(
+                        0,
+                        int.Parse(timeParts[0]),
+                        int.Parse(timeParts[1]),
+                        int.Parse(timeParts[2]));
                     game.Duration = duration;
                     //// Console.WriteLine(timeSpan);
                 }

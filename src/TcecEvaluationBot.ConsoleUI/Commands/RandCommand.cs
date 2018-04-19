@@ -20,7 +20,7 @@
                 return $"Random number [{Math.Min(firstValue, secondValue)}; {Math.Max(firstValue, secondValue)}]: {randomNumber}";
             }
 
-            return "Usage: !eval [minNumber] [maxNumber]";
+            return "Usage: !rand [minNumber] [maxNumber]";
         }
 
         public long LongRandom(long min, long max)

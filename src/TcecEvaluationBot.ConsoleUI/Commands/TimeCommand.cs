@@ -99,7 +99,7 @@
             var endingS = games.Count - games.CountPlayed != 1 ? 's' : '\0';
             var longestGame = games.Games.Where(x => x.IsPlayed).OrderByDescending(x => x.Duration).FirstOrDefault()?.Duration;
             var shortestGame = games.Games.Where(x => x.IsPlayed).OrderBy(x => x.Duration).FirstOrDefault()?.Duration;
-            return $"{games.Count - games.CountPlayed} game{endingS} left. Average duration: {games.AverageGameTime:hh\\:mm\\:ss}. Estimated division end: {estimatedEndTime:R}. Shortest game: {shortestGame:hh\\:mm\\:ss}. Longest game: {longestGame:hh\\:mm\\:ss}";
+            return $"{games.Count - games.CountPlayed}/{games.Count} game{endingS} left. Average duration: {games.AverageGameTime:hh\\:mm\\:ss}. Estimated division end: {estimatedEndTime:R}. Shortest game: {shortestGame:hh\\:mm\\:ss}. Longest game: {longestGame:hh\\:mm\\:ss}";
         }
     }
 }
