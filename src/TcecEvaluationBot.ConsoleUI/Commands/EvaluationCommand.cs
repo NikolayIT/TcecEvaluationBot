@@ -58,9 +58,18 @@
             {
                 for (var i = 1; i < commandParts.Length; i++)
                 {
-                    if (int.TryParse(commandParts[i], out var moveTimeArgument) && moveTimeArgument >= this.options.MinEvaluationTime
-                                                                                && moveTimeArgument <= this.options.MaxEvaluationTime)
+                    if (int.TryParse(commandParts[i], out var moveTimeArgument))
                     {
+                        if (moveTimeArgument > this.options.MaxEvaluationTime)
+                        {
+                            moveTimeArgument = this.options.MaxEvaluationTime;
+                        }
+
+                        if (moveTimeArgument < this.options.MinEvaluationTime)
+                        {
+                            moveTimeArgument = this.options.MinEvaluationTime;
+                        }
+
                         moveTime = moveTimeArgument * 1000;
                     }
                     else if (this.engines.Keys.Contains(commandParts[i].ToLower().Trim()))
