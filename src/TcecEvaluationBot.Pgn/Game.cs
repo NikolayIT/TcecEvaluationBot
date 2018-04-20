@@ -22,5 +22,7 @@
         public string White => this.Tags.FirstOrDefault(x => x.Name == "White")?.Value;
 
         public string Black => this.Tags.FirstOrDefault(x => x.Name == "Black")?.Value;
+
+        public string Event => this.Tags.FirstOrDefault(x => x.Name == "Event")?.Value;
     }
 }

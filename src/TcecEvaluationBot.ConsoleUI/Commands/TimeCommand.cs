@@ -53,6 +53,11 @@
                 return GetNextGameInfo(games);
             }
 
+            if (messageParts.Contains("reverse"))
+            {
+                return GetReverseGameInfo(games);
+            }
+
             return GetRemainingDivisionTime(games);
         }
 
@@ -68,6 +73,35 @@
             return nextGame == null ? "The next division will start soon." : GetGameInfo(games, nextGame.Number);
         }
 
+        private static string GetReverseGameInfo(GamesList games)
+        {
+            var currentGame = games.Games.OrderBy(x => x.Number).FirstOrDefault(x => !x.IsPlayed);
+            if (currentGame == null)
+            {
+                return "No active game?";
+            }
+
+            var sameGamesCount = games.Games.Count(
+                x => ((x.WhiteName == currentGame.WhiteName && x.BlackName == currentGame.BlackName)
+                     || (x.WhiteName == currentGame.BlackName && x.BlackName == currentGame.WhiteName)) && x.IsPlayed);
+            if (sameGamesCount % 2 == 0)
+            {
+                var nextGame = games.Games.OrderBy(x => x.Number).Where(
+                        x => (x.WhiteName == currentGame.WhiteName && x.BlackName == currentGame.BlackName)
+                             || (x.WhiteName == currentGame.BlackName && x.BlackName == currentGame.WhiteName))
+                    .FirstOrDefault(x => !x.Started.HasValue);
+                return nextGame == null ? "Next reverse game not found." : GetGameInfo(games, nextGame.Number);
+            }
+            else
+            {
+                var previousGame = games.Games.OrderBy(x => x.Number).Where(
+                        x => (x.WhiteName == currentGame.WhiteName && x.BlackName == currentGame.BlackName)
+                             || (x.WhiteName == currentGame.BlackName && x.BlackName == currentGame.WhiteName))
+                    .LastOrDefault(x => x.IsPlayed);
+                return previousGame == null ? "Previous reverse game not found." : GetGameInfo(games, previousGame.Number);
+            }
+        }
+
         private static string GetGameInfo(GamesList games, int gameId)
         {
             // Check game start time
@@ -79,7 +113,7 @@
 
             if (game.IsPlayed)
             {
-                return $"Game #{game.Number} \"{game.WhiteName}\" vs \"{game.BlackName}\" finished with result \"{game.Result}\" for {game.Duration:hh\\:mm\\:ss}";
+                return $"Game #{game.Number} \"{game.WhiteName}\" vs \"{game.BlackName}\" finished with result \"{game.Result}\" for {game.Duration:hh\\:mm\\:ss} on {game.Started + game.Duration:R}";
             }
 
             if (game.Started.HasValue)
@@ -89,7 +123,8 @@
 
             var remainingTime = (gameId - games.CountPlayed - 1) * (games.AverageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
             var estimatedStartTime = games.LastStarted + remainingTime;
-            return $"Game #{game.Number} \"{game.WhiteName}\" vs \"{game.BlackName}\" is estimated to start on {estimatedStartTime:R}";
+            var timeRemaining = estimatedStartTime - DateTime.UtcNow;
+            return $"Game #{game.Number} \"{game.WhiteName}\" vs \"{game.BlackName}\" is estimated to start on {estimatedStartTime:R} (After {(int)timeRemaining.TotalHours}h {timeRemaining.Minutes}')";
         }
 
         private static string GetRemainingDivisionTime(GamesList games)

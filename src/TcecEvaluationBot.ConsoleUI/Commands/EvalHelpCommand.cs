@@ -20,7 +20,7 @@
         {
             return $@"commands: 
 !eval {{engine({this.settings.Engines.FirstOrDefault()?.Names.FirstOrDefault()})}} {{time({this.options.DefaultEvaluationTime})}} • 
-!db • !time {{gameNum|last|next}} • !games {{engine}} • !static • !reverse • !rand [min] [max]";
+!db • !static • !time {{#|last|next|reverse}} • !games {{engine}} • !reverse • !rand [min] [max]";
         }
     }
 }
