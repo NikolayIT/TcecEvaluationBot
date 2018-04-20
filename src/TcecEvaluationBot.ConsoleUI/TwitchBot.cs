@@ -59,7 +59,7 @@
                                 if (cooldownRemaining >= 0.1)
                                 {
                                     message = $"[{DateTime.UtcNow:HH:mm:ss}] \"!{command.Text}\" will be available in {cooldownRemaining:0.0} sec.";
-                                    this.twitchClient.SendMessage(message);
+                                    this.twitchClient.SendMessage(this.options.TwitchChannelName, message);
                                     this.logger.Log($"SENT: {message}");
                                 }
                                 else
@@ -70,7 +70,7 @@
                                         message != lastMessage
                                             ? $"/me {message}"
                                             : $"/me [{DateTime.UtcNow:HH:mm:ss}] {message}";
-                                    this.twitchClient.SendMessage(messageToSend);
+                                    this.twitchClient.SendMessage(this.options.TwitchChannelName, messageToSend);
                                     this.logger.Log($"SENT: {messageToSend}");
                                     lastMessage = message;
                                 }
@@ -80,7 +80,7 @@
                             catch (Exception ex)
                             {
                                 this.logger.Log($"ERROR: {ex}");
-                                this.twitchClient.SendMessage($"[{DateTime.UtcNow:HH:mm:ss}] Error: {ex.Message}");
+                                this.twitchClient.SendMessage(this.options.TwitchChannelName, $"[{DateTime.UtcNow:HH:mm:ss}] Error: {ex.Message}");
                                 this.Log($"Error while executing \"{arguments.ChatMessage.Message}\": {ex.ToString()}");
                             }
                         }
