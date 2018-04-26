@@ -10,6 +10,8 @@
     {
         private readonly Options options;
 
+        private readonly MoveConversionService moveConversion;
+
         private readonly string executableFileName;
 
         private readonly string engineSignature;
@@ -19,6 +21,7 @@
         public UciEnginePositionEvaluator(Options options, string executableFileName, string engineSignature, string arguments)
         {
             this.options = options;
+            this.moveConversion = new MoveConversionService();
             this.executableFileName = executableFileName;
             this.engineSignature = engineSignature;
             this.arguments = arguments;
@@ -80,7 +83,7 @@
                         var cp = GetCp(fenPosition, lastStatsLine);
                         var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
                         var ponder = currentLine.Contains("ponder ") ? currentLine.Split("ponder ")[1] : string.Empty;
-                        var outputMessage = $"({fenPosition.GetMoveInfoFromFen()}) {cp} d{depth} (tb {tableBaseHits}) pv {best} {ponder} <{this.engineSignature}>";
+                        var outputMessage = $"({fenPosition.GetMoveInfoFromFen()}) {cp} d{depth} (tb {tableBaseHits}) pv {this.moveConversion.AlgebraicToSan(fenPosition, best)}({best}) {this.moveConversion.AlgebraicToSan(fenPosition, best, ponder)}({ponder}) <{this.engineSignature}>";
                         return outputMessage;
                     }
 

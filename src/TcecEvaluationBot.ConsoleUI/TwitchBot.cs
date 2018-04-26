@@ -33,7 +33,7 @@
             this.commands.Add(new CommandInfo("static", new StaticCommand(settings)));
             this.commands.Add(new CommandInfo("evalhelp", new EvalHelpCommand(settings, options)));
             this.commands.Add(new CommandInfo("reverse", new ReverseCommand(settings)));
-            //// Console.WriteLine(new ReverseCommand(settings).Execute("!reverse")); Console.ReadLine();
+            //// Console.WriteLine(new EvaluationCommand(this.twitchClient, options, settings).Execute("!eval 5")); Console.ReadLine();
         }
 
         public void Run()
