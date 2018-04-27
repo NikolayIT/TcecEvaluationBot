@@ -23,7 +23,7 @@
         {
             this.options = options;
             this.twitchClient = new TwitchClient();
-            this.logger = new FileLogger("log.txt");
+            this.logger = new FileLogger($"log_{DateTime.UtcNow:yyyy-MM-dd}.txt");
 
             this.commands.Add(new CommandInfo("eval", new EvaluationCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("time", new TimeCommand(this.twitchClient, options, settings)));
@@ -31,8 +31,9 @@
             this.commands.Add(new CommandInfo("rand", new RandCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("db", new DbCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("static", new StaticCommand(this.twitchClient, options, settings)));
-            this.commands.Add(new CommandInfo("evalhelp", new EvalHelpCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("reverse", new ReverseCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("evalhelp", new EvalHelpCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("evalengines", new EvalEnginesCommand(this.twitchClient, options, settings)));
             //// Console.WriteLine(new EvaluationCommand(this.twitchClient, options, settings).Execute("!eval 5")); Console.ReadLine();
         }
 
