@@ -26,13 +26,13 @@
             this.logger = new FileLogger("log.txt");
 
             this.commands.Add(new CommandInfo("eval", new EvaluationCommand(this.twitchClient, options, settings)));
-            this.commands.Add(new CommandInfo("time", new TimeCommand(settings)));
-            this.commands.Add(new CommandInfo("games", new GamesCommand(settings)));
-            this.commands.Add(new CommandInfo("rand", new RandCommand()));
-            this.commands.Add(new CommandInfo("db", new DbCommand(settings)));
-            this.commands.Add(new CommandInfo("static", new StaticCommand(settings)));
-            this.commands.Add(new CommandInfo("evalhelp", new EvalHelpCommand(settings, options)));
-            this.commands.Add(new CommandInfo("reverse", new ReverseCommand(settings)));
+            this.commands.Add(new CommandInfo("time", new TimeCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("games", new GamesCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("rand", new RandCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("db", new DbCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("static", new StaticCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("evalhelp", new EvalHelpCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("reverse", new ReverseCommand(this.twitchClient, options, settings)));
             //// Console.WriteLine(new EvaluationCommand(this.twitchClient, options, settings).Execute("!eval 5")); Console.ReadLine();
         }
 

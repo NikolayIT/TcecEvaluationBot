@@ -8,11 +8,14 @@
     using TcecEvaluationBot.ConsoleUI.Services;
     using TcecEvaluationBot.ConsoleUI.Settings;
 
+    using TwitchLib.Client;
+
     public class StaticCommand : BaseCommand
     {
         private readonly CurrentGameInfoProvider currentGameInfoProvider;
 
-        public StaticCommand(Settings settings)
+        public StaticCommand(TwitchClient twitchClient, Options options, Settings settings)
+            : base(twitchClient, options, settings)
         {
             this.currentGameInfoProvider = new CurrentGameInfoProvider(settings.LivePgnUrl);
         }

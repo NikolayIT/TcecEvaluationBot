@@ -8,11 +8,14 @@
     using TcecEvaluationBot.ConsoleUI.Settings;
     using TcecEvaluationBot.Pgn;
 
+    using TwitchLib.Client;
+
     public class ReverseCommand : BaseCommand
     {
         private readonly ArchiveInfoProvider archiveInfoProvider;
 
-        public ReverseCommand(Settings settings)
+        public ReverseCommand(TwitchClient twitchClient, Options options, Settings settings)
+            : base(twitchClient, options, settings)
         {
             this.archiveInfoProvider = new ArchiveInfoProvider(settings.LivePgnUrl, settings.ArchivePgnUrl);
         }

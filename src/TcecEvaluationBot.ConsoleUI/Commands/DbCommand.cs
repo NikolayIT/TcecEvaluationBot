@@ -6,13 +6,16 @@
     using TcecEvaluationBot.ConsoleUI.Services;
     using TcecEvaluationBot.ConsoleUI.Settings;
 
+    using TwitchLib.Client;
+
     public class DbCommand : BaseCommand
     {
         private readonly CurrentGameInfoProvider currentGameInfoProvider;
 
         private readonly LichessPositionDataProvider lichessPositionDataProvider;
 
-        public DbCommand(Settings settings)
+        public DbCommand(TwitchClient twitchClient, Options options, Settings settings)
+            : base(twitchClient, options, settings)
         {
             this.currentGameInfoProvider = new CurrentGameInfoProvider(settings.LivePgnUrl);
             this.lichessPositionDataProvider = new LichessPositionDataProvider(settings.LichessDbUrl);

@@ -11,10 +11,6 @@
 
     public class EvaluationCommand : BaseCommand
     {
-        private readonly TwitchClient twitchClient;
-
-        private readonly Options options;
-
         private readonly IDictionary<string, IPositionEvaluator> engines;
 
         private readonly string defaultEngine;
@@ -22,10 +18,8 @@
         private readonly CurrentGameInfoProvider currentGameInfoProvider;
 
         public EvaluationCommand(TwitchClient twitchClient, Options options, Settings settings)
+            : base(twitchClient, options, settings)
         {
-            this.twitchClient = twitchClient;
-            this.options = options;
-
             if (settings.Engines.Length == 0)
             {
                 throw new Exception("No engines are registered.");
@@ -52,7 +46,7 @@
         public override string Execute(string message)
         {
             var engine = this.defaultEngine;
-            var moveTime = this.options.DefaultEvaluationTime * 1000;
+            var moveTime = this.Options.DefaultEvaluationTime * 1000;
             var commandParts = message.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
             if (commandParts.Length > 1)
             {
@@ -60,14 +54,14 @@
                 {
                     if (int.TryParse(commandParts[i], out var moveTimeArgument))
                     {
-                        if (moveTimeArgument > this.options.MaxEvaluationTime)
+                        if (moveTimeArgument > this.Options.MaxEvaluationTime)
                         {
-                            moveTimeArgument = this.options.MaxEvaluationTime;
+                            moveTimeArgument = this.Options.MaxEvaluationTime;
                         }
 
-                        if (moveTimeArgument < this.options.MinEvaluationTime)
+                        if (moveTimeArgument < this.Options.MinEvaluationTime)
                         {
-                            moveTimeArgument = this.options.MinEvaluationTime;
+                            moveTimeArgument = this.Options.MinEvaluationTime;
                         }
 
                         moveTime = moveTimeArgument * 1000;
@@ -79,9 +73,9 @@
                 }
             }
 
-            if (this.options.ThinkingMessage)
+            if (this.Options.ThinkingMessage)
             {
-                this.twitchClient.SendMessage(this.options.TwitchChannelName, $"[{DateTime.UtcNow:HH:mm:ss}] Thinking {moveTime / 1000} sec., please wait.");
+                this.TwitchClient.SendMessage(this.Options.TwitchChannelName, $"[{DateTime.UtcNow:HH:mm:ss}] Thinking {moveTime / 1000} sec., please wait.");
             }
 
             var evaluation = this.Evaluate(moveTime, engine);

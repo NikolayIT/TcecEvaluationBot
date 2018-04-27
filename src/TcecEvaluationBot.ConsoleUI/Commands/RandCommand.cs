@@ -2,11 +2,16 @@
 {
     using System;
 
+    using TcecEvaluationBot.ConsoleUI.Settings;
+
+    using TwitchLib.Client;
+
     public class RandCommand : BaseCommand
     {
         private readonly Random random;
 
-        public RandCommand()
+        public RandCommand(TwitchClient twitchClient, Options options, Settings settings)
+            : base(twitchClient, options, settings)
         {
             this.random = new Random();
         }

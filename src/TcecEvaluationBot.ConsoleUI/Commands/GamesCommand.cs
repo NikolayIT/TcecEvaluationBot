@@ -8,11 +8,14 @@
     using TcecEvaluationBot.ConsoleUI.Services.Models;
     using TcecEvaluationBot.ConsoleUI.Settings;
 
+    using TwitchLib.Client;
+
     public class GamesCommand : BaseCommand
     {
         private readonly GamesInfoProvider gamesInfoProvider;
 
-        public GamesCommand(Settings settings)
+        public GamesCommand(TwitchClient twitchClient, Options options, Settings settings)
+            : base(twitchClient, options, settings)
         {
             this.gamesInfoProvider = new GamesInfoProvider(settings.ScheduleUrl);
         }
