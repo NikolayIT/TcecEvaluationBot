@@ -51,12 +51,12 @@
         {
             var movesBuilder = new StringBuilder();
 
-            if (game.Moves.Any(x => x.Comment == "book"))
+            if (game.Moves.Any(x => x.Comment.StartsWith("book")))
             {
                 movesBuilder.Append("[book] ");
             }
 
-            var moves = game.Moves.Where(x => x.Comment != "book").ToList();
+            var moves = game.Moves.Where(x => !x.Comment.StartsWith("book")).ToList();
             for (var index = 0; index < Math.Min(moves.Count, firstNPlies); index++)
             {
                 var move = moves[index];
