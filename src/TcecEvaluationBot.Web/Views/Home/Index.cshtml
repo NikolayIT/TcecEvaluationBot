@@ -1,0 +1,63 @@
+﻿@model TcecEvaluationBot.Pgn.GamesList
+
+@{
+    this.ViewData["Title"] = this.Model.Games.LastOrDefault()?.Event;
+}
+
+<div class="row">
+    <div class="col-lg-4">
+        <h3 id="GameBlack"></h3>
+        <div id="GameBoard"></div>
+        <div id="GameButtons"></div>
+        <h3 id="GameWhite"></h3>
+    </div>
+    <div class="col-lg-4">
+        <span id="GameText"></span>
+        <span id="GameResult"></span>
+        <div id="GameECO"></div>
+    </div>
+    <div class="col-lg-4">
+        <iframe frameborder="0" scrolling="no" id="TCEC Season 10" src="http://www.twitch.tv/TCEC_Chess_TV/chat?darkpopout" class="chat"></iframe>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4">
+        <pre id="Crosstable"></pre>
+    </div>
+    <div class="col-lg-8">
+        <pre id="Schedule"></pre>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $('#Crosstable').load('/Home/Crosstable');
+        $('#Schedule').load('/Home/Schedule');
+
+        SetPgnUrl("/Home/LivePgn");
+        SetImagePath("images");
+        SetImageType("png");
+        SetHighlightOption(true); // true or false
+        SetGameSelectorOptions(null, false, 0, 0, 0, 15, 15, 0, 10); // (head, num, chEvent, chSite, chRound, chWhite, chBlack, chResult, chDate);
+        SetCommentsIntoMoveText(false);
+        SetCommentsOnSeparateLines(false);
+        SetAutoplayDelay(1000); // milliseconds
+        SetAutostartAutoplay(false);
+        SetAutoplayNextGame(true); // if set, move to the next game at the end of the current game during autoplay
+        SetInitialGame("first"); // number of game to be shown at load, from 1 (default); values (keep the quotes) of "first", "last", "random" are accepted; other string values assumed as PGN search string
+        SetInitialVariation(0); // number for the variation to be shown at load, 0 (default) for main variation
+        SetInitialHalfmove("end", true); // halfmove number to be shown at load, 0 (default) for start position; values (keep the quotes) of "start", "end", "random", "comment" (go to first comment or variation), "variation" (go to the first variation) are also accepted. Second parameter if true applies the setting to every selected game instead of startup only (default)
+        SetShortcutKeysEnabled(false);
+        SetLiveBroadcast(0.08, false, false, true, false); // set live broadcast; parameters are delay (refresh delay in minutes, 0 means no broadcast, default 0) alertFlag (if true, displays debug error messages, default false) demoFlag (if true starts broadcast demo mode, default false) stepFlag (if true, autoplays updates in steps, default false) endlessFlag (if true, keeps polling for new moves even after all games are finished)
+
+        
+        // setInterval(function() {
+        //         $.get('/Home/LivePgn',
+        //             function (data) {
+        //                 console.log(customPgnHeaderTag("ECO", "GameECO"));
+        //             });
+        //     },
+        //     5000);
+    </script>
+}
