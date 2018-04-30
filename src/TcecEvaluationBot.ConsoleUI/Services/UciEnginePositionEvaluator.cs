@@ -18,6 +18,7 @@
 
         private readonly string arguments;
 
+        // ReSharper disable once UnusedMember.Global - Used with reflection
         public UciEnginePositionEvaluator(Options options, string executableFileName, string engineSignature, string arguments)
         {
             this.options = options;

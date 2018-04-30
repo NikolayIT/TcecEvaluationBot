@@ -1,6 +1,5 @@
 ﻿namespace TcecEvaluationBot.ConsoleUI.Commands
 {
-    using System;
     using System.Text;
 
     using TcecEvaluationBot.ConsoleUI.Settings;

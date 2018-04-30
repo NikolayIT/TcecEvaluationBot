@@ -17,12 +17,8 @@
                     return null;
                 }
 
-                var moveType = game.ApplyMove(
-                    new Move(
-                        move[0].ToString() + move[1],
-                        move[2].ToString() + move[3],
-                        playerToMove,
-                        'Q'),
+                game.ApplyMove(
+                    new Move(move[0].ToString() + move[1], move[2].ToString() + move[3], playerToMove, 'Q'),
                     false);
                 playerToMove = playerToMove == Player.White ? Player.Black : Player.White;
             }

@@ -36,7 +36,7 @@
                 return "No games played.";
             }
 
-            var messageParts = message.Split(" ");
+            var messageParts = message.Split(" ").Select(x => x.ToLower()).ToList();
             var gameId = messageParts.Any(x => int.TryParse(x, out _))
                              ? int.Parse(messageParts.FirstOrDefault(x => int.TryParse(x, out _)))
                              : (int?)null;

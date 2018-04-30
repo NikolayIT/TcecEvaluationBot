@@ -39,12 +39,9 @@
             }
 
             var reverseGame = gamesList.Games.LastOrDefault(x => x.White == currentGame.Black && x.Black == currentGame.White);
-            if (reverseGame == null)
-            {
-                return "Reverse game not found.";
-            }
-
-            return $"Game #{reverseGame.Id} \"{reverseGame.White}\" vs. \"{reverseGame.Black}\": {this.ToShortNotation(reverseGame)}";
+            return reverseGame != null
+                       ? $"Game #{reverseGame.Id} \"{reverseGame.White}\" vs. \"{reverseGame.Black}\": {this.ToShortNotation(reverseGame)}"
+                       : "Reverse game not found.";
         }
 
         public string ToShortNotation(Game game, int firstNPlies = 30)
