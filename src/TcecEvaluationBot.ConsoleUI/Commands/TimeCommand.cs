@@ -132,12 +132,13 @@
 
         private static string GetRemainingDivisionTime(GamesList games)
         {
-            var remainingTime = (games.Count - games.CountPlayed) * (games.AverageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
+            var gamesCount = games.Count;
+            var remainingTime = (gamesCount - games.CountPlayed) * (games.AverageGameTime + new TimeSpan(0, 0, 1, 0)); // +1 minute between games
             var estimatedEndTime = games.LastStarted + remainingTime;
-            var endingS = games.Count - games.CountPlayed != 1 ? 's' : '\0';
+            var endingS = gamesCount - games.CountPlayed != 1 ? 's' : '\0';
             var longestGame = games.Games.Where(x => x.IsPlayed).OrderByDescending(x => x.Duration).FirstOrDefault()?.Duration;
             var shortestGame = games.Games.Where(x => x.IsPlayed).OrderBy(x => x.Duration).FirstOrDefault()?.Duration;
-            return $"{games.Count - games.CountPlayed}/{games.Count} game{endingS} left. Average duration: {games.AverageGameTime:hh\\:mm\\:ss}. Estimated division end: {estimatedEndTime:R}. Shortest game: {shortestGame:hh\\:mm\\:ss}. Longest game: {longestGame:hh\\:mm\\:ss}";
+            return $"{gamesCount - games.CountPlayed}/{gamesCount} game{endingS} left. Average duration: {games.AverageGameTime:hh\\:mm\\:ss}. Estimated division end: {estimatedEndTime:R}. Shortest game: {shortestGame:hh\\:mm\\:ss}. Longest game: {longestGame:hh\\:mm\\:ss}";
         }
     }
 }
