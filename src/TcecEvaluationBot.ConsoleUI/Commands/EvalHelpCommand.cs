@@ -21,7 +21,7 @@
         {
             return $@"commands: 
 !eval {{engine({this.Settings.Engines.FirstOrDefault()?.Names.FirstOrDefault()})}} {{time({this.Options.DefaultEvaluationTime})}} • 
-!db • !static • !time {{#|last|next|reverse}} • !games {{engine}} • !reverse • !rand [min] [max] • evalhelp • evalengines •
+!db • !static • !time {{#|last|next|reverse}} • !games {{engine}} • !reverse • !rand [min] [max] • evalhelp • evalengines • 
 <eval_bot {this.environmentInformationProvider.VersionNumber}>";
         }
     }

@@ -47,9 +47,21 @@
                 false);
             var pieceChar = piece is Pawn ? '\0' : char.ToUpper(piece.GetFenCharacter());
             var pieceCharTakes = piece is Pawn ? algebraicMove[0] : char.ToUpper(piece.GetFenCharacter());
+            var additionalInfoChar = '\0';
 
-            //// TODO: En passant
             //// TODO: Rooks and Knights from square when ambiguous
+            if (piece is Rook)
+            {
+                if (algebraicMove[0] == algebraicMove[2])
+                {
+                    additionalInfoChar = algebraicMove[1];
+                }
+
+                if (algebraicMove[1] == algebraicMove[3])
+                {
+                    additionalInfoChar = algebraicMove[0];
+                }
+            }
 
             string san;
             switch (moveType)
@@ -58,10 +70,10 @@
                     san = "xxx";
                     break;
                 case MoveType.Move:
-                    san = $"{pieceChar}{algebraicMove[2]}{algebraicMove[3]}";
+                    san = $"{pieceChar}{additionalInfoChar}{algebraicMove[2]}{algebraicMove[3]}";
                     break;
                 case MoveType.Capture:
-                    san = $"{pieceCharTakes}x{algebraicMove[2]}{algebraicMove[3]}";
+                    san = $"{pieceCharTakes}{additionalInfoChar}x{algebraicMove[2]}{algebraicMove[3]}";
                     break;
                 case MoveType.Castling:
                     san = algebraicMove[2] == 'c' ? "O-O-O" : "O-O";
@@ -70,7 +82,7 @@
                     san = $"{algebraicMove[2]}{algebraicMove[3]}=" + (algebraicMove.Length > 4 ? char.ToUpper(algebraicMove[4]) : '?');
                     break;
                 default:
-                    san = $"{pieceCharTakes}x{algebraicMove[2]}{algebraicMove[3]}";
+                    san = $"{pieceCharTakes}{additionalInfoChar}x{algebraicMove[2]}{algebraicMove[3]}";
                     break;
             }
 
