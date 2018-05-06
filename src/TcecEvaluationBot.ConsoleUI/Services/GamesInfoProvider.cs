@@ -63,16 +63,23 @@
                 gameIndex++;
                 var game = new Game { Number = gameIndex };
 
+                line = line.Replace("2684354.55", "   x.xx");
+                line = line.Replace("-2684354.55", "x.xx   ");
+
                 var durationText = line.Substring(durationColumnIndex, ecoColumnIndex - durationColumnIndex).Trim();
                 if (!string.IsNullOrWhiteSpace(durationText))
                 {
-                    var timeParts = durationText.Split(':');
-                    var duration = new TimeSpan(
-                        0,
-                        int.Parse(timeParts[0]),
-                        int.Parse(timeParts[1]),
-                        int.Parse(timeParts[2]));
-                    game.Duration = duration;
+                    var timeParts = durationText.Split(':', StringSplitOptions.RemoveEmptyEntries);
+                    if (timeParts.Length == 3)
+                    {
+                        var duration = new TimeSpan(
+                            0,
+                            int.Parse(timeParts[0]),
+                            int.Parse(timeParts[1]),
+                            int.Parse(timeParts[2]));
+                        game.Duration = duration;
+                    }
+
                     //// Console.WriteLine(timeSpan);
                 }
 
