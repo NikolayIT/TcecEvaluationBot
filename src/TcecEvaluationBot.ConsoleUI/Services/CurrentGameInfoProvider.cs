@@ -4,6 +4,7 @@
     using System.Diagnostics;
     using System.IO;
     using System.Net.Http;
+    using System.Threading;
     using System.Threading.Tasks;
 
     public class CurrentGameInfoProvider
@@ -70,9 +71,21 @@
 
         private async Task<string> GetTextContent(string url)
         {
-            var response = await this.httpClient.GetAsync($"{url}?noCache={Guid.NewGuid()}");
-            var stringResult = await response.Content.ReadAsStringAsync();
-            return stringResult;
+            for (int i = 0; i < 5; i++)
+            {
+                try
+                {
+                    var response = await this.httpClient.GetAsync($"{url}?noCache={Guid.NewGuid()}");
+                    var stringResult = await response.Content.ReadAsStringAsync();
+                    return stringResult;
+                }
+                catch (Exception)
+                {
+                    Thread.Sleep(500);
+                }
+            }
+
+            return string.Empty;
         }
     }
 }
