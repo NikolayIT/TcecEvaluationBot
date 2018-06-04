@@ -77,12 +77,17 @@
                 {
                     var response = await this.httpClient.GetAsync($"{url}?noCache={Guid.NewGuid()}");
                     var stringResult = await response.Content.ReadAsStringAsync();
-                    return stringResult;
+                    if (!string.IsNullOrWhiteSpace(stringResult))
+                    {
+                        return stringResult;
+                    }
                 }
                 catch (Exception)
                 {
-                    Thread.Sleep(500);
+                    // ignored
                 }
+
+                Thread.Sleep(500);
             }
 
             return string.Empty;

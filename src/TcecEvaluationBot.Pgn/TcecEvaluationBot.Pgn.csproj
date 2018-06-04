@@ -4,4 +4,15 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>..\Rules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta007" />
+  </ItemGroup>
+
 </Project>
