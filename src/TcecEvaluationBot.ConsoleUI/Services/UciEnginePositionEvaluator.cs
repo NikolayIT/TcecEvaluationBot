@@ -1,6 +1,7 @@
 ﻿namespace TcecEvaluationBot.ConsoleUI.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Threading;
@@ -18,14 +19,22 @@
 
         private readonly string arguments;
 
+        private readonly IEnumerable<string> commandLineInputs;
+
         // ReSharper disable once UnusedMember.Global - Used with reflection
-        public UciEnginePositionEvaluator(Options options, string executableFileName, string engineSignature, string arguments)
+        public UciEnginePositionEvaluator(
+            Options options,
+            string executableFileName,
+            string engineSignature,
+            string arguments,
+            IEnumerable<string> commandLineInputs)
         {
             this.options = options;
             this.moveConversion = new MoveConversionService();
             this.executableFileName = executableFileName;
             this.engineSignature = engineSignature;
             this.arguments = arguments;
+            this.commandLineInputs = commandLineInputs;
         }
 
         public string GetEvaluation(string fenPosition, int moveTime)
@@ -57,6 +66,11 @@
             if (!string.IsNullOrWhiteSpace(this.options.SyzygyPath))
             {
                 process.StandardInput.WriteLine($"setoption name SyzygyPath value {this.options.SyzygyPath}");
+            }
+
+            foreach (var commandLineInput in this.commandLineInputs)
+            {
+                process.StandardInput.WriteLine(commandLineInput);
             }
 
             process.StandardInput.WriteLine($"position fen {fenPosition}");

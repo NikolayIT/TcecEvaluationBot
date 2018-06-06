@@ -31,7 +31,13 @@
             {
                 var typeName = $"TcecEvaluationBot.ConsoleUI.Services.{engineSettings.PositionEvaluator}";
                 var type = typeof(IPositionEvaluator).Assembly.GetType(typeName);
-                if (Activator.CreateInstance(type, options, engineSettings.Executable, engineSettings.Title, engineSettings.Arguments) is IPositionEvaluator evaluator)
+                if (Activator.CreateInstance(
+                        type,
+                        options,
+                        engineSettings.Executable,
+                        engineSettings.Title,
+                        engineSettings.Arguments,
+                        engineSettings.CommandLineInputs) is IPositionEvaluator evaluator)
                 {
                     foreach (var engineName in engineSettings.Names)
                     {

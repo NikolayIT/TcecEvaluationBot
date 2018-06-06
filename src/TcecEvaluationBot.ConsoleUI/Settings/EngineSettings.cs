@@ -13,5 +13,7 @@
         public string Title { get; set; }
 
         public string PositionEvaluator { get; set; }
+
+        public IEnumerable<string> CommandLineInputs { get; set; }
     }
 }
