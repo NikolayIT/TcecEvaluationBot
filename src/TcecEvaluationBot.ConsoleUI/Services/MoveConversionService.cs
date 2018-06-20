@@ -69,14 +69,14 @@
                 case MoveType.Invalid:
                     san = "xxx";
                     break;
+                case MoveType.Castling:
+                    san = algebraicMove[2] == 'c' ? "O-O-O" : "O-O";
+                    break;
                 case MoveType.Move:
                     san = $"{pieceChar}{additionalInfoChar}{algebraicMove[2]}{algebraicMove[3]}";
                     break;
                 case MoveType.Capture:
                     san = $"{pieceCharTakes}{additionalInfoChar}x{algebraicMove[2]}{algebraicMove[3]}";
-                    break;
-                case MoveType.Castling:
-                    san = algebraicMove[2] == 'c' ? "O-O-O" : "O-O";
                     break;
                 case MoveType.Promotion:
                     san = $"{algebraicMove[2]}{algebraicMove[3]}=" + (algebraicMove.Length > 4 ? char.ToUpper(algebraicMove[4]) : '?');
