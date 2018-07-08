@@ -13,7 +13,7 @@
             }
 
             tagLine = tagLine.Trim('[', ']', '"');
-            var tagParts = tagLine.Split('"', 2);
+            var tagParts = tagLine.Split(new char[] { '"' }, 2);
             this.Name = tagParts[0].Trim();
             this.Value = tagParts[1].Replace("\\\"", "\"");
         }
