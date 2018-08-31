@@ -1,4 +1,4 @@
-﻿namespace TcecEvaluationBot.ConsoleUI.Services.LichessModels
+﻿namespace LichessApi.Models
 {
     public class Move
     {

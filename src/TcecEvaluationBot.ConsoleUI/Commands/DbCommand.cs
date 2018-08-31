@@ -3,6 +3,8 @@
     using System;
     using System.Text;
 
+    using LichessApi;
+
     using TcecEvaluationBot.ConsoleUI.Services;
     using TcecEvaluationBot.ConsoleUI.Settings;
 
@@ -12,13 +14,13 @@
     {
         private readonly CurrentGameInfoProvider currentGameInfoProvider;
 
-        private readonly LichessPositionDataProvider lichessPositionDataProvider;
+        private readonly ILichessApiClient lichessApiClient;
 
         public DbCommand(TwitchClient twitchClient, Options options, Settings settings)
             : base(twitchClient, options, settings)
         {
             this.currentGameInfoProvider = new CurrentGameInfoProvider(settings.LivePgnUrl);
-            this.lichessPositionDataProvider = new LichessPositionDataProvider(settings.LichessDbUrl);
+            this.lichessApiClient = new LichessApiClient();
         }
 
         public override string Execute(string message)
@@ -29,7 +31,7 @@
                 return "No active game?";
             }
 
-            var positionInfo = this.lichessPositionDataProvider.GetPositionInfo(fen);
+            var positionInfo = this.lichessApiClient.GetPositionInfo(fen);
             var sb = new StringBuilder();
 
             sb.Append($"({fen.GetMoveInfoFromFen()}) ");

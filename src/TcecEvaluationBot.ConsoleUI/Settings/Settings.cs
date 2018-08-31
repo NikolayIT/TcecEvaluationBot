@@ -8,8 +8,6 @@
 
         public string ArchivePgnUrl { get; set; }
 
-        public string LichessDbUrl { get; set; }
-
         public EngineSettings[] Engines { get; set; }
     }
 }

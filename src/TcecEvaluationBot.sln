@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TcecEvaluationBot.ConsoleUI", "TcecEvaluationBot.ConsoleUI\TcecEvaluationBot.ConsoleUI.csproj", "{1740283B-D343-413A-9D64-B4ACF604F350}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcecEvaluationBot.Pgn", "TcecEvaluationBot.Pgn\TcecEvaluationBot.Pgn.csproj", "{03A7F152-C602-4437-893C-6B61B3F8B61D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TcecEvaluationBot.Pgn", "TcecEvaluationBot.Pgn\TcecEvaluationBot.Pgn.csproj", "{03A7F152-C602-4437-893C-6B61B3F8B61D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LichessApi", "LichessApi\LichessApi.csproj", "{4FA9B256-D4F0-4806-9CBC-F4D7BC04DE1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{03A7F152-C602-4437-893C-6B61B3F8B61D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03A7F152-C602-4437-893C-6B61B3F8B61D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03A7F152-C602-4437-893C-6B61B3F8B61D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FA9B256-D4F0-4806-9CBC-F4D7BC04DE1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FA9B256-D4F0-4806-9CBC-F4D7BC04DE1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FA9B256-D4F0-4806-9CBC-F4D7BC04DE1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FA9B256-D4F0-4806-9CBC-F4D7BC04DE1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

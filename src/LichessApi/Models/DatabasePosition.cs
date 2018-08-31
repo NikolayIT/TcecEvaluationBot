@@ -1,6 +1,6 @@
-﻿namespace TcecEvaluationBot.ConsoleUI.Services.LichessModels
+﻿namespace LichessApi.Models
 {
-    public class LichessPosition
+    public class DatabasePosition
     {
         public int White { get; set; }
 
