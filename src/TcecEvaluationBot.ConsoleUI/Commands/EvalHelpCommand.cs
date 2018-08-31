@@ -20,9 +20,9 @@
         public override string Execute(string message)
         {
             return $@"commands: 
-!eval {{engine({this.Settings.Engines.FirstOrDefault()?.Names.FirstOrDefault()})}} {{time({this.Options.DefaultEvaluationTime})}} • !static • 
-!db {{fen}} * !tb {{fen}} • !time {{#|last|next|reverse}} • !games {{engine}} • !reverse • !rand [min] [max] • !evalhelp • !evalengines • 
-<eval_bot {this.environmentInformationProvider.VersionNumber}>";
+!eval {{engine({this.Settings.Engines.FirstOrDefault()?.Names.FirstOrDefault()})}} {{time({this.Options.DefaultEvaluationTime})}} •
+!static • !links {{fen}} • !db {{fen}} * !tb {{fen}} • !time {{#|last|next|reverse}} • !games {{engine}} • !reverse •
+!rand [min] [max] • !evalhelp • !evalengines • <eval_bot {this.environmentInformationProvider.VersionNumber}>";
         }
     }
 }
