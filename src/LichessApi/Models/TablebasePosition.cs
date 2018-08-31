@@ -17,11 +17,11 @@
         [JsonProperty("insufficient_material")]
         public bool InsufficientMaterial { get; set; }
 
-        public int Wdl { get; set; }
+        public int? Wdl { get; set; }
 
-        public int Dtz { get; set; }
+        public int? Dtz { get; set; }
 
-        public int Dtm { get; set; }
+        public int? Dtm { get; set; }
 
         public TablebaseMove[] Moves { get; set; }
     }
