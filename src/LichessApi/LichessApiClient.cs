@@ -2,6 +2,7 @@
 {
     using System;
     using System.Net.Http;
+    using System.Threading;
 
     using LichessApi.Models;
 
@@ -22,18 +23,44 @@
 
         public DatabasePosition GetPositionInfo(string fen)
         {
-            var response = this.httpClient.GetAsync(DbUrl + Uri.EscapeUriString(fen)).GetAwaiter().GetResult();
-            var stringResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            var result = JsonConvert.DeserializeObject<DatabasePosition>(stringResponse);
-            return result;
+            for (var i = 0; i < 10; i++)
+            {
+                try
+                {
+                    var response = this.httpClient.GetAsync(DbUrl + Uri.EscapeUriString(fen)).GetAwaiter().GetResult();
+                    var stringResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    var result = JsonConvert.DeserializeObject<DatabasePosition>(stringResponse);
+                    return result;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Error in LichessApiClient.GetPositionInfo: {e.Message}");
+                    Thread.Sleep(50);
+                }
+            }
+
+            return null;
         }
 
         public TablebasePosition GetTablebaseInfo(string fen)
         {
-            var response = this.httpClient.GetAsync(TbUrl + Uri.EscapeUriString(fen)).GetAwaiter().GetResult();
-            var stringResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            var result = JsonConvert.DeserializeObject<TablebasePosition>(stringResponse);
-            return result;
+            for (var i = 0; i < 10; i++)
+            {
+                try
+                {
+                    var response = this.httpClient.GetAsync(TbUrl + Uri.EscapeUriString(fen)).GetAwaiter().GetResult();
+                    var stringResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    var result = JsonConvert.DeserializeObject<TablebasePosition>(stringResponse);
+                    return result;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Error in LichessApiClient.GetTablebaseInfo: {e.Message}");
+                    Thread.Sleep(50);
+                }
+            }
+
+            return null;
         }
     }
 }
