@@ -45,6 +45,10 @@
             }
 
             var positionInfo = this.lichessApiClient.GetPositionInfo(fen);
+            if (positionInfo == null)
+            {
+                return $"Invalid FEN: \"{fen}\" or Lichess down.";
+            }
 
             // Stats
             sb.Append($"+{positionInfo.White}={positionInfo.Draws}-{positionInfo.Black} • ");

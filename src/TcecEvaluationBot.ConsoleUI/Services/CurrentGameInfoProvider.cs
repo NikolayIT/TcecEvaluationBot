@@ -71,7 +71,7 @@
 
         private async Task<string> GetTextContent(string url)
         {
-            for (int i = 0; i < 5; i++)
+            for (var i = 0; i < 10; i++)
             {
                 try
                 {
@@ -87,7 +87,7 @@
                     // ignored
                 }
 
-                Thread.Sleep(500);
+                Thread.Sleep(200);
             }
 
             return string.Empty;

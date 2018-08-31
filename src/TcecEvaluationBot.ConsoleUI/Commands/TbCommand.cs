@@ -46,7 +46,7 @@
             var tablebaseInfo = this.lichessApiClient.GetTablebaseInfo(fen);
             if (tablebaseInfo == null)
             {
-                return $"Invalid FEN: \"{fen}\"";
+                return $"Invalid FEN: \"{fen}\" or Lichess down.";
             }
 
             // Current position
