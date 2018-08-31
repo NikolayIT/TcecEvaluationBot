@@ -25,16 +25,26 @@
 
         public override string Execute(string message)
         {
-            var fen = this.currentGameInfoProvider.GetFen();
+            var sb = new StringBuilder();
+            string fen = null;
+            if (message.Contains(" "))
+            {
+                var parts = message.Split(" ", 2);
+                fen = parts[1];
+            }
+
             if (string.IsNullOrWhiteSpace(fen))
             {
-                return "No active game?";
+                fen = this.currentGameInfoProvider.GetFen();
+                sb.Append($"({fen.GetMoveInfoFromFen()}) ");
+            }
+
+            if (string.IsNullOrWhiteSpace(fen))
+            {
+                return "No active game or invalid FEN?";
             }
 
             var positionInfo = this.lichessApiClient.GetPositionInfo(fen);
-            var sb = new StringBuilder();
-
-            sb.Append($"({fen.GetMoveInfoFromFen()}) ");
 
             // Stats
             sb.Append($"+{positionInfo.White}={positionInfo.Draws}-{positionInfo.Black} • ");
