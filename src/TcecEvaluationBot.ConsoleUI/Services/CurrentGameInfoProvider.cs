@@ -22,6 +22,14 @@
         public string GetFen()
         {
             var livePgnAsString = this.GetTextContent(this.livePgnUrl).GetAwaiter().GetResult();
+            if (livePgnAsString.Trim().Contains("[Result \"*\"]"))
+            {
+                livePgnAsString = livePgnAsString.Replace(
+                    @"[Result ""*""]  
+* ",
+                    string.Empty);
+            }
+
             var fenPosition = this.ConvertPgnToFen(livePgnAsString);
             if (fenPosition == null)
             {
