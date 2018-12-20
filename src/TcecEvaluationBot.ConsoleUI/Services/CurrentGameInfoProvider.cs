@@ -3,9 +3,12 @@
     using System;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
+
+    using TcecEvaluationBot.Pgn;
 
     public class CurrentGameInfoProvider
     {
@@ -13,13 +16,16 @@
 
         private readonly HttpClient httpClient;
 
+        private readonly PgnParser pgnParser;
+
         public CurrentGameInfoProvider(string livePgnUrl)
         {
             this.livePgnUrl = livePgnUrl;
+            this.pgnParser = new PgnParser();
             this.httpClient = new HttpClient();
         }
 
-        public string GetFen()
+        public GameInfo GetInfo()
         {
             var livePgnAsString = this.GetTextContent(this.livePgnUrl).GetAwaiter().GetResult();
             if (livePgnAsString.Trim().Contains("[Result \"*\"]"))
@@ -36,7 +42,23 @@
                 Console.WriteLine("Invalid fen! See if file.pgn contains a valid PGN.");
             }
 
-            return fenPosition;
+            var lastMove = this.ExtractLastMove(livePgnAsString);
+
+            return new GameInfo { Fen = fenPosition, LastMove = lastMove, };
+        }
+
+        private string ExtractLastMove(string pgn)
+        {
+            try
+            {
+                var lastMove = this.pgnParser.ParseFromString(pgn).Games.Last().Moves.Last();
+                return $"{lastMove.Number}{(lastMove.Color == Color.White ? 'w' : 'b')}. {lastMove.San}";
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Exception during parsing last move: {e.Message}");
+                return string.Empty;
+            }
         }
 
         private string ConvertPgnToFen(string livePgnAsString)
@@ -79,7 +101,7 @@
 
         private async Task<string> GetTextContent(string url)
         {
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < 15; i++)
             {
                 try
                 {
@@ -95,10 +117,17 @@
                     // ignored
                 }
 
-                Thread.Sleep(200);
+                Thread.Sleep(100);
             }
 
             return string.Empty;
+        }
+
+        public class GameInfo
+        {
+            public string Fen { get; set; }
+
+            public string LastMove { get; set; }
         }
     }
 }

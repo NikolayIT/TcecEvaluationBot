@@ -90,7 +90,7 @@
 
         private string Evaluate(int moveTime, string engineName)
         {
-            var fenPosition = this.currentGameInfoProvider.GetFen();
+            var fenPosition = this.currentGameInfoProvider.GetInfo().Fen;
             if (fenPosition == null)
             {
                 return "fenPosition is null. No active game?";

@@ -35,7 +35,7 @@
 
             if (string.IsNullOrWhiteSpace(fen))
             {
-                fen = this.currentGameInfoProvider.GetFen();
+                fen = this.currentGameInfoProvider.GetInfo().Fen;
                 sb.Append($"({fen.GetMoveInfoFromFen()}) ");
             }
 

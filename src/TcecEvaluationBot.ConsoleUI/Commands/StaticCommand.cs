@@ -22,7 +22,7 @@
 
         public override string Execute(string message)
         {
-            var fen = this.currentGameInfoProvider.GetFen();
+            var fen = this.currentGameInfoProvider.GetInfo().Fen;
             if (string.IsNullOrWhiteSpace(fen))
             {
                 return "No active game?";
