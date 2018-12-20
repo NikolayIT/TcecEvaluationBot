@@ -8,6 +8,8 @@
 
         public string ArchivePgnUrl { get; set; }
 
+        public bool OutputMoves { get; set; }
+
         public EngineSettings[] Engines { get; set; }
     }
 }

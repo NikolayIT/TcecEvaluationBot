@@ -41,6 +41,8 @@
             this.commands.Add(new CommandInfo("reverse", new ReverseCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("evalhelp", new EvalHelpCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("evalengines", new EvalEnginesCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("outputmoveson", new SetOutputMovesCommand(this.twitchClient, options, settings, true)));
+            this.commands.Add(new CommandInfo("outputmovesoff", new SetOutputMovesCommand(this.twitchClient, options, settings, false)));
             //// Console.WriteLine(new EvaluationCommand(this.twitchClient, options, settings).Execute("!eval 5")); Console.ReadLine();
         }
 
@@ -55,14 +57,19 @@
                         var lastFen = string.Empty;
                         while (true)
                         {
-                            var info = infoProvider.GetInfo();
-                            if (!string.IsNullOrWhiteSpace(info.Fen) &&
-                                !string.IsNullOrWhiteSpace(info.LastMove) &&
-                                info.Fen != lastFen)
+                            if (this.settings.OutputMoves)
                             {
-                                lastFen = info.Fen;
-                                var message = $"New move: {info.LastMove}";
-                                this.twitchClient.SendMessage(this.options.TwitchChannelName, $"/me [{DateTime.UtcNow:HH:mm:ss}] {message}");
+                                var info = infoProvider.GetInfo();
+                                if (!string.IsNullOrWhiteSpace(info.Fen) &&
+                                    !string.IsNullOrWhiteSpace(info.LastMove) &&
+                                    info.Fen != lastFen)
+                                {
+                                    lastFen = info.Fen;
+                                    var message = $"New move: {info.LastMove}";
+                                    this.twitchClient.SendMessage(
+                                        this.options.TwitchChannelName,
+                                        $"/me [{DateTime.UtcNow:HH:mm:ss}] {message}");
+                                }
                             }
 
                             Thread.Sleep(2000);
