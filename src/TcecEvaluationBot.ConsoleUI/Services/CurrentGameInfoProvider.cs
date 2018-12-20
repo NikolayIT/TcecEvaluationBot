@@ -37,12 +37,15 @@
             }
 
             var fenPosition = this.ConvertPgnToFen(livePgnAsString);
+            var lastMove = string.Empty;
             if (fenPosition == null)
             {
                 Console.WriteLine("Invalid fen! See if file.pgn contains a valid PGN.");
             }
-
-            var lastMove = this.ExtractLastMove(livePgnAsString);
+            else
+            {
+                lastMove = this.ExtractLastMove(livePgnAsString);
+            }
 
             return new GameInfo { Fen = fenPosition, LastMove = lastMove, };
         }

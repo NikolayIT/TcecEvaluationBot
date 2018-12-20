@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     using TcecEvaluationBot.ConsoleUI.Commands;
     using TcecEvaluationBot.ConsoleUI.Services;
@@ -13,6 +15,8 @@
     {
         private readonly Options options;
 
+        private readonly Settings.Settings settings;
+
         private readonly TwitchClient twitchClient;
 
         private readonly ILogger logger;
@@ -22,6 +26,7 @@
         public TwitchBot(Options options, Settings.Settings settings)
         {
             this.options = options;
+            this.settings = settings;
             this.twitchClient = new TwitchClient();
             this.logger = new FileLogger($"log_{DateTime.UtcNow:yyyy-MM-dd}.txt");
 
@@ -39,8 +44,35 @@
             //// Console.WriteLine(new EvaluationCommand(this.twitchClient, options, settings).Execute("!eval 5")); Console.ReadLine();
         }
 
+        public Task OutputMovesTask()
+        {
+            return Task.Run(
+                () =>
+                    {
+                        Thread.Sleep(5000);
+                        Console.WriteLine("Output moves task is running...");
+                        var infoProvider = new CurrentGameInfoProvider(this.settings.LivePgnUrl);
+                        var lastFen = string.Empty;
+                        while (true)
+                        {
+                            var info = infoProvider.GetInfo();
+                            if (!string.IsNullOrWhiteSpace(info.Fen) &&
+                                !string.IsNullOrWhiteSpace(info.LastMove) &&
+                                info.Fen != lastFen)
+                            {
+                                lastFen = info.Fen;
+                                var message = $"New move: {info.LastMove}";
+                                this.twitchClient.SendMessage(this.options.TwitchChannelName, $"/me [{DateTime.UtcNow:HH:mm:ss}] {message}");
+                            }
+
+                            Thread.Sleep(2000);
+                        }
+                    });
+        }
+
         public void Run()
         {
+            Console.WriteLine("Commands receiver is running...");
             string lastMessage = null;
             var credentials = new ConnectionCredentials(this.options.TwitchUserName, this.options.TwitchAccessToken);
             this.twitchClient.Initialize(credentials, this.options.TwitchChannelName);
