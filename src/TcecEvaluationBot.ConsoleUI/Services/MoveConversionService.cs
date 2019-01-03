@@ -69,7 +69,7 @@
                 case MoveType.Invalid:
                     san = "xxx";
                     break;
-                case MoveType.Castling:
+                case MoveType.Move | MoveType.Castling:
                     san = algebraicMove[2] == 'c' ? "O-O-O" : "O-O";
                     break;
                 case MoveType.Move:
