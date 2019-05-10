@@ -28,10 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ChessDotNet" Version="0.9.6" />
-    <PackageReference Include="CommandLineParser" Version="2.3.0" />
+    <PackageReference Include="ChessDotNet" Version="0.11.0" />
+    <PackageReference Include="CommandLineParser" Version="2.5.0" />
     <PackageReference Include="TwitchLib" Version="2.1.5" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta008" PrivateAssets="All" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>

@@ -17,7 +17,7 @@
                     return null;
                 }
 
-                game.ApplyMove(
+                game.MakeMove(
                     new Move(move[0].ToString() + move[1], move[2].ToString() + move[3], playerToMove, 'Q'),
                     false);
                 playerToMove = playerToMove == Player.White ? Player.Black : Player.White;
@@ -38,7 +38,7 @@
             var playerToMove = fen.Contains(" b ") ? Player.Black : Player.White;
             var playerToDefend = fen.Contains(" b ") ? Player.White : Player.Black;
             var piece = game.GetPieceAt(new Position(algebraicMove[0].ToString() + algebraicMove[1]));
-            var moveType = game.ApplyMove(
+            var moveType = game.MakeMove(
                 new Move(
                     algebraicMove[0].ToString() + algebraicMove[1],
                     algebraicMove[2].ToString() + algebraicMove[3],
