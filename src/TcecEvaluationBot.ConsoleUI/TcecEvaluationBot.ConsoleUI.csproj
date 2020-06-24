@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
 	<LangVersion>latest</LangVersion>
-	<Version>1.8.0</Version>
+	<Version>1.9.0</Version>
 	<Authors>Nikolay.IT</Authors>
 	<Company />
 	<Product>TcecEvaluationBot</Product>
@@ -12,16 +12,9 @@
 	<AssemblyName>TcecEvaluationBot</AssemblyName>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-
   <PropertyGroup>
     <CodeAnalysisRuleSet>..\Rules.ruleset</CodeAnalysisRuleSet>
+    <PackageProjectUrl>https://github.com/NikolayIT/TcecEvaluationBot</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" />

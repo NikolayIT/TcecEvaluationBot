@@ -41,6 +41,7 @@
             this.commands.Add(new CommandInfo("reverse", new ReverseCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("evalhelp", new EvalHelpCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("evalengines", new EvalEnginesCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("temp", new TempCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("outputmoveson", new SetOutputMovesCommand(this.twitchClient, options, settings, true)));
             this.commands.Add(new CommandInfo("outputmovesoff", new SetOutputMovesCommand(this.twitchClient, options, settings, false)));
             //// Console.WriteLine(new EvaluationCommand(this.twitchClient, options, settings).Execute("!eval 5")); Console.ReadLine();
