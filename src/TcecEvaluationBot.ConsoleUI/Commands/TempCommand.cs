@@ -47,7 +47,7 @@
                 }
 
                 return
-                    $"CPU {cpuTemperatures.Average():0.0}°C ({string.Join(",", cpuTemperatures)}) (https://tcec-chess.com/cpu_temperature.txt) • GPU {gpuTemperatures.Average():0.0}°C ({string.Join(",", gpuTemperatures)}) (https://tcec-chess.com/gpu_temperature.txt) • Updated every 5min.";
+                    $"CPU {cpuTemperatures.Average():0.0}°C ({string.Join(",", cpuTemperatures)}) tcec-chess.com/cpu_temperature.txt • GPU {gpuTemperatures.Average():0.0}°C ({string.Join(",", gpuTemperatures)}) tcec-chess.com/gpu_temperature.txt • Updated every 5min.";
             }
             catch (Exception e)
             {

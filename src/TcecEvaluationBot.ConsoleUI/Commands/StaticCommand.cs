@@ -34,8 +34,11 @@
                 return "Unable to get static evaluation";
             }
 
+            var finalEvaluation = info[^3].Replace("Final evaluation:", string.Empty)
+                .Replace("(white side)", string.Empty).Trim();
+
             var result = new StringBuilder();
-            result.Append($"({fen.GetMoveInfoFromFen()}) ");
+            result.Append($"({fen.GetMoveInfoFromFen()}) {finalEvaluation} • ");
 
             result.Append(this.GetPositionInfoFromLine(info[18]));
             for (var i = 4; i < 17; i++)
@@ -43,7 +46,7 @@
                 result.Append(" • " + this.GetPositionInfoFromLine(info[i]));
             }
 
-            result.Append("<Stockfish>");
+            result.Append(" <Stockfish>");
 
             return result.ToString();
         }
@@ -89,7 +92,7 @@
         private string GetPositionInfoFromLine(string line)
         {
             var lineParts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            return $"{lineParts[0]}({lineParts[lineParts.Length - 2]},{lineParts[lineParts.Length - 1]}) ";
+            return $"{lineParts[0]}({lineParts[^2]},{lineParts[^1]})";
         }
     }
 }
