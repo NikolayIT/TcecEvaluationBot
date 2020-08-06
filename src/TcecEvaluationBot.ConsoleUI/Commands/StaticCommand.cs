@@ -40,8 +40,8 @@
             var result = new StringBuilder();
             result.Append($"({fen.GetMoveInfoFromFen()}) {finalEvaluation} • ");
 
-            result.Append(this.GetPositionInfoFromLine(info[18]));
-            for (var i = 4; i < 17; i++)
+            result.Append(this.GetPositionInfoFromLine(info[20]));
+            for (var i = 6; i < 19; i++)
             {
                 result.Append(" • " + this.GetPositionInfoFromLine(info[i]));
             }
