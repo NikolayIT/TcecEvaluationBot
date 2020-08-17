@@ -19,12 +19,9 @@
 
     public class CalcCommand : BaseCommand
     {
-        private readonly Random random;
-
         public CalcCommand(TwitchClient twitchClient, Options options, Settings settings)
             : base(twitchClient, options, settings)
         {
-            this.random = new Random();
         }
 
         public override string Execute(string message)
@@ -37,8 +34,9 @@
 
             try
             {
-                var expression = parts[1];
+                var expression = parts[1].TrimEnd();
                 var code = $@"using System;
+using System.Linq;
 using static System.Math;
 namespace ExpressionEvaluation
 {{
@@ -48,6 +46,17 @@ namespace ExpressionEvaluation
         {{
             Console.WriteLine({expression});
         }}
+
+        public static double Factorial(double n)
+        {{
+            double result = 1;
+            for (int i = 2; i <= n; i++)
+            {{
+                result *= i;
+            }}
+
+            return result;
+        }}
     }}
 }}";
                 var dotNetCoreDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
@@ -56,6 +65,7 @@ namespace ExpressionEvaluation
                     .AddReferences(
                         MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
                         MetadataReference.CreateFromFile(typeof(Console).Assembly.Location),
+                        MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
                         MetadataReference.CreateFromFile(Path.Combine(dotNetCoreDir, "System.Runtime.dll")))
                     .AddSyntaxTrees(SyntaxFactory.ParseSyntaxTree(code));
                 Directory.CreateDirectory(@"C:\Temp");
@@ -70,7 +80,7 @@ namespace ExpressionEvaluation
                 }
 
                 var process = new RestrictedProcess("dotnet.exe", @"C:\Temp", new List<string> { "ExpressionEvaluation.dll" });
-                process.Start(1500, 8 * 1024 * 2014);
+                process.Start(1500, 8 * 1024 * 1024);
                 var output = process.StandardOutput.ReadToEnd();
                 var error = process.StandardError.ReadToEnd();
                 if (!string.IsNullOrWhiteSpace(error))
