@@ -35,6 +35,7 @@
             this.commands.Add(new CommandInfo("time", new TimeCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("games", new GamesCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("rand", new RandCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("calc", new CalcCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("db", new DbCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("tb", new TbCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("links", new LinksCommand(this.twitchClient, options, settings)));
@@ -44,7 +45,7 @@
             this.commands.Add(new CommandInfo("temp", new TempCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("outputmoveson", new SetOutputMovesCommand(this.twitchClient, options, settings, true)));
             this.commands.Add(new CommandInfo("outputmovesoff", new SetOutputMovesCommand(this.twitchClient, options, settings, false)));
-            //// Console.WriteLine(new EvaluationCommand(this.twitchClient, options, settings).Execute("!eval 5")); Console.ReadLine();
+            //// Console.WriteLine(new CalcCommand(this.twitchClient, options, settings).Execute("!calc 2+2")); Console.ReadLine();
         }
 
         public Task OutputMovesTask()
