@@ -31,14 +31,19 @@
             var info = GetStaticEvaluationLines(fen);
             if (info.Length == 0)
             {
-                return "Unable to get static evaluation";
+                return "Unable to get static evaluation (probably the player is in check)";
             }
 
+            var classicEvaluation = info[^7].Replace("Classical evaluation:", string.Empty)
+                .Replace("(white side)", string.Empty).Trim();
+            var nnueEvaluation = info[^5].Replace("NNUE evaluation:", string.Empty)
+                .Replace("(white side)", string.Empty).Trim();
             var finalEvaluation = info[^3].Replace("Final evaluation:", string.Empty)
                 .Replace("(white side)", string.Empty).Trim();
 
             var result = new StringBuilder();
             result.Append($"({fen.GetMoveInfoFromFen()}) {finalEvaluation} • ");
+            result.Append($"Classic: {classicEvaluation} • NNUE: {nnueEvaluation} • ");
 
             result.Append(this.GetPositionInfoFromLine(info[20]));
             for (var i = 6; i < 19; i++)
@@ -73,7 +78,7 @@
                 process.StandardInput.WriteLine($"position fen {fen}");
                 process.StandardInput.WriteLine("eval");
                 process.StandardInput.Flush();
-                Thread.Sleep(300);
+                Thread.Sleep(1000);
                 if (!process.HasExited)
                 {
                     process.Kill();
