@@ -2,13 +2,6 @@
 {
     using System;
 
-    public enum Select
-    {
-        Continuations,
-        Transpositions,
-        All,
-    }
-
     public static class SelectHelper
     {
         public static readonly Select[] Values = { Select.Continuations, Select.Transpositions, Select.All };

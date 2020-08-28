@@ -2,13 +2,6 @@
 {
     using System;
 
-    public enum GameResult
-    {
-        WhiteWin,
-        BlackWin,
-        Draw,
-    }
-
     public static class GameResultHelper
     {
         public static string ToStringWordFormat(this GameResult result)
