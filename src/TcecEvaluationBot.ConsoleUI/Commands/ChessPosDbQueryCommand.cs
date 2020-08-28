@@ -43,6 +43,15 @@
                     this.database = null;
                 }
             }
+
+            if (this.database != null && this.database.IsOpen)
+            {
+                Console.WriteLine($"Exposing database at: {this.database.Path}");
+            }
+            else
+            {
+                Console.WriteLine($"Database at {path} couldn't be opened.");
+            }
         }
 
         public override string Execute(string message)
