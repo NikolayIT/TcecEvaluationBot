@@ -1,19 +1,33 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
-
-namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
+﻿namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
 {
+    using System.Collections.Generic;
+
+    using Newtonsoft.Json.Linq;
+
     public class ResultForRoot
     {
+        public ResultForRoot(RootPosition position)
+        {
+            this.Position = position;
+            this.ResultsBySelect = new Dictionary<Select, SelectResult>();
+            this.Retractions = new Dictionary<string, SegregatedEntries>();
+        }
+
+        public ResultForRoot()
+            : this(null)
+        {
+        }
+
         public RootPosition Position { get; set; }
+
         public Dictionary<Select, SelectResult> ResultsBySelect { get; set; }
+
         public Dictionary<string, SegregatedEntries> Retractions { get; set; }
 
         public static ResultForRoot FromJson(JObject json)
         {
             var result = new ResultForRoot(
-                RootPosition.FromJson(json["position"].Value<JObject>())
-            );
+                RootPosition.FromJson(json["position"].Value<JObject>()));
 
             foreach (Select select in SelectHelper.Values)
             {
@@ -35,23 +49,17 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
 
             return result;
         }
-
-        public ResultForRoot(RootPosition position)
-        {
-            Position = position;
-            ResultsBySelect = new Dictionary<Select, SelectResult>();
-            Retractions = new Dictionary<string, SegregatedEntries>();
-        }
-
-        public ResultForRoot() :
-            this(null)
-        {
-        }
     }
 
     public class SelectResult
     {
+        public SelectResult()
+        {
+            this.Children = new Dictionary<string, SegregatedEntries>();
+        }
+
         public SegregatedEntries Root { get; set; }
+
         public Dictionary<string, SegregatedEntries> Children { get; set; }
 
         public static SelectResult FromJson(JObject json)
@@ -72,11 +80,6 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
             }
 
             return result;
-        }
-
-        public SelectResult()
-        {
-            Children = new Dictionary<string, SegregatedEntries>();
         }
     }
 }

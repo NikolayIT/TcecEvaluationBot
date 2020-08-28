@@ -1,8 +1,13 @@
-﻿using System;
-
-namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
+﻿namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
 {
-    public enum GameLevel { Human, Engine, Server };
+    using System;
+
+    public enum GameLevel
+    {
+        Human,
+        Engine,
+        Server,
+    }
 
     public static class GameLevelHelper
     {
@@ -16,6 +21,8 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
                     return "engine";
                 case GameLevel.Server:
                     return "server";
+                default:
+                    break;
             }
 
             throw new ArgumentException();
@@ -31,6 +38,8 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
                     return Optional<GameLevel>.Create(GameLevel.Engine);
                 case "server":
                     return Optional<GameLevel>.Create(GameLevel.Server);
+                default:
+                    break;
             }
 
             return Optional<GameLevel>.CreateEmpty();

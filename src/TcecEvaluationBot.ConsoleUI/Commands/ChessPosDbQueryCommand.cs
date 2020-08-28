@@ -10,18 +10,13 @@
 
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
-
     using RestrictedProcess.Process;
-
-    using TcecEvaluationBot.ConsoleUI.Settings;
-
     using TcecEvaluationBot.ConsoleUI.Services;
-
     using TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery;
-
+    using TcecEvaluationBot.ConsoleUI.Settings;
     using TwitchLib.Client;
 
-    class ChessPosDbQueryCommand : BaseCommand
+    public class ChessPosDbQueryCommand : BaseCommand
     {
         private readonly CurrentGameInfoProvider currentGameInfoProvider;
         private readonly ChessPosDbProxy database;
@@ -33,26 +28,26 @@
 
             if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(ip))
             {
-                database = null;
+                this.database = null;
             }
             else
             {
                 try
                 {
-                    database = new ChessPosDbProxy(ip, port);
-                    database.Open(path);
+                    this.database = new ChessPosDbProxy(ip, port);
+                    this.database.Open(path);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
-                    database = null;
+                    this.database = null;
                 }
             }
         }
 
         public override string Execute(string message)
         {
-            if (database == null || !database.IsOpen)
+            if (this.database == null || !this.database.IsOpen)
             {
                 return "No database open.";
             }
@@ -65,9 +60,9 @@
 
             try
             {
-                var queryResult = database.Query(fen);
+                var queryResult = this.database.Query(fen);
 
-                return GetResponseStringFromQueryResult(queryResult);
+                return this.GetResponseStringFromQueryResult(queryResult);
             }
             catch (Exception e)
             {
@@ -78,14 +73,14 @@
 
         public override void Dispose()
         {
-            if (database != null)
+            if (this.database != null)
             {
-                if (database.IsOpen)
+                if (this.database.IsOpen)
                 {
-                    database.Close();
+                    this.database.Close();
                 }
 
-                database.Dispose();
+                this.database.Dispose();
             }
         }
 
@@ -93,7 +88,7 @@
         {
             const int numDisplayedChildren = 3;
 
-            var allGameLevels = new List<GameLevel>{ GameLevel.Engine, GameLevel.Human, GameLevel.Server };
+            var allGameLevels = new List<GameLevel> { GameLevel.Engine, GameLevel.Human, GameLevel.Server };
 
             var continuations = result.Results.First().ResultsBySelect[Select.Continuations];
             var root = continuations.Root;
@@ -109,7 +104,7 @@
             var sb = new StringBuilder();
             sb.Append(aggregatedRoot.ToString());
 
-            var bestChildren = GetBestChildren(aggregatedChildren, numDisplayedChildren);
+            var bestChildren = this.GetBestChildren(aggregatedChildren, numDisplayedChildren);
             foreach ((string move, var entry) in bestChildren)
             {
                 sb.Append(" • ");

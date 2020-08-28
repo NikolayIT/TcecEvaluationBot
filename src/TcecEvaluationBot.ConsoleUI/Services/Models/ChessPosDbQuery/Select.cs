@@ -1,12 +1,17 @@
-﻿using System;
-
-namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
+﻿namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
 {
-    public enum Select { Continuations, Transpositions, All };
+    using System;
+
+    public enum Select
+    {
+        Continuations,
+        Transpositions,
+        All,
+    }
 
     public static class SelectHelper
     {
-        public static Select[] Values = { Select.Continuations, Select.Transpositions, Select.All };
+        public static readonly Select[] Values = { Select.Continuations, Select.Transpositions, Select.All };
 
         public static string Stringify(this Select result)
         {
@@ -18,6 +23,8 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
                     return "transpositions";
                 case Select.All:
                     return "all";
+                default:
+                    break;
             }
 
             throw new ArgumentException();
@@ -33,6 +40,8 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
                     return Optional<Select>.Create(Select.Transpositions);
                 case "all":
                     return Optional<Select>.Create(Select.All);
+                default:
+                    break;
             }
 
             return Optional<Select>.CreateEmpty();

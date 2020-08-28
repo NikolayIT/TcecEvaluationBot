@@ -47,11 +47,11 @@
             this.commands.Add(new CommandInfo("outputmovesoff", new SetOutputMovesCommand(this.twitchClient, options, settings, false)));
 
             var iccfCommand = new ChessPosDbQueryCommand(
-                this.twitchClient, 
-                options, 
+                this.twitchClient,
+                options,
                 settings,
                 settings.IccfDatabaseIp,
-                settings.IccfDatabasePort, 
+                settings.IccfDatabasePort,
                 settings.IccfDatabasePath);
 
             this.commands.Add(new CommandInfo("iccf", iccfCommand));
@@ -136,7 +136,7 @@
                             {
                                 this.logger.Log($"ERROR: {ex}");
                                 this.twitchClient.SendMessage(this.options.TwitchChannelName, $"[{DateTime.UtcNow:HH:mm:ss}] Error: {ex.Message}");
-                                this.Log($"Error while executing \"{arguments.ChatMessage.Message}\": {ex.ToString()}");
+                                this.Log($"Error while executing \"{arguments.ChatMessage.Message}\": {ex}");
                             }
                         }
                     }
@@ -146,11 +146,12 @@
 
         public void Dispose()
         {
-            foreach (var command in commands)
+            foreach (var command in this.commands)
             {
                 command.Command.Dispose();
             }
-            commands.Clear();
+
+            this.commands.Clear();
         }
 
         private void Log(string message)

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
+﻿namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class Optional<T> : IEnumerable<T>
     {
         private readonly T[] data;
@@ -35,13 +35,13 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
 
         public T Or(T def)
         {
-            if (data.Count() == 0)
+            if (this.data.Count() == 0)
             {
                 return def;
             }
             else
             {
-                return data[0];
+                return this.data[0];
             }
         }
     }

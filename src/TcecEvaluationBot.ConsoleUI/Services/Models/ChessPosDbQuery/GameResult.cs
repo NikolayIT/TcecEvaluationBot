@@ -1,8 +1,13 @@
-﻿using System;
-
-namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
+﻿namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
 {
-    public enum GameResult { WhiteWin, BlackWin, Draw };
+    using System;
+
+    public enum GameResult
+    {
+        WhiteWin,
+        BlackWin,
+        Draw,
+    }
 
     public static class GameResultHelper
     {
@@ -16,6 +21,8 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
                     return "loss";
                 case GameResult.Draw:
                     return "draw";
+                default:
+                    break;
             }
 
             throw new ArgumentException();
@@ -31,6 +38,8 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
                     return "0-1";
                 case GameResult.Draw:
                     return "1/2-1/2";
+                default:
+                    break;
             }
 
             throw new ArgumentException();
@@ -46,6 +55,8 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
                     return "0-1";
                 case GameResult.Draw:
                     return "½-½";
+                default:
+                    break;
             }
 
             throw new ArgumentException();
@@ -61,6 +72,8 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
                     return "L";
                 case GameResult.Draw:
                     return "D";
+                default:
+                    break;
             }
 
             throw new ArgumentException();
@@ -76,10 +89,13 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
                     return Optional<GameResult>.Create(GameResult.BlackWin);
                 case "draw":
                     return Optional<GameResult>.Create(GameResult.Draw);
+                default:
+                    break;
             }
 
             return Optional<GameResult>.CreateEmpty();
         }
+
         public static Optional<GameResult> FromStringPgnFormat(string str)
         {
             switch (str)
@@ -90,6 +106,8 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
                     return Optional<GameResult>.Create(GameResult.BlackWin);
                 case "1/2-1/2":
                     return Optional<GameResult>.Create(GameResult.Draw);
+                default:
+                    break;
             }
 
             return Optional<GameResult>.CreateEmpty();

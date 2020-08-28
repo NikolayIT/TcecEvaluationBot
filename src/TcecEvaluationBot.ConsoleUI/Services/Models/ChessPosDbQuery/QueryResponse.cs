@@ -1,10 +1,16 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
-
-namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
+﻿namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
 {
+    using System.Collections.Generic;
+
+    using Newtonsoft.Json.Linq;
+
     public class QueryResponse
     {
+        public QueryResponse()
+        {
+            this.Results = new List<ResultForRoot>();
+        }
+
         public List<ResultForRoot> Results { get; set; }
 
         public static QueryResponse FromJson(JObject json)
@@ -17,11 +23,6 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
             }
 
             return result;
-        }
-
-        public QueryResponse()
-        {
-            Results = new List<ResultForRoot>();
         }
     }
 }

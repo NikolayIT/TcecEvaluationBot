@@ -1,11 +1,19 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-
-namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
+﻿namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
 {
+    using System;
+
+    using Newtonsoft.Json.Linq;
+
     public struct Eco
     {
+        public Eco(char category, byte index)
+        {
+            this.Category = category;
+            this.Index = index;
+        }
+
         public char Category { get; set; }
+
         public byte Index { get; set; }
 
         public static Eco FromJson(JToken json)
@@ -28,19 +36,13 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
             return new Eco
             {
                 Category = str[0],
-                Index = Byte.Parse(str.Substring(1, 2))
+                Index = byte.Parse(str.Substring(1, 2)),
             };
-        }
-
-        public Eco(char category, byte index)
-        {
-            Category = category;
-            Index = index;
         }
 
         public override string ToString()
         {
-            return Category + Index.ToString("D2");
+            return this.Category + this.Index.ToString("D2");
         }
     }
 }

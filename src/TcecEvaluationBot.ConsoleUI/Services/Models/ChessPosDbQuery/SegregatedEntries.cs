@@ -1,12 +1,18 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
+﻿namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Newtonsoft.Json.Linq;
+
     public class SegregatedEntries : IEnumerable<KeyValuePair<Origin, Entry>>
     {
+        public SegregatedEntries()
+        {
+            this.Entries = new Dictionary<Origin, Entry>();
+        }
+
         private Dictionary<Origin, Entry> Entries { get; set; }
 
         public static SegregatedEntries FromJson(JObject json)
@@ -27,19 +33,14 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
             return e;
         }
 
-        public SegregatedEntries()
-        {
-            Entries = new Dictionary<Origin, Entry>();
-        }
-
         public void Add(GameLevel level, GameResult result, Entry entry)
         {
-            Entries.Add(new Origin(level, result), entry);
+            this.Entries.Add(new Origin(level, result), entry);
         }
 
         public Entry Get(GameLevel level, GameResult result)
         {
-            if (Entries.TryGetValue(new Origin(level, result), out Entry e))
+            if (this.Entries.TryGetValue(new Origin(level, result), out Entry e))
             {
                 return e;
             }
@@ -49,24 +50,25 @@ namespace TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery
 
         IEnumerator<KeyValuePair<Origin, Entry>> IEnumerable<KeyValuePair<Origin, Entry>>.GetEnumerator()
         {
-            return ((IEnumerable<KeyValuePair<Origin, Entry>>)Entries).GetEnumerator();
+            return ((IEnumerable<KeyValuePair<Origin, Entry>>)this.Entries).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable<KeyValuePair<Origin, Entry>>)Entries).GetEnumerator();
+            return ((IEnumerable<KeyValuePair<Origin, Entry>>)this.Entries).GetEnumerator();
         }
     }
 
     internal struct Origin
     {
-        public GameLevel Level { get; set; }
-        public GameResult Result { get; set; }
-
         public Origin(GameLevel level, GameResult result)
         {
-            Level = level;
-            Result = result;
+            this.Level = level;
+            this.Result = result;
         }
+
+        public GameLevel Level { get; set; }
+
+        public GameResult Result { get; set; }
     }
 }
