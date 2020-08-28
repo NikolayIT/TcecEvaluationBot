@@ -11,7 +11,7 @@
     using TwitchLib.Client;
     using TwitchLib.Client.Models;
 
-    public class TwitchBot
+    public class TwitchBot : IDisposable
     {
         private readonly Options options;
 
@@ -45,7 +45,18 @@
             this.commands.Add(new CommandInfo("temp", new TempCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("outputmoveson", new SetOutputMovesCommand(this.twitchClient, options, settings, true)));
             this.commands.Add(new CommandInfo("outputmovesoff", new SetOutputMovesCommand(this.twitchClient, options, settings, false)));
-            //// Console.WriteLine(new CalcCommand(this.twitchClient, options, settings).Execute("!calc 2+2")); Console.ReadLine();
+
+            var iccfCommand = new ChessPosDbQueryCommand(
+                this.twitchClient, 
+                options, 
+                settings,
+                settings.IccfDatabaseIp,
+                settings.IccfDatabasePort, 
+                settings.IccfDatabasePath);
+
+            this.commands.Add(new CommandInfo("iccf", iccfCommand));
+
+            // Console.WriteLine(iccfCommand.Execute("!iccf")); Console.ReadLine();
         }
 
         public Task OutputMovesTask()
@@ -131,6 +142,15 @@
                     }
                 };
             this.twitchClient.Connect();
+        }
+
+        public void Dispose()
+        {
+            foreach (var command in commands)
+            {
+                command.Command.Dispose();
+            }
+            commands.Clear();
         }
 
         private void Log(string message)

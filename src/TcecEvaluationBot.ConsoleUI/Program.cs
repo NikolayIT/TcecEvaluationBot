@@ -25,7 +25,7 @@
 
         private static void RunBot(Options options, Settings.Settings settings)
         {
-            var bot = new TwitchBot(options, settings);
+            using var bot = new TwitchBot(options, settings);
             bot.OutputMovesTask();
             bot.Run();
             Console.ReadLine();

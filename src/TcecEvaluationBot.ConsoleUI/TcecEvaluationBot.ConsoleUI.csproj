@@ -38,6 +38,12 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="cfg\config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="chess_pos_db.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="nn-82215d0fd0df.nnue">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
