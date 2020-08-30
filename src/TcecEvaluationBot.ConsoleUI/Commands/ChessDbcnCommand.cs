@@ -49,12 +49,14 @@
 
             if (allScores.Count == 0)
             {
-                return "Unkown position.";
+                return $"({fen.GetMoveInfoFromFen()}) Position not found. <chessdb.cn>";
             }
 
             var bestScores = this.GetBestScores(allScores, this.maxBestScores, playerToMove);
 
-            return this.FormatScoreList(bestScores);
+            return message.Trim().Contains(" ")
+                       ? $"{this.FormatScoreList(bestScores)} <chessdb.cn>"
+                       : $"({fen.GetMoveInfoFromFen()}) {this.FormatScoreList(bestScores)} <chessdb.cn>";
         }
 
         private List<KeyValuePair<string, ChessDbcnScore>> GetBestScores(
