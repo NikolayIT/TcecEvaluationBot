@@ -57,7 +57,18 @@
                 return "No database open.";
             }
 
-            var fen = this.currentGameInfoProvider.GetInfo().Fen;
+            string fen = null;
+            if (message.Trim().Contains(" "))
+            {
+                var parts = message.Split(" ", 2);
+                fen = parts[1];
+            }
+
+            if (string.IsNullOrWhiteSpace(fen))
+            {
+                fen = this.currentGameInfoProvider.GetInfo().Fen;
+            }
+
             if (string.IsNullOrWhiteSpace(fen))
             {
                 return "No active game?";
@@ -67,7 +78,9 @@
             {
                 var queryResult = this.database.Query(fen);
 
-                return this.GetResponseStringFromQueryResult(queryResult);
+                return message.Trim().Contains(" ")
+                           ? this.GetResponseStringFromQueryResult(queryResult)
+                           : $"({fen.GetMoveInfoFromFen()}) " + this.GetResponseStringFromQueryResult(queryResult);
             }
             catch (Exception e)
             {

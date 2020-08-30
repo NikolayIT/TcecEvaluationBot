@@ -52,15 +52,9 @@
 
         public Optional<GameHeader> FirstGame { get; set; }
 
-        public double Perf
-        {
-            get { return (this.WinCount + (this.DrawCount / 2.0)) / this.Count; }
-        }
+        public double Perf => (this.WinCount + (this.DrawCount / 2.0)) / this.Count;
 
-        public double DrawRate
-        {
-            get { return (double)this.DrawCount / this.Count; }
-        }
+        public double DrawRate => (double)this.DrawCount / this.Count;
 
         public static AggregatedEntry operator -(AggregatedEntry lhs, AggregatedEntry rhs)
         {
@@ -92,7 +86,7 @@
                     break;
             }
 
-            if (this.FirstGame.Count() == 0)
+            if (!this.FirstGame.Any())
             {
                 this.FirstGame = entry.FirstGame;
             }
@@ -115,7 +109,7 @@
             this.LossCount += entry.LossCount;
             this.TotalEloDiff += entry.TotalEloDiff;
 
-            if (this.FirstGame.Count() == 0)
+            if (!this.FirstGame.Any())
             {
                 this.FirstGame = entry.FirstGame;
             }
@@ -127,12 +121,11 @@
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-
+            var sb = new StringBuilder();
             sb.Append($"+{this.WinCount}={this.DrawCount}-{this.LossCount} ");
             foreach (var game in this.FirstGame)
             {
-                sb.Append(game.ToString());
+                sb.Append(game);
             }
 
             return sb.ToString();

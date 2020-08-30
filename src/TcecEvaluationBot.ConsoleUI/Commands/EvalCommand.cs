@@ -9,7 +9,7 @@
 
     using TwitchLib.Client;
 
-    public class EvaluationCommand : BaseCommand
+    public class EvalCommand : BaseCommand
     {
         private readonly IDictionary<string, IPositionEvaluator> engines;
 
@@ -17,7 +17,7 @@
 
         private readonly CurrentGameInfoProvider currentGameInfoProvider;
 
-        public EvaluationCommand(TwitchClient twitchClient, Options options, Settings settings)
+        public EvalCommand(TwitchClient twitchClient, Options options, Settings settings)
             : base(twitchClient, options, settings)
         {
             if (settings.Engines.Length == 0)

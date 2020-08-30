@@ -1,5 +1,6 @@
 # TcecEvaluationBot
-Position evaluation chat bot for http://tcec.chessdom.com/live.php
+
+Position evaluation chat bot for <https://tcec-chess.com/>
 
 ## Command-line parameters
 
