@@ -99,7 +99,7 @@
                         var cp = GetCp(fenPosition, lastStatsLine);
                         var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
                         var ponder = currentLine.Contains("ponder ") ? currentLine.Split("ponder ")[1] : string.Empty;
-                        var outputMessage = $"({fenPosition.GetMoveInfoFromFen()}) {cp} {this.moveConversion.AlgebraicToSan(fenPosition, best)} {this.moveConversion.AlgebraicToSan(fenPosition, best, ponder)} (d{depth}, {nodesPerSecond / 1000000:0.00} Mnps, {tableBaseHits} tb) <{this.engineSignature}>";
+                        var outputMessage = $"({fenPosition.GetMoveInfoFromFen()}) {cp} {this.moveConversion.AlgebraicToSan(fenPosition, best)} {this.moveConversion.AlgebraicToSan(fenPosition, best, ponder)} (d{depth}, {nodesPerSecond / 1000000.0:0.00} Mnps, {tableBaseHits} tb) <{this.engineSignature}>";
                         return outputMessage;
                     }
 
