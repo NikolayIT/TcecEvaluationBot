@@ -2,31 +2,27 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using System.Runtime.InteropServices;
     using System.Text;
-    using System.Text.Json;
 
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using RestrictedProcess.Process;
     using TcecEvaluationBot.ConsoleUI.Services;
     using TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery;
     using TcecEvaluationBot.ConsoleUI.Settings;
+
     using TwitchLib.Client;
 
     public class ChessPosDbQueryCommand : BaseCommand
     {
         private readonly CurrentGameInfoProvider currentGameInfoProvider;
+
         private readonly ChessPosDbProxy database;
 
-        public ChessPosDbQueryCommand(TwitchClient twitchClient, Options options, Settings settings, string ip, int port, string path)
+        public ChessPosDbQueryCommand(TwitchClient twitchClient, Options options, Settings settings)
             : base(twitchClient, options, settings)
         {
             this.currentGameInfoProvider = new CurrentGameInfoProvider(settings.LivePgnUrl);
 
-            if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(ip))
+            if (string.IsNullOrWhiteSpace(settings.IccfDatabasePath) || string.IsNullOrWhiteSpace(settings.IccfDatabaseIp))
             {
                 this.database = null;
             }
@@ -34,8 +30,8 @@
             {
                 try
                 {
-                    this.database = new ChessPosDbProxy(ip, port);
-                    this.database.Open(path);
+                    this.database = new ChessPosDbProxy(settings.IccfDatabaseIp, settings.IccfDatabasePort);
+                    this.database.Open(settings.IccfDatabasePath);
                 }
                 catch (Exception e)
                 {
@@ -50,7 +46,7 @@
             }
             else
             {
-                Console.WriteLine($"Database at {path} couldn't be opened.");
+                Console.WriteLine($"Database at \"{settings.IccfDatabasePath}\" couldn't be opened.");
             }
         }
 
