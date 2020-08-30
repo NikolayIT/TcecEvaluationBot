@@ -11,13 +11,13 @@
 
     using TwitchLib.Client;
 
-    public class ChessPosDbQueryCommand : BaseCommand
+    public class IccfDbCommand : BaseCommand
     {
         private readonly CurrentGameInfoProvider currentGameInfoProvider;
 
         private readonly ChessPosDbProxy database;
 
-        public ChessPosDbQueryCommand(TwitchClient twitchClient, Options options, Settings settings)
+        public IccfDbCommand(TwitchClient twitchClient, Options options, Settings settings)
             : base(twitchClient, options, settings)
         {
             this.currentGameInfoProvider = new CurrentGameInfoProvider(settings.LivePgnUrl);
@@ -91,7 +91,7 @@
 
         private string GetResponseStringFromQueryResult(QueryResponse result)
         {
-            const int numDisplayedChildren = 3;
+            const int numDisplayedChildren = 5;
 
             var allGameLevels = new List<GameLevel> { GameLevel.Engine, GameLevel.Human, GameLevel.Server };
 
@@ -101,23 +101,24 @@
 
             var aggregatedRoot = new AggregatedEntry(root, allGameLevels);
             var aggregatedChildren = new Dictionary<string, AggregatedEntry>();
-            foreach ((string move, var e) in children)
+            foreach (var (move, e) in children)
             {
                 aggregatedChildren.Add(move, new AggregatedEntry(e, allGameLevels));
             }
 
             var sb = new StringBuilder();
-            sb.Append(aggregatedRoot.ToString());
+            sb.Append(aggregatedRoot);
 
             var bestChildren = this.GetBestChildren(aggregatedChildren, numDisplayedChildren);
-            foreach ((string move, var entry) in bestChildren)
+            foreach (var (move, entry) in bestChildren)
             {
                 sb.Append(" • ");
                 sb.Append(move);
                 sb.Append(" ");
-                sb.Append(entry.ToString());
+                sb.Append(entry);
             }
 
+            sb.Append(" <ICCF>");
             return sb.ToString();
         }
 
@@ -125,6 +126,7 @@
         {
             return aggregatedChildren
                 .OrderByDescending(kv => kv.Value.Count)
+                .Where(x => x.Value.Count > 0)
                 .Take(maxChildren)
                 .ToList();
         }

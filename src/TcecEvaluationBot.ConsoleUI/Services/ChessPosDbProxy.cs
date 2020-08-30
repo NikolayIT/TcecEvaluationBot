@@ -8,7 +8,6 @@
     using System.Text;
     using System.Threading;
 
-    using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using TcecEvaluationBot.ConsoleUI.Services.Models.ChessPosDbQuery;
 
@@ -25,20 +24,17 @@
 
             /* If the app crashes then it orphans the process. Shouldn't happen.
                The following workaround also limits the number of concurrent dbs to 1.*/
-            /*
             {
-                var collidingProcessses = System.Diagnostics.Process.GetProcessesByName(processName);
-                System.Diagnostics.Debug.WriteLine("Killing " + collidingProcessses.Length + " colliding processes...");
-                foreach (var process in collidingProcessses)
+                var collidingProcesses = System.Diagnostics.Process.GetProcessesByName(processName);
+                foreach (var process in collidingProcesses)
                 {
                     process.Kill();
                 }
             }
-            */
 
             this.Process = new Process();
             this.Process.StartInfo.FileName = processName + ".exe";
-            this.Process.StartInfo.Arguments = string.Format("tcp --port {0}", port);
+            this.Process.StartInfo.Arguments = $"tcp --port {port}";
             System.Diagnostics.Debug.WriteLine(this.Process.StartInfo.Arguments);
 
             // TODO: Setting this to true makes the program hang after a few queries
@@ -75,6 +71,8 @@
                     this.Process.Kill();
                     throw;
                 }
+
+                Thread.Sleep(1500);
             }
         }
 

@@ -60,7 +60,7 @@
             }
             else
             {
-                for (var i = 0; i < Math.Min(positionInfo.Moves.Length, 4); i++)
+                for (var i = 0; i < Math.Min(positionInfo.Moves.Length, 5); i++)
                 {
                     var move = positionInfo.Moves[i];
                     sb.Append($"{move.San} (+{move.White}={move.Draws}-{move.Black}) • ");
