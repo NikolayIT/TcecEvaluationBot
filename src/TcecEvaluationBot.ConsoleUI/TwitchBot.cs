@@ -37,6 +37,8 @@
             this.commands.Add(new CommandInfo("rand", new RandCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("calc", new CalcCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("db", new DbCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("idb", new IccfDbCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("cdb", new ChessDbcnCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("tb", new TbCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("links", new LinksCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("reverse", new ReverseCommand(this.twitchClient, options, settings)));
@@ -45,12 +47,11 @@
             this.commands.Add(new CommandInfo("temp", new TempCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("outputmoveson", new SetOutputMovesCommand(this.twitchClient, options, settings, true)));
             this.commands.Add(new CommandInfo("outputmovesoff", new SetOutputMovesCommand(this.twitchClient, options, settings, false)));
-            this.commands.Add(new CommandInfo("iccfdb", new IccfDbCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("define", new DefineCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("urban", new UrbanCommand(this.twitchClient, options, settings)));
-            this.commands.Add(new CommandInfo("dbcn", new ChessDbcnCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("chesswiki", new WikiCommand(this.twitchClient, options, settings)));
 
-            //// Console.WriteLine(new DefineCommand(this.twitchClient, options, settings).Execute("!define test")); Console.ReadLine();
+            //// Console.WriteLine(new WikiCommand(this.twitchClient, options, settings).Execute("!chesswiki AllieStein")); Console.ReadLine();
         }
 
         public Task OutputMovesTask()
