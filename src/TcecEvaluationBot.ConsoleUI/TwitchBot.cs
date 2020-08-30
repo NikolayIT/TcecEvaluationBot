@@ -48,6 +48,7 @@
             this.commands.Add(new CommandInfo("iccfdb", new IccfDbCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("define", new DefineCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("urban", new UrbanCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("dbcn", new ChessDbcnCommand(this.twitchClient, options, settings)));
 
             //// Console.WriteLine(new DefineCommand(this.twitchClient, options, settings).Execute("!define test")); Console.ReadLine();
         }
