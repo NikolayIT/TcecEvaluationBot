@@ -46,8 +46,9 @@
             this.commands.Add(new CommandInfo("outputmoveson", new SetOutputMovesCommand(this.twitchClient, options, settings, true)));
             this.commands.Add(new CommandInfo("outputmovesoff", new SetOutputMovesCommand(this.twitchClient, options, settings, false)));
             this.commands.Add(new CommandInfo("iccfdb", new IccfDbCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("define", new DefineCommand(this.twitchClient, options, settings)));
 
-            //// Console.WriteLine(new EvalCommand(this.twitchClient, options, settings).Execute("!eval")); Console.ReadLine();
+            //// Console.WriteLine(new DefineCommand(this.twitchClient, options, settings).Execute("!define test")); Console.ReadLine();
         }
 
         public Task OutputMovesTask()

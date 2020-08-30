@@ -17,5 +17,9 @@
         public string IccfDatabaseIp { get; set; }
 
         public int IccfDatabasePort { get; set; }
+
+        public string OxfordApiAppId { get; set; }
+
+        public string OxfordApiAppKey { get; set; }
     }
 }
