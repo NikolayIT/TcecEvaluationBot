@@ -109,15 +109,40 @@
             var allGameLevels = new List<GameLevel> { GameLevel.Engine, GameLevel.Human, GameLevel.Server };
 
             var continuations = result.Results.First().ResultsBySelect[Select.Continuations];
-            var root = continuations.Root;
-            var children = continuations.Children;
+            var transpositions = result.Results.First().ResultsBySelect[Select.Transpositions];
+            var rootContinuations = continuations.Root;
+            var rootTranspositions = transpositions.Root;
+            var childrenContinuations = continuations.Children;
+            var childrenTranspositions = transpositions.Children;
 
-            var aggregatedRoot = new AggregatedEntry(root, allGameLevels);
+            var aggregatedRoot = new AggregatedEntry(rootContinuations, allGameLevels);
+            aggregatedRoot.Combine(new AggregatedEntry(rootTranspositions, allGameLevels));
+
             var aggregatedChildren = new Dictionary<string, AggregatedEntry>();
-            foreach (var (move, e) in children)
+            foreach (var (move, e) in childrenTranspositions)
             {
                 aggregatedChildren.Add(move, new AggregatedEntry(e, allGameLevels));
             }
+
+            var aggregatedChildrenContinuations = new Dictionary<string, AggregatedEntry>();
+            foreach (var (move, e) in childrenContinuations)
+            {
+                var ae = new AggregatedEntry(e, allGameLevels);
+
+                aggregatedChildrenContinuations.Add(move, ae);
+
+                if (aggregatedChildren.ContainsKey(move))
+                {
+                    aggregatedChildren[move].Combine(ae);
+                }
+                else
+                {
+                    aggregatedChildren.Add(move, ae);
+                }
+            }
+
+            var onlyTranspositions = childrenTranspositions.Keys.Where(
+                move => aggregatedChildrenContinuations.Any(c => c.Key == move && c.Value.Count == 0));
 
             var sb = new StringBuilder();
             sb.Append(aggregatedRoot);
@@ -126,6 +151,12 @@
             foreach (var (move, entry) in bestChildren)
             {
                 sb.Append(" • ");
+
+                if (onlyTranspositions.Contains(move))
+                {
+                    sb.Append("(T) ");
+                }
+
                 sb.Append(move);
                 sb.Append(" ");
                 sb.Append(entry);
