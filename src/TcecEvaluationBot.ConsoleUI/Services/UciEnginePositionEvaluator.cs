@@ -95,11 +95,11 @@
                         Console.WriteLine(lastStatsLine);
                         var depth = lastStatsLine.Split(" depth ")[1].Split(" ")[0];
                         var tableBaseHits = lastStatsLine.Contains(" tbhits ") ? lastStatsLine.Split(" tbhits ")[1].Split(" ")[0] : "0";
-                        var nodesPerSecond = lastStatsLine.Contains(" nps ") ? lastStatsLine.Split(" nps ")[1].Split(" ")[0] : "?";
+                        var nodesPerSecond = lastStatsLine.Contains(" nps ") ? int.Parse(lastStatsLine.Split(" nps ")[1].Split(" ")[0]) : 0;
                         var cp = GetCp(fenPosition, lastStatsLine);
                         var best = currentLine.Split("bestmove ")[1].Split(" ")[0];
                         var ponder = currentLine.Contains("ponder ") ? currentLine.Split("ponder ")[1] : string.Empty;
-                        var outputMessage = $"({fenPosition.GetMoveInfoFromFen()}) {cp} d{depth} (tb {tableBaseHits}, nps {nodesPerSecond}) pv {this.moveConversion.AlgebraicToSan(fenPosition, best)} {this.moveConversion.AlgebraicToSan(fenPosition, best, ponder)} <{this.engineSignature}>";
+                        var outputMessage = $"({fenPosition.GetMoveInfoFromFen()}) {cp} d{depth} (tb {tableBaseHits}, nps {nodesPerSecond / 1000}k) pv {this.moveConversion.AlgebraicToSan(fenPosition, best)} {this.moveConversion.AlgebraicToSan(fenPosition, best, ponder)} <{this.engineSignature}>";
                         return outputMessage;
                     }
 
