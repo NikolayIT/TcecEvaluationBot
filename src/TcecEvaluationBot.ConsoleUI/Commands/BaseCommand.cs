@@ -1,7 +1,6 @@
 ﻿namespace TcecEvaluationBot.ConsoleUI.Commands
 {
     using TcecEvaluationBot.ConsoleUI.Settings;
-
     using TwitchLib.Client;
 
     public abstract class BaseCommand : ICommand
@@ -20,5 +19,9 @@
         protected Settings Settings { get; }
 
         public abstract string Execute(string message);
+
+        public virtual void Dispose()
+        {
+        }
     }
 }

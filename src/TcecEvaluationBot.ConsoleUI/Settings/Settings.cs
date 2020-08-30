@@ -11,5 +11,11 @@
         public bool OutputMoves { get; set; }
 
         public EngineSettings[] Engines { get; set; }
+
+        public string IccfDatabasePath { get; set; }
+
+        public string IccfDatabaseIp { get; set; }
+
+        public int IccfDatabasePort { get; set; }
     }
 }
