@@ -28,6 +28,11 @@
                     $"https://od-api.oxforddictionaries.com:443/api/v2/entries/en-us/{word}?fields=definitions&strictMatch=false";
                 var response = await this.httpClient.GetAsync(url);
                 var jsonResponse = await response.Content.ReadAsStringAsync();
+                if (jsonResponse.Contains("No entry found matching supplied source_lang, word and provided filters"))
+                {
+                    return "word not found";
+                }
+
                 var data = JsonConvert.DeserializeObject<ResponseObject>(jsonResponse);
                 return data.Results.FirstOrDefault()?.LexicalEntries.FirstOrDefault()?.Entries.FirstOrDefault()?.Senses.FirstOrDefault()?.Definitions.FirstOrDefault() ?? "Word not found.";
             }

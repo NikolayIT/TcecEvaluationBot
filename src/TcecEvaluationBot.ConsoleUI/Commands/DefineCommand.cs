@@ -22,12 +22,12 @@
             var parts = message.Split(' ', 2);
             if (parts.Length != 2)
             {
-                return "Usage: !explain [word]";
+                return "Usage: !define [word]";
             }
 
             var word = parts[1];
             var meaning = this.oxfordDictionaryDefinitionsProvider.GetWordDefinition(word).GetAwaiter().GetResult();
-            return $"{word}: {meaning} <Oxford> https://en.wiktionary.org/wiki/{word}";
+            return $"{word}: {meaning} <Oxford> https://en.wiktionary.org/wiki/{word.Replace(" ", "_")}";
         }
     }
 }
