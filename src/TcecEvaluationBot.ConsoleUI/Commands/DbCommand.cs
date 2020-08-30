@@ -77,7 +77,7 @@
                 for (var i = 0; i < Math.Min(positionInfo.TopGames.Length, 2); i++)
                 {
                     var topGame = positionInfo.TopGames[i];
-                    sb.Append($"[{topGame.Year}] {topGame.White.Name} ({topGame.White.Rating}) vs {topGame.Black.Name} ({topGame.Black.Rating}): {topGame.Winner} • ");
+                    sb.Append($"[{topGame.Year}] {topGame.White.Name} ({topGame.White.Rating}) vs {topGame.Black.Name} ({topGame.Black.Rating}): {topGame.WinnerFriendlyString} • ");
                 }
             }
 
