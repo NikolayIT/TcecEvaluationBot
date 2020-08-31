@@ -1,5 +1,6 @@
 ﻿namespace TcecEvaluationBot.ConsoleUI.Services
 {
+    using ChessDotNet;
     using System;
     using System.Collections.Generic;
     using System.Net.Http;
@@ -64,6 +65,8 @@
         {
             Dictionary<string, ChessDbcnScore> scores = new Dictionary<string, ChessDbcnScore>();
 
+            var sideToMove = fen.Contains(" b ") ? Player.Black : Player.White;
+
             string[] byMoveStrs = responseStr.Split('|');
             foreach (var byMoveStr in byMoveStrs)
             {
@@ -90,7 +93,7 @@
                     {
                         // AlgebraicToSan produces '\0' bytes. TODO: fix?
                         var san = MoveConverter.AlgebraicToSan(fen, moveStr).Replace("\0", string.Empty);
-                        scores.Add(san, new ChessDbcnScore(scoreStr));
+                        scores.Add(san, new ChessDbcnScore(scoreStr, sideToMove));
                     }
                     catch
                     {
