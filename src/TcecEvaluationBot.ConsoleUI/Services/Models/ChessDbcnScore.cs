@@ -1,5 +1,6 @@
 ﻿namespace TcecEvaluationBot.ConsoleUI.Services.Models
 {
+    using ChessDotNet;
     using System;
     using System.Globalization;
 
@@ -9,27 +10,27 @@
         private static readonly int CursedDtz0 = 20000;
         private static readonly int Dtz0 = 30000;
 
-        public ChessDbcnScore(int v)
+        public ChessDbcnScore(int v, Player sideToMove)
         {
-            this.Value = v;
+            this.Value = GetValueForPlayer(v, sideToMove);
             this.Perf = 0;
         }
 
-        public ChessDbcnScore(string str)
+        public ChessDbcnScore(string str, Player sideToMove)
         {
-            this.Value = ValueFromString(str);
+            this.Value = GetValueForPlayer(ValueFromString(str), sideToMove);
             this.Perf = str == null ? double.NaN : WinPctFromEval(this.Value);
         }
 
-        public ChessDbcnScore(int v, double pct)
+        public ChessDbcnScore(int v, double pct, Player sideToMove)
         {
-            this.Value = v;
+            this.Value = GetValueForPlayer(v, sideToMove);
             this.Perf = pct;
         }
 
-        public ChessDbcnScore(string value, string winpct)
+        public ChessDbcnScore(string value, string winpct, Player sideToMove)
         {
-            this.Value = ValueFromString(value);
+            this.Value = GetValueForPlayer(ValueFromString(value), sideToMove);
             this.Perf = WinPctFromString(winpct);
         }
 
@@ -120,6 +121,11 @@
             }
 
             return 1.0 / (1.0 + Math.Exp(-eval / 90.0));
+        }
+
+        private static int GetValueForPlayer(int value, Player sideToMove)
+        {
+            return sideToMove == Player.White ? value : -value;
         }
     }
 }
