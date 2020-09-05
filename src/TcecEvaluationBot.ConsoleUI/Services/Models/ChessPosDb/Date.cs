@@ -106,6 +106,11 @@
             return this.ToString('.');
         }
 
+        public string ToStringYear()
+        {
+            return this.Year.Select(y => y.ToString("D4")).DefaultIfEmpty("????").First();
+        }
+
         public string ToString(char sep)
         {
             var parts = new string[]
