@@ -22,7 +22,7 @@
             return $@"commands: !eval {{engine({this.Settings.Engines.FirstOrDefault()?.Names.FirstOrDefault()})}} {{time({this.Options.DefaultEvaluationTime})}} •
 !static • !links {{fen}} • !db {{fen}} • !idb {{fen}} • !cdb {{fen}} • !tb {{fen}} • !time {{#|last|next|reverse}} • !games {{engine}} • !reverse •
 !rand [min] [max] • !calc [expression] • !define [word] • !urban [word]• !chesswiki [term] • !evalhelp • !evalengines • !temp • 
-!outputmoveson • !outputmovesoff • <eval_bot {this.environmentInformationProvider.VersionNumber}>";
+!outputmoveson • !outputmovesoff • !bot • <eval_bot {this.environmentInformationProvider.VersionNumber}>";
         }
     }
 }
