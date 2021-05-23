@@ -11,7 +11,7 @@
     using TwitchLib.Client;
     using TwitchLib.Client.Models;
 
-    public class TwitchBot : IDisposable
+    public sealed class TwitchBot : IDisposable
     {
         private readonly Options options;
 
@@ -50,6 +50,7 @@
             this.commands.Add(new CommandInfo("define", new DefineCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("urban", new UrbanCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("chesswiki", new WikiCommand(this.twitchClient, options, settings)));
+            this.commands.Add(new CommandInfo("bot", new BotCommand(this.twitchClient, options, settings)));
 
             //// Console.WriteLine(new WikiCommand(this.twitchClient, options, settings).Execute("!chesswiki AllieStein")); Console.ReadLine();
         }

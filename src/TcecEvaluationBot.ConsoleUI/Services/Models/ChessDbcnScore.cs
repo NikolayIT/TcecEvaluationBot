@@ -1,8 +1,9 @@
 ﻿namespace TcecEvaluationBot.ConsoleUI.Services.Models
 {
-    using ChessDotNet;
     using System;
     using System.Globalization;
+
+    using ChessDotNet;
 
     public class ChessDbcnScore : IComparable
     {
