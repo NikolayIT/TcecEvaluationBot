@@ -84,7 +84,7 @@
             sb.Append($"{this.White} - {this.Black} ");
             sb.Append(this.Result.ToStringPgnUnicodeFormat());
             sb.Append(" ");
-            sb.Append(this.Date.ToStringOmitUnknown());
+            sb.Append(this.Date.ToStringYear());
 
             return sb.ToString();
         }
