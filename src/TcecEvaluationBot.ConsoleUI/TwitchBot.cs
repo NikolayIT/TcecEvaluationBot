@@ -52,7 +52,7 @@
             this.commands.Add(new CommandInfo("chesswiki", new WikiCommand(this.twitchClient, options, settings)));
             this.commands.Add(new CommandInfo("bot", new BotCommand(this.twitchClient, options, settings)));
 
-            //// Console.WriteLine(new WikiCommand(this.twitchClient, options, settings).Execute("!chesswiki AllieStein")); Console.ReadLine();
+            //// Console.WriteLine(new StaticCommand(this.twitchClient, options, settings).Execute("!static")); Console.ReadLine();
         }
 
         public Task OutputMovesTask()

@@ -78,7 +78,7 @@
                 process.StandardInput.WriteLine($"position fen {fen}");
                 process.StandardInput.WriteLine("eval");
                 process.StandardInput.Flush();
-                Thread.Sleep(1000);
+                Thread.Sleep(2000);
                 if (!process.HasExited)
                 {
                     process.Kill();
