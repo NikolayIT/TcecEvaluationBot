@@ -34,19 +34,20 @@
                 return "Unable to get static evaluation (probably the player is in check)";
             }
 
-            var classicEvaluation = info[^7].Replace("Classical evaluation:", string.Empty)
+            var classicEvaluation = info[^5].Replace("Classical evaluation", string.Empty)
                 .Replace("(white side)", string.Empty).Trim();
-            var nnueEvaluation = info[^5].Replace("NNUE evaluation:", string.Empty)
+            var nnueEvaluation = info[^4].Replace("NNUE evaluation", string.Empty)
                 .Replace("(white side)", string.Empty).Trim();
-            var finalEvaluation = info[^3].Replace("Final evaluation:", string.Empty)
+            var finalEvaluation = info[^3].Replace("Final evaluation", string.Empty)
+                .Replace("[with scaled NNUE, hybrid, ...]", string.Empty)
                 .Replace("(white side)", string.Empty).Trim();
 
             var result = new StringBuilder();
             result.Append($"({fen.GetMoveInfoFromFen()}) {finalEvaluation} • ");
             result.Append($"Classic: {classicEvaluation} • NNUE: {nnueEvaluation} • ");
 
-            result.Append(this.GetPositionInfoFromLine(info[20]));
-            for (var i = 6; i < 19; i++)
+            result.Append(this.GetPositionInfoFromLine(info[22]));
+            for (var i = 8; i < 21; i++)
             {
                 result.Append(" • " + this.GetPositionInfoFromLine(info[i]));
             }
@@ -97,7 +98,7 @@
         private string GetPositionInfoFromLine(string line)
         {
             var lineParts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            return $"{lineParts[0]}({lineParts[^2]},{lineParts[^1]})";
+            return $"{lineParts[1]}({lineParts[^3]},{lineParts[^2]})";
         }
     }
 }
