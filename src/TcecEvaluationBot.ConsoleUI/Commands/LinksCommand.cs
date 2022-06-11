@@ -39,8 +39,8 @@
                 return "No active game or invalid FEN?";
             }
 
-            sb.Append($"Lichess: https://lichess.org/analysis/standard/{Uri.EscapeUriString(fen)} • ");
-            sb.Append($"Syzygy: https://syzygy-tables.info/?fen={Uri.EscapeUriString(fen)}");
+            sb.Append($"Lichess: https://lichess.org/analysis/standard/{Uri.EscapeDataString(fen)} • ");
+            sb.Append($"Syzygy: https://syzygy-tables.info/?fen={Uri.EscapeDataString(fen)}");
 
             return sb.ToString();
         }

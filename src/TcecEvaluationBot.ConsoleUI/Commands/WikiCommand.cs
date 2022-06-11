@@ -26,8 +26,8 @@
             var word = parts[1];
             var meaning = this.chessProgrammingPageContentProvider.GetContent(word).GetAwaiter().GetResult();
             return meaning == null
-                       ? $"\"{word}\" not found <https://chessprogramming.org/{word.Replace(" ", "_")}>"
-                       : $"{meaning} <https://chessprogramming.org/{word.Replace(" ", "_")}>";
+                       ? $"\"{word}\" not found https://chessprogramming.org/{word.Replace(" ", "_")}"
+                       : $"{meaning} https://chessprogramming.org/{word.Replace(" ", "_")}";
         }
     }
 }
